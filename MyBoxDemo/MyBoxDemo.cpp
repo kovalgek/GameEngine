@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include "BoxApp.h"
 
+#include "d3dUtil.h"
+
 #define MAX_LOADSTRING 100
 
 HINSTANCE applicationInstanceHandle = nullptr;
@@ -39,11 +41,25 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    boxApp = new BoxApp();
-    if (!boxApp->initialize())
-        return 0;
+    
 
-    return runMainLoop(hInstance);
+    try
+    {
+        BoxApp boxApp(mainWindowHandle);
+
+        if (!boxApp.initialize())
+            return 0;
+
+        //MainScene mainScene(context);
+
+
+        return runMainLoop(hInstance);
+    }
+    catch (DxException& e)
+    {
+        MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+        return 0;
+    }
 }
 
 ATOM registerClass(HINSTANCE hInstance)
@@ -100,7 +116,8 @@ int runMainLoop(HINSTANCE hInstance)
         }
         else
         {
-            boxApp->update();
+            //mainScene->update();
+            //mainScene->draw();
         }
     }
 

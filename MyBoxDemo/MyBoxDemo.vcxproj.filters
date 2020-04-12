@@ -30,12 +30,18 @@
     <ClInclude Include="BoxApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyBoxDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BoxApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
