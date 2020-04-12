@@ -149,15 +149,19 @@
   <ItemGroup>
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="MainScene.h" />
     <ClInclude Include="MyBoxDemo.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="BoxApp.h" />
+    <ClInclude Include="ApplicationContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="d3dUtil.cpp" />
+    <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="MyBoxDemo.cpp" />
-    <ClCompile Include="BoxApp.cpp" />
+    <ClCompile Include="ApplicationContext.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

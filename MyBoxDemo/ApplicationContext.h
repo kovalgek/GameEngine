@@ -4,6 +4,7 @@
 #include <wrl.h>
 #include <dxgi1_4.h>
 #include <d3d12.h>
+
 // Link necessary d3d12 libraries.
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -12,16 +13,24 @@
 #define MAX_LOADSTRING 100
 
 
-class BoxApp
+class ApplicationContext
 {
 public:
-	BoxApp(HWND mainWindowHandle);
-	~BoxApp();
+	ApplicationContext(HWND mainWindowHandle);
+	~ApplicationContext();
 	bool initialize();
-	void update();
+	void onResize();
 
 	void windowDidActivate();
+
+	Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
+	int clientWidth = 800;
+	int clientHeight = 600;
 private:
+
+	ID3D12Resource* currentBackBuffer()const;
+	D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView()const;
+	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView()const;
 
 	void enableDebugModeIfNeeded();
 	void createDevice();
@@ -47,11 +56,6 @@ private:
 	
 
 
-	bool      mAppPaused = false;  // is the application paused?
-	bool      mMinimized = false;  // is the application minimized?
-	bool      mMaximized = false;  // is the application maximized?
-	bool      mResizing = false;   // are the resize bars being dragged?
-	bool      mFullscreenState = false;// fullscreen enabled
 
 	// Set true to use 4X MSAA (§4.1.8).  The default is false.
 	bool      msaa4xState = false;    // 4X MSAA enabled
@@ -62,7 +66,6 @@ private:
 
 	Microsoft::WRL::ComPtr<IDXGIFactory4> dxgiFactory;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
-	Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
 
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
 	UINT64 currentFence = 0;
@@ -76,11 +79,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainBuffer[swapChainBufferCount];
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer;
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
 
-	D3D12_VIEWPORT mScreenViewport;
-	D3D12_RECT mScissorRect;
+	D3D12_VIEWPORT screenViewport;
+	D3D12_RECT scissorRect;
 
 	UINT rtvDescriptorSize = 0;
 	UINT dsvDescriptorSize = 0;
@@ -88,10 +91,9 @@ private:
 
 	// Derived class should set these in derived constructor to customize starting values.
 	//std::wstring mMainWndCaption = L"d3d App";
-	D3D_DRIVER_TYPE md3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
-	DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-	DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	int mClientWidth = 800;
-	int mClientHeight = 600;
+	D3D_DRIVER_TYPE d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
+	DXGI_FORMAT backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
 };
 

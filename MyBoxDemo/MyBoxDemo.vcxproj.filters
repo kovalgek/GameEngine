@@ -27,10 +27,16 @@
     <ClInclude Include="MyBoxDemo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BoxApp.h">
+    <ClInclude Include="d3dUtil.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="d3dUtil.h">
+    <ClInclude Include="ApplicationContext.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,10 +44,16 @@
     <ClCompile Include="MyBoxDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoxApp.cpp">
+    <ClCompile Include="d3dUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d3dUtil.cpp">
+    <ClCompile Include="ApplicationContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
