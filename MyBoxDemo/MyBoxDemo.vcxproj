@@ -147,19 +147,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AppFacade.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="MainScene.h" />
+    <ClInclude Include="MathHelper.h" />
     <ClInclude Include="MyBoxDemo.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ApplicationContext.h" />
+    <ClInclude Include="UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AppFacade.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="MainScene.cpp" />
+    <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="MyBoxDemo.cpp" />
     <ClCompile Include="ApplicationContext.cpp" />
   </ItemGroup>

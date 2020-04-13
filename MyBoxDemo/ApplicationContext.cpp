@@ -15,10 +15,7 @@ using namespace std;
 ApplicationContext::ApplicationContext(HWND mainWindowHandle)
 {
 	this->mainWindowHandle = mainWindowHandle;
-}
 
-bool ApplicationContext::initialize()
-{
 	enableDebugModeIfNeeded();
 
 	createDXGIFactory();
@@ -34,10 +31,8 @@ bool ApplicationContext::initialize()
 
 	createCommandObjects();
 	createSwapChain();
-
-	return true;
+	createRtvAndDsvDescriptorHeaps();
 }
-
 
 void ApplicationContext::enableDebugModeIfNeeded()
 {
@@ -139,8 +134,8 @@ void ApplicationContext::createSwapChain()
 	swapChain.Reset();
 
 	DXGI_SWAP_CHAIN_DESC sd;
-	sd.BufferDesc.Width = clientWidth;
-	sd.BufferDesc.Height = clientHeight;
+	sd.BufferDesc.Width = 800;
+	sd.BufferDesc.Height = 600;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferDesc.Format = backBufferFormat;
@@ -205,11 +200,6 @@ void ApplicationContext::flushCommandQueue()
 	}
 }
 
-void ApplicationContext::windowDidActivate()
-{
-
-}
-
 ID3D12Resource* ApplicationContext::currentBackBuffer()const
 {
 	return swapChainBuffer[currBackBuffer].Get();
@@ -228,7 +218,9 @@ D3D12_CPU_DESCRIPTOR_HANDLE ApplicationContext::depthStencilView()const
 	return dsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-void ApplicationContext::onResize()
+
+
+void ApplicationContext::onResize(int clientWidth, int clientHeight)
 {
 	assert(d3dDevice);
 	assert(swapChain);

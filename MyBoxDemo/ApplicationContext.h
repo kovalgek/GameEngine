@@ -18,19 +18,39 @@ class ApplicationContext
 public:
 	ApplicationContext(HWND mainWindowHandle);
 	~ApplicationContext();
-	bool initialize();
-	void onResize();
 
-	void windowDidActivate();
+	void onResize(int clientWidth, int clientHeight);
 
-	Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
-	int clientWidth = 800;
-	int clientHeight = 600;
-private:
+	
+	Microsoft::WRL::ComPtr<ID3D12Device> getDevice() const { return d3dDevice; }
+
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> getCommandList() const { return commandList; }
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> getCommandAllocator() const { return commandAllocator; }
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> getCommandQueue() const { return commandQueue; }
+	void flushCommandQueue();
+
+	DXGI_FORMAT getBackBufferFormat() const { return backBufferFormat; }
+	DXGI_FORMAT getDepthStencilFormat() const { return depthStencilFormat; }
+
+	bool  getMsaa4xState() const {	return msaa4xState; }
+	UINT   getMsaa4xQuality() const { return msaa4xQuality; }
+
+	D3D12_VIEWPORT getScreenViewport() const {	return  screenViewport; }
+	D3D12_RECT getScissorRect() const { return scissorRect; }
 
 	ID3D12Resource* currentBackBuffer()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView()const;
+
+	int currBackBuffer = 0;
+	static const int swapChainBufferCount = 2;
+
+	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+
+private:
+
+	
+
 
 	void enableDebugModeIfNeeded();
 	void createDevice();
@@ -41,7 +61,6 @@ private:
 	void createCommandObjects();
 	void createSwapChain();
 	void createRtvAndDsvDescriptorHeaps();
-	void flushCommandQueue();
 
 	void logAdapters();
 	void logAdapterOutputs(IDXGIAdapter* adapter);
@@ -63,9 +82,9 @@ private:
 
 	// Used to keep track of the “delta-time” and game time (§4.4).
 	//GameTimer mTimer;
-
+	Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
 	Microsoft::WRL::ComPtr<IDXGIFactory4> dxgiFactory;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+
 
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
 	UINT64 currentFence = 0;
@@ -74,8 +93,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
-	static const int swapChainBufferCount = 2;
-	int currBackBuffer = 0;
+
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainBuffer[swapChainBufferCount];
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer;
 

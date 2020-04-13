@@ -9,6 +9,7 @@
 #include "ApplicationContext.h"
 #include "MainScene.h"
 #include "GameTimer.h"
+#include "AppFacade.h"
 
 #include "d3dUtil.h"
 
@@ -18,8 +19,9 @@
 HINSTANCE applicationInstanceHandle = nullptr;
 HWND mainWindowHandle = nullptr;
 
-ApplicationContext* appContext = nullptr;
-MainScene* mainScene = nullptr;
+
+AppFacade* appFacade = nullptr;
+
 bool appPaused = false;
 GameTimer timer;
 
@@ -56,26 +58,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    
+	ApplicationContext* appContext = nullptr;
+	MainScene* mainScene = nullptr;
+
     try
     {
         appContext = new ApplicationContext(mainWindowHandle);
+		mainScene = new MainScene(appContext);
+		appFacade = new AppFacade(appContext, mainScene);
 
-        if (!appContext->initialize())
-            return 0;
-
-        mainScene = new MainScene(appContext);
+		appFacade->onResize(clientWidth, clientHeight);
 
         return runMainLoop(hInstance);
     }
     catch (DxException& e)
     {
         MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+
+		delete appContext;
+		delete mainScene;
+		delete appFacade;
         return 0;
     }
 
     delete appContext;
     delete mainScene;
+	delete appFacade;
 }
 
 ATOM registerClass(HINSTANCE hInstance)
@@ -121,31 +129,59 @@ int runMainLoop(HINSTANCE hInstance)
 {
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_MYBOXDEMO));
 
-    MSG msg;
+    //MSG msg;
 
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-        else
-        {
+    //while (GetMessage(&msg, nullptr, 0, 0))
+    //{
+    //    if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+    //    {
+    //        TranslateMessage(&msg);
+    //        DispatchMessage(&msg);
+    //    }
+    //    else
+    //    {
 
-            timer.Tick();
+    //        timer.Tick();
 
-            if (!appPaused)
-            {
-                mainScene->update(timer);
-                mainScene->draw(timer);
-            }
-            else
-            {
-                Sleep(100);
-            }
-        }
-    }
+    //        if (!appPaused)
+    //        {
+    //            mainScene->update(timer);
+    //            mainScene->draw(timer);
+    //        }
+    //        else
+    //        {
+    //            Sleep(100);
+    //        }
+    //    }
+    //}
+
+	MSG msg = { 0 };
+
+	timer.Reset();
+
+	while (msg.message != WM_QUIT)
+	{
+		// If there are Window messages then process them.
+		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		// Otherwise, do animation/game stuff.
+		else
+		{
+			timer.Tick();
+
+			if (!appPaused)
+			{
+				appFacade->update(timer);
+			}
+			else
+			{
+			    Sleep(100);
+			}
+		}
+	}
 
     return (int)msg.wParam;
 }
@@ -178,11 +214,8 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		clientHeight = HIWORD(lParam);
 
 
-
-		if (appContext && appContext->d3dDevice)
+		if (appFacade)
 		{
-			appContext->clientWidth = clientWidth;
-			appContext->clientHeight = clientHeight;
 
 			if (wParam == SIZE_MINIMIZED)
 			{
@@ -195,7 +228,7 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 				appPaused = false;
 				minimized = false;
 				maximized = true;
-				appContext->onResize();
+				appFacade->onResize(clientWidth, clientHeight);
 			}
 			else if (wParam == SIZE_RESTORED)
 			{
@@ -205,7 +238,7 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 				{
 					appPaused = false;
 					minimized = false;
-					appContext->onResize();
+					appFacade->onResize(clientWidth, clientHeight);
 				}
 
 				// Restoring from maximized state?
@@ -213,7 +246,7 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 				{
 					appPaused = false;
 					maximized = false;
-					appContext->onResize();
+					appFacade->onResize(clientWidth, clientHeight);
 				}
 				else if (resizing)
 				{
@@ -228,7 +261,7 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 				}
 				else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
 				{
-					appContext->onResize();
+					appFacade->onResize(clientWidth, clientHeight);
 				}
 			}
 		}
@@ -247,7 +280,7 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		appPaused = false;
 		resizing = false;
 		timer.Start();
-		appContext->onResize();
+		//appFacade->onResize();
 		return 0;
 
 		// WM_DESTROY is sent when the window is being destroyed.
