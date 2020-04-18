@@ -21,3 +21,18 @@ void AppFacade::onResize(int clientWidth, int clientHeight)
 	appContext->onResize(clientWidth, clientHeight);
 	mainScene->onResize(clientWidth, clientHeight);
 }
+
+void AppFacade::onMouseDown(int x, int y)
+{
+	mainScene->onMouseDown(x, y);
+}
+
+void AppFacade::onMouseUp(int x, int y)
+{
+	mainScene->onMouseUp(x, y);
+}
+
+void AppFacade::onMouseMove(int x, int y)
+{
+	mainScene->onMouseMove(x, y);
+}

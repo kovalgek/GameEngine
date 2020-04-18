@@ -231,7 +231,6 @@ void MainScene::onResize(int clientWidth, int clientHeight)
 	XMStoreFloat4x4(&mProj, P);
 }
 
-
 void MainScene::update(const GameTimer& gameTimer)
 {
 	// Convert Spherical to Cartesian coordinates.
@@ -308,6 +307,37 @@ void MainScene::draw(const GameTimer& gameTimer)
 	// Add the command list to the queue for execution.
 	ID3D12CommandList* cmdsLists[] = { commandList };
 	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+}
 
+void MainScene::onMouseDown(int x, int y)
+{
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
 
+	//SetCapture(mhMainWnd);
+}
+
+void MainScene::onMouseUp(int x, int y)
+{
+
+}
+
+void MainScene::onMouseMove(int x, int y)
+{
+	//if ((btnState & MK_LBUTTON) != 0)
+	{
+		// Make each pixel correspond to a quarter of a degree.
+		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
+		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
+
+		// Update angles based on input to orbit camera around box.
+		mTheta += dx;
+		mPhi += dy;
+
+		// Restrict the angle mPhi.
+		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
+	}
+
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
 }

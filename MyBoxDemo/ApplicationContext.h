@@ -10,7 +10,6 @@
 
 #define MAX_LOADSTRING 100
 
-
 class ApplicationContext
 {
 public:

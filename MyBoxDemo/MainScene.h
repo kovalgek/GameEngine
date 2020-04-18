@@ -33,6 +33,10 @@ public:
 	void draw(const GameTimer& gameTimer);
 	void onResize(int clientWidth, int clientHeight);
 
+	void onMouseDown(int x, int y);
+	void onMouseUp(int x, int y);
+	void onMouseMove(int x, int y);
+
 private:
 	ApplicationContext* appContext;
 	ID3D12Device* device;
@@ -70,5 +74,7 @@ private:
 	float mTheta = 1.5f * DirectX::XM_PI;
 	float mPhi = DirectX::XM_PIDIV4;
 	float mRadius = 5.0f;
+
+	POINT mLastMousePos;
 };
 

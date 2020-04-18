@@ -1,27 +1,19 @@
-// MyBoxDemo.cpp : Defines the entry point for the application.
-//
-
-#include "framework.h"
 #include "MyBoxDemo.h"
 #include <wchar.h>
 #include <stdio.h>
-
+#include <WindowsX.h>
 #include "ApplicationContext.h"
 #include "MainScene.h"
 #include "GameTimer.h"
 #include "AppFacade.h"
-
 #include "d3dUtil.h"
-
 
 #define MAX_LOADSTRING 100
 
+std::wstring mMainWndCaption = L"d3d App";
 HINSTANCE applicationInstanceHandle = nullptr;
 HWND mainWindowHandle = nullptr;
-
-
 AppFacade* appFacade = nullptr;
-
 bool appPaused = false;
 GameTimer timer;
 
@@ -29,8 +21,8 @@ bool      resizing = false;   // are the resize bars being dragged?
 bool      minimized = false;  // is the application minimized?
 bool      maximized = false;  // is the application maximized?
 bool      fullscreenState = false;// fullscreen enabled
-int clientWidth = 800;
-int clientHeight = 600;
+int       clientWidth = 800;
+int       clientHeight = 600;
 
 WCHAR windowTitle[MAX_LOADSTRING];
 WCHAR windowClass[MAX_LOADSTRING];
@@ -39,6 +31,7 @@ ATOM                registerClass(HINSTANCE hInstance);
 BOOL                initMainWindow(HINSTANCE, int);
 int                 runMainLoop(HINSTANCE hInstance);
 LRESULT CALLBACK    handleMessage(HWND, UINT, WPARAM, LPARAM);
+void                calculateFrameStats();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -127,53 +120,24 @@ BOOL initMainWindow(HINSTANCE hInstance, int nCmdShow)
 
 int runMainLoop(HINSTANCE hInstance)
 {
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_MYBOXDEMO));
-
-    //MSG msg;
-
-    //while (GetMessage(&msg, nullptr, 0, 0))
-    //{
-    //    if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-    //    {
-    //        TranslateMessage(&msg);
-    //        DispatchMessage(&msg);
-    //    }
-    //    else
-    //    {
-
-    //        timer.Tick();
-
-    //        if (!appPaused)
-    //        {
-    //            mainScene->update(timer);
-    //            mainScene->draw(timer);
-    //        }
-    //        else
-    //        {
-    //            Sleep(100);
-    //        }
-    //    }
-    //}
-
 	MSG msg = { 0 };
 
 	timer.Reset();
 
 	while (msg.message != WM_QUIT)
 	{
-		// If there are Window messages then process them.
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		// Otherwise, do animation/game stuff.
 		else
 		{
 			timer.Tick();
 
 			if (!appPaused)
 			{
+				calculateFrameStats();
 				appFacade->update(timer);
 			}
 			else
@@ -209,10 +173,8 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		// WM_SIZE is sent when the user resizes the window.  
 	case WM_SIZE:
 		// Save the new client area dimensions.
-		
 		clientWidth = LOWORD(lParam);
 		clientHeight = HIWORD(lParam);
-
 
 		if (appFacade)
 		{
@@ -303,23 +265,26 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		//OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		SetCapture(mainWindowHandle);
+		appFacade->onMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
-		//OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		ReleaseCapture();
+		appFacade->onMouseUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_MOUSEMOVE:
-		//OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		if ((wParam & MK_LBUTTON) != 0)
+		{
+			appFacade->onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		}
 		return 0;
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)
 		{
 			PostQuitMessage(0);
 		}
-		//else if ((int)wParam == VK_F2)
-			//Set4xMsaaState(!m4xMsaaState);
 
 		return 0;
 	}
@@ -327,34 +292,30 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-//void calculateFrameStats()
-//{
-//    // Code computes the average frames per second, and also the 
-//    // average time it takes to render one frame.  These stats 
-//    // are appended to the window caption bar.
-//
-//    static int frameCnt = 0;
-//    static float timeElapsed = 0.0f;
-//
-//    frameCnt++;
-//
-//    // Compute averages over one second period.
-//    if ((mTimer.TotalTime() - timeElapsed) >= 1.0f)
-//    {
-//        float fps = (float)frameCnt; // fps = frameCnt / 1
-//        float mspf = 1000.0f / fps;
-//
-//        wstring fpsStr = to_wstring(fps);
-//        wstring mspfStr = to_wstring(mspf);
-//
-//        wstring windowText = mMainWndCaption +
-//            L"    fps: " + fpsStr +
-//            L"   mspf: " + mspfStr;
-//
-//        SetWindowText(mhMainWnd, windowText.c_str());
-//
-//        // Reset for next average.
-//        frameCnt = 0;
-//        timeElapsed += 1.0f;
-//    }
-//}
+void calculateFrameStats()
+{
+    static int frameCnt = 0;
+    static float timeElapsed = 0.0f;
+
+    frameCnt++;
+
+    // Compute averages over one second period.
+    if ((timer.TotalTime() - timeElapsed) >= 1.0f)
+    {
+        float fps = (float)frameCnt; // fps = frameCnt / 1
+        float mspf = 1000.0f / fps;
+
+		std::wstring fpsStr = std::to_wstring(fps);
+		std::wstring mspfStr = std::to_wstring(mspf);
+
+		std::wstring windowText = mMainWndCaption +
+            L"    fps: " + fpsStr +
+            L"   mspf: " + mspfStr;
+
+        SetWindowText(mainWindowHandle, windowText.c_str());
+
+        // Reset for next average.
+        frameCnt = 0;
+        timeElapsed += 1.0f;
+    }
+}

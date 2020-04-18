@@ -19,13 +19,13 @@ ApplicationContext::ApplicationContext(HWND mainWindowHandle) : mainWindowHandle
 	setUpDescriptorSizes();
 	setUp4xMSAAQuality();
 
-#ifdef _DEBUG
-	logAdapters();
-#endif
-
 	createCommandObjects();
 	createSwapChain();
 	createRtvAndDsvDescriptorHeaps();
+
+#ifdef _DEBUG
+	logAdapters();
+#endif
 }
 
 void ApplicationContext::enableDebugModeIfNeeded()
