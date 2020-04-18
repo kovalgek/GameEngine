@@ -4,27 +4,38 @@
 #include "UploadBuffer.h"
 #include "d3dx12.h"
 #include <DirectXColors.h>
-#include <array>
 #include <D3Dcompiler.h>
+#include <array>
 
-MainScene::MainScene(ApplicationContext *appContext)
+using Microsoft::WRL::ComPtr;
+using namespace DirectX;
+using namespace DirectX::PackedVector;
+
+MainScene::MainScene(ApplicationContext* appContext) : 
+	appContext{ appContext },
+	device { appContext->getDevice() },
+	commandQueue { appContext->getCommandQueue() },
+	commandList {appContext->getCommandList() },
+	commandAllocator { appContext->getCommandAllocator() },
+	backBufferFormat { appContext->getBackBufferFormat() },
+	depthStencilFormat { appContext->getDepthStencilFormat() },
+	msaa4xState { appContext->getMsaa4xState() },
+	msaa4xQuality { appContext->getMsaa4xQuality() }
 {
-    this->appContext = appContext;
-
 	// Reset the command list to prep for initialization commands.
-	ThrowIfFailed(appContext->getCommandList()->Reset(appContext->getCommandAllocator().Get(), nullptr));
+	ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
 
 	buildDescriptorHeaps();
-    buildConstantBuffers();
+	buildConstantBuffers();
 	buildRootSignature();
 	buildShadersAndInputLayout();
 	buildBoxGeometry();
 	buildPSO();
 
 	// Execute the initialization commands.
-	ThrowIfFailed(appContext->getCommandList()->Close());
-	ID3D12CommandList* cmdsLists[] = { appContext->getCommandList().Get() };
-	appContext->getCommandQueue()->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	ThrowIfFailed(commandList->Close());
+	ID3D12CommandList* cmdsLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// Wait until initialization is complete.
 	appContext->flushCommandQueue();
@@ -37,12 +48,12 @@ void MainScene::buildDescriptorHeaps()
     cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     cbvHeapDesc.NodeMask = 0;
-    ThrowIfFailed(appContext->getDevice()->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&cbvHeap)));
+    ThrowIfFailed(device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&cbvHeap)));
 }
 
 void MainScene::buildConstantBuffers()
 {
-	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(appContext->getDevice().Get(), 1, true);
+	mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(device, 1, true);
 
 	UINT objCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
 
@@ -55,9 +66,7 @@ void MainScene::buildConstantBuffers()
 	cbvDesc.BufferLocation = cbAddress;
 	cbvDesc.SizeInBytes = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
 
-	appContext->getDevice()->CreateConstantBufferView(
-		&cbvDesc,
-		cbvHeap->GetCPUDescriptorHandleForHeapStart());
+	device->CreateConstantBufferView(&cbvDesc, cbvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void MainScene::buildRootSignature()
@@ -92,7 +101,7 @@ void MainScene::buildRootSignature()
 	}
 	ThrowIfFailed(hr);
 
-	ThrowIfFailed(appContext->getDevice()->CreateRootSignature(
+	ThrowIfFailed(device->CreateRootSignature(
 		0,
 		serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(),
@@ -166,11 +175,11 @@ void MainScene::buildBoxGeometry()
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &boxGeo->IndexBufferCPU));
 	CopyMemory(boxGeo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 
-	boxGeo->VertexBufferGPU = d3dUtil::createDefaultBuffer(appContext->getDevice().Get(),
-		appContext->getCommandList().Get(), vertices.data(), vbByteSize, boxGeo->VertexBufferUploader);
+	boxGeo->VertexBufferGPU = d3dUtil::createDefaultBuffer(device,
+		commandList, vertices.data(), vbByteSize, boxGeo->VertexBufferUploader);
 
-	boxGeo->IndexBufferGPU = d3dUtil::createDefaultBuffer(appContext->getDevice().Get(),
-		appContext->getCommandList().Get(), indices.data(), ibByteSize, boxGeo->IndexBufferUploader);
+	boxGeo->IndexBufferGPU = d3dUtil::createDefaultBuffer(device,
+		commandList, indices.data(), ibByteSize, boxGeo->IndexBufferUploader);
 
 	boxGeo->VertexByteStride = sizeof(Vertex);
 	boxGeo->VertexBufferByteSize = vbByteSize;
@@ -211,7 +220,7 @@ void MainScene::buildPSO()
 	psoDesc.SampleDesc.Count = appContext->getMsaa4xState() ? 4 : 1;
 	psoDesc.SampleDesc.Quality = appContext->getMsaa4xState() ? (appContext->getMsaa4xQuality() - 1) : 0;
 	psoDesc.DSVFormat = appContext->getDepthStencilFormat();
-	ThrowIfFailed(appContext->getDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&PSO)));
+	ThrowIfFailed(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&PSO)));
 }
 
 void MainScene::onResize(int clientWidth, int clientHeight)
@@ -252,60 +261,53 @@ void MainScene::draw(const GameTimer& gameTimer)
 {
 	// Reuse the memory associated with command recording.
  // We can only reset when the associated command lists have finished execution on the GPU.
-	ThrowIfFailed(appContext->getCommandAllocator()->Reset());
+	ThrowIfFailed(commandAllocator->Reset());
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	ThrowIfFailed(appContext->getCommandList()->Reset(appContext->getCommandAllocator().Get(), PSO.Get()));
+	ThrowIfFailed(commandList->Reset(commandAllocator, PSO.Get()));
 
-	appContext->getCommandList()->RSSetViewports(1, &appContext->getScreenViewport());
-	appContext->getCommandList()->RSSetScissorRects(1, &appContext->getScissorRect());
+	commandList->RSSetViewports(1, &appContext->getScreenViewport());
+	commandList->RSSetScissorRects(1, &appContext->getScissorRect());
 
 	// Indicate a state transition on the resource usage.
-	appContext->getCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	// Clear the back buffer and depth buffer.
-	auto currentBackBufferView = appContext->currentBackBufferView();
-	appContext->getCommandList()->ClearRenderTargetView(appContext->currentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-	appContext->getCommandList()->ClearDepthStencilView(appContext->depthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+	commandList->ClearRenderTargetView(appContext->currentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+	commandList->ClearDepthStencilView(appContext->depthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Specify the buffers we are going to render to.
-	appContext->getCommandList()->OMSetRenderTargets(1, &appContext->currentBackBufferView(), true, &appContext->depthStencilView());
+	
+	commandList->OMSetRenderTargets(1, &appContext->currentBackBufferView(), true, &appContext->depthStencilView());
 
 	ID3D12DescriptorHeap* descriptorHeaps[] = { cbvHeap.Get() };
-	appContext->getCommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-	appContext->getCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+	commandList->SetGraphicsRootSignature(rootSignature.Get());
 
-	appContext->getCommandList()->IASetVertexBuffers(0, 1, &boxGeo->VertexBufferView());
-	appContext->getCommandList()->IASetIndexBuffer(&boxGeo->IndexBufferView());
-	appContext->getCommandList()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->IASetVertexBuffers(0, 1, &boxGeo->VertexBufferView());
+	commandList->IASetIndexBuffer(&boxGeo->IndexBufferView());
+	commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	auto qwe = cbvHeap->GetGPUDescriptorHandleForHeapStart();
-	appContext->getCommandList()->SetGraphicsRootDescriptorTable(0, cbvHeap->GetGPUDescriptorHandleForHeapStart());
+	commandList->SetGraphicsRootDescriptorTable(0, cbvHeap->GetGPUDescriptorHandleForHeapStart());
 
-	appContext->getCommandList()->DrawIndexedInstanced(
+	commandList->DrawIndexedInstanced(
 		boxGeo->DrawArgs["box"].IndexCount,
 		1, 0, 0, 0);
 
 	// Indicate a state transition on the resource usage.
-	appContext->getCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 	// Done recording commands.
-	ThrowIfFailed(appContext->getCommandList()->Close());
+	ThrowIfFailed(commandList->Close());
 
 	// Add the command list to the queue for execution.
-	ID3D12CommandList* cmdsLists[] = { appContext->getCommandList().Get() };
-	appContext->getCommandQueue()->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	ID3D12CommandList* cmdsLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-	// swap the back and front buffers
-	ThrowIfFailed(appContext->swapChain->Present(0, 0));
-	appContext->currBackBuffer = (appContext->currBackBuffer + 1) % ApplicationContext::swapChainBufferCount;
 
-	// Wait until frame commands are complete.  This waiting is inefficient and is
-	// done for simplicity.  Later we will show how to organize our rendering code
-	// so we do not have to wait per frame.
-	appContext->flushCommandQueue();
 }

@@ -1,21 +1,15 @@
 #include "ApplicationContext.h"
-
-
 #include "d3dUtil.h"
+#include "d3dx12.h"
 #include <cassert>
 #include <vector>
-#include "d3dx12.h"
-
-
 
 using Microsoft::WRL::ComPtr;
 using namespace std;
 //using namespace DirectX;
 
-ApplicationContext::ApplicationContext(HWND mainWindowHandle)
+ApplicationContext::ApplicationContext(HWND mainWindowHandle) : mainWindowHandle { mainWindowHandle }
 {
-	this->mainWindowHandle = mainWindowHandle;
-
 	enableDebugModeIfNeeded();
 
 	createDXGIFactory();
@@ -218,8 +212,6 @@ D3D12_CPU_DESCRIPTOR_HANDLE ApplicationContext::depthStencilView()const
 	return dsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-
-
 void ApplicationContext::onResize(int clientWidth, int clientHeight)
 {
 	assert(d3dDevice);
@@ -319,6 +311,18 @@ void ApplicationContext::onResize(int clientWidth, int clientHeight)
 	scissorRect = { 0, 0, clientWidth, clientHeight };
 }
 
+void ApplicationContext::draw()
+{
+	// swap the back and front buffers
+	ThrowIfFailed(swapChain->Present(0, 0));
+	currBackBuffer = (currBackBuffer + 1) % ApplicationContext::swapChainBufferCount;
+
+	// Wait until frame commands are complete.  This waiting is inefficient and is
+	// done for simplicity.  Later we will show how to organize our rendering code
+	// so we do not have to wait per frame.
+	flushCommandQueue();
+}
+
 void ApplicationContext::logAdapters()
 {
     UINT i = 0;
@@ -393,7 +397,6 @@ void ApplicationContext::logOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT 
         ::OutputDebugString(text.c_str());
     }
 }
-
 
 ApplicationContext::~ApplicationContext()
 {

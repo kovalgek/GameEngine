@@ -13,6 +13,7 @@ void AppFacade::update(const GameTimer& gameTimer)
 {
 	mainScene->update(gameTimer);
 	mainScene->draw(gameTimer);
+	appContext->draw();
 }
 
 void AppFacade::onResize(int clientWidth, int clientHeight)
