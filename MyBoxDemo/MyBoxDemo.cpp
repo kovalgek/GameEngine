@@ -2,7 +2,7 @@
 #include <wchar.h>
 #include <stdio.h>
 #include <WindowsX.h>
-#include "ApplicationContext.h"
+#include "Application.h"
 #include "MainScene.h"
 #include "GameTimer.h"
 #include "AppFacade.h"
@@ -51,12 +51,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-	ApplicationContext* appContext = nullptr;
+	Application* appContext = nullptr;
 	MainScene* mainScene = nullptr;
 
     try
     {
-        appContext = new ApplicationContext(mainWindowHandle);
+        appContext = new Application(mainWindowHandle);
 		mainScene = new MainScene(appContext);
 		appFacade = new AppFacade(appContext, mainScene);
 

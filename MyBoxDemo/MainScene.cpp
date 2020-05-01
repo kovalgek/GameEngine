@@ -1,5 +1,5 @@
 #include "MainScene.h"
-#include "ApplicationContext.h"
+#include "Application.h"
 #include "d3dUtil.h"
 #include "UploadBuffer.h"
 #include "d3dx12.h"
@@ -11,7 +11,7 @@ using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
-MainScene::MainScene(ApplicationContext* appContext) : 
+MainScene::MainScene(Application* appContext) : 
 	appContext{ appContext },
 	device { appContext->getDevice() },
 	commandQueue { appContext->getCommandQueue() },
@@ -290,7 +290,6 @@ void MainScene::draw(const GameTimer& gameTimer)
 	commandList->IASetIndexBuffer(&boxGeo->IndexBufferView());
 	commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	auto qwe = cbvHeap->GetGPUDescriptorHandleForHeapStart();
 	commandList->SetGraphicsRootDescriptorTable(0, cbvHeap->GetGPUDescriptorHandleForHeapStart());
 
 	commandList->DrawIndexedInstanced(
@@ -313,8 +312,6 @@ void MainScene::onMouseDown(int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-
-	//SetCapture(mhMainWnd);
 }
 
 void MainScene::onMouseUp(int x, int y)

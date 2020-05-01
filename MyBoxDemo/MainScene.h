@@ -8,7 +8,7 @@
 #include "MathHelper.h"
 #include "UploadBuffer.h"
 
-class ApplicationContext;
+class Application;
 class GameTimer;
 
 struct Vertex
@@ -27,7 +27,7 @@ class MainScene
 {
 public:
 
-	MainScene(ApplicationContext* appContext);
+	MainScene(Application* appContext);
 
 	void update(const GameTimer& gameTimer);
 	void draw(const GameTimer& gameTimer);
@@ -38,7 +38,7 @@ public:
 	void onMouseMove(int x, int y);
 
 private:
-	ApplicationContext* appContext;
+	Application* appContext;
 	ID3D12Device* device;
 	ID3D12CommandQueue* commandQueue;
 	ID3D12CommandAllocator* commandAllocator;

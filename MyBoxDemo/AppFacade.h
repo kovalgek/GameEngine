@@ -1,4 +1,4 @@
-class ApplicationContext;
+class Application;
 class MainScene;
 class GameTimer;
 
@@ -6,7 +6,7 @@ class GameTimer;
 class AppFacade
 {
 public:
-	AppFacade(ApplicationContext *appContext, MainScene *mainScene);
+	AppFacade(Application *appContext, MainScene *mainScene);
 	void update(const GameTimer& gameTimer);
 	void onResize(int clientWidth, int clientHeight);
 
@@ -14,7 +14,7 @@ public:
 	void onMouseUp(int x, int y);
 	void onMouseMove(int x, int y);
 private:
-	ApplicationContext* appContext;
+	Application* appContext;
 	MainScene* mainScene;
 };
 

@@ -10,35 +10,36 @@
 
 #define MAX_LOADSTRING 100
 
-class ApplicationContext
+class Application
 {
 public:
-	ApplicationContext(HWND mainWindowHandle);
-	~ApplicationContext();
+	Application(HWND mainWindowHandle);
+	~Application();
 
 	void onResize(int clientWidth, int clientHeight);
 	void draw();
-	
+	void flushCommandQueue();
+
+	// Factory for directx objects
 	ID3D12Device *getDevice() const { return d3dDevice.Get() ; }
 
+	// Execute commands
 	ID3D12GraphicsCommandList *getCommandList() const { return commandList.Get(); }
 	ID3D12CommandAllocator *getCommandAllocator() const { return commandAllocator.Get(); }
 	ID3D12CommandQueue *getCommandQueue() const { return commandQueue.Get(); }
 
-	void flushCommandQueue();
-
+	// Drawing
 	ID3D12Resource* currentBackBuffer()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView()const;
+	D3D12_VIEWPORT getScreenViewport() const { return  screenViewport; }
+	D3D12_RECT getScissorRect() const { return scissorRect; }
 
+	// Properties for PSO
 	DXGI_FORMAT getBackBufferFormat() const { return backBufferFormat; }
 	DXGI_FORMAT getDepthStencilFormat() const { return depthStencilFormat; }
-
 	bool  getMsaa4xState() const {	return msaa4xState; }
 	UINT   getMsaa4xQuality() const { return msaa4xQuality; }
-
-	D3D12_VIEWPORT getScreenViewport() const {	return  screenViewport; }
-	D3D12_RECT getScissorRect() const { return scissorRect; }
 
 private:
 	void enableDebugModeIfNeeded();

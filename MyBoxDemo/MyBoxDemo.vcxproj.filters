@@ -30,9 +30,6 @@
     <ClInclude Include="d3dUtil.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="ApplicationContext.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="MainScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -48,15 +45,18 @@
     <ClInclude Include="AppFacade.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="FrameResource.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyBoxDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="d3dUtil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MainScene.cpp">
@@ -69,6 +69,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AppFacade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

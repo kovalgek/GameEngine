@@ -1,4 +1,4 @@
-#include "ApplicationContext.h"
+#include "Application.h"
 #include "d3dUtil.h"
 #include "d3dx12.h"
 #include <cassert>
@@ -8,7 +8,7 @@ using Microsoft::WRL::ComPtr;
 using namespace std;
 //using namespace DirectX;
 
-ApplicationContext::ApplicationContext(HWND mainWindowHandle) : mainWindowHandle { mainWindowHandle }
+Application::Application(HWND mainWindowHandle) : mainWindowHandle { mainWindowHandle }
 {
 	enableDebugModeIfNeeded();
 
@@ -28,7 +28,7 @@ ApplicationContext::ApplicationContext(HWND mainWindowHandle) : mainWindowHandle
 #endif
 }
 
-void ApplicationContext::enableDebugModeIfNeeded()
+void Application::enableDebugModeIfNeeded()
 {
 #if defined(DEBUG) || defined(_DEBUG) 
 	// Enable the D3D12 debug layer.
@@ -40,12 +40,12 @@ void ApplicationContext::enableDebugModeIfNeeded()
 #endif
 }
 
-void ApplicationContext::createDXGIFactory()
+void Application::createDXGIFactory()
 {
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)));
 }
 
-void ApplicationContext::createDevice()
+void Application::createDevice()
 {
 	// Try to create hardware device.
 	HRESULT hardwareResult = D3D12CreateDevice(
@@ -66,19 +66,19 @@ void ApplicationContext::createDevice()
 	}
 }
 
-void ApplicationContext::createFence()
+void Application::createFence()
 {
 	ThrowIfFailed(d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
 }
 
-void ApplicationContext::setUpDescriptorSizes()
+void Application::setUpDescriptorSizes()
 {
 	rtvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	dsvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	cbvSrvUavDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
-void ApplicationContext::setUp4xMSAAQuality()
+void Application::setUp4xMSAAQuality()
 {
 	// Check 4X MSAA quality support for our back buffer format.
 	// All Direct3D 11 capable devices support 4X MSAA for all render 
@@ -98,7 +98,7 @@ void ApplicationContext::setUp4xMSAAQuality()
 	assert(msaa4xQuality > 0 && "Unexpected MSAA quality level.");
 }
 
-void ApplicationContext::createCommandObjects()
+void Application::createCommandObjects()
 {
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -122,7 +122,7 @@ void ApplicationContext::createCommandObjects()
 	commandList->Close();
 }
 
-void ApplicationContext::createSwapChain()
+void Application::createSwapChain()
 {
 	// Release the previous swapchain we will be recreating.
 	swapChain.Reset();
@@ -151,7 +151,7 @@ void ApplicationContext::createSwapChain()
 		swapChain.GetAddressOf()));
 }
 
-void ApplicationContext::createRtvAndDsvDescriptorHeaps()
+void Application::createRtvAndDsvDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
 	rtvHeapDesc.NumDescriptors = swapChainBufferCount;
@@ -170,7 +170,7 @@ void ApplicationContext::createRtvAndDsvDescriptorHeaps()
 }
 
 
-void ApplicationContext::flushCommandQueue()
+void Application::flushCommandQueue()
 {
 	// Advance the fence value to mark commands up to this fence point.
 	currentFence++;
@@ -194,12 +194,12 @@ void ApplicationContext::flushCommandQueue()
 	}
 }
 
-ID3D12Resource* ApplicationContext::currentBackBuffer()const
+ID3D12Resource* Application::currentBackBuffer()const
 {
 	return swapChainBuffer[currBackBuffer].Get();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE ApplicationContext::currentBackBufferView()const
+D3D12_CPU_DESCRIPTOR_HANDLE Application::currentBackBufferView()const
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
 		rtvHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -207,12 +207,12 @@ D3D12_CPU_DESCRIPTOR_HANDLE ApplicationContext::currentBackBufferView()const
 		rtvDescriptorSize);
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE ApplicationContext::depthStencilView()const
+D3D12_CPU_DESCRIPTOR_HANDLE Application::depthStencilView()const
 {
 	return dsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-void ApplicationContext::onResize(int clientWidth, int clientHeight)
+void Application::onResize(int clientWidth, int clientHeight)
 {
 	assert(d3dDevice);
 	assert(swapChain);
@@ -311,11 +311,11 @@ void ApplicationContext::onResize(int clientWidth, int clientHeight)
 	scissorRect = { 0, 0, clientWidth, clientHeight };
 }
 
-void ApplicationContext::draw()
+void Application::draw()
 {
 	// swap the back and front buffers
 	ThrowIfFailed(swapChain->Present(0, 0));
-	currBackBuffer = (currBackBuffer + 1) % ApplicationContext::swapChainBufferCount;
+	currBackBuffer = (currBackBuffer + 1) % Application::swapChainBufferCount;
 
 	// Wait until frame commands are complete.  This waiting is inefficient and is
 	// done for simplicity.  Later we will show how to organize our rendering code
@@ -323,7 +323,7 @@ void ApplicationContext::draw()
 	flushCommandQueue();
 }
 
-void ApplicationContext::logAdapters()
+void Application::logAdapters()
 {
     UINT i = 0;
     IDXGIAdapter* adapter = nullptr;
@@ -351,7 +351,7 @@ void ApplicationContext::logAdapters()
     }
 }
 
-void ApplicationContext::logAdapterOutputs(IDXGIAdapter* adapter)
+void Application::logAdapterOutputs(IDXGIAdapter* adapter)
 {
     UINT i = 0;
     IDXGIOutput* output = nullptr;
@@ -373,7 +373,7 @@ void ApplicationContext::logAdapterOutputs(IDXGIAdapter* adapter)
     }
 }
 
-void ApplicationContext::logOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
+void Application::logOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
 {
     UINT count = 0;
     UINT flags = 0;
@@ -398,7 +398,7 @@ void ApplicationContext::logOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT 
     }
 }
 
-ApplicationContext::~ApplicationContext()
+Application::~Application()
 {
 	if (d3dDevice != nullptr)
 	{

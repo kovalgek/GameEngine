@@ -1,9 +1,9 @@
 #include "AppFacade.h"
-#include "ApplicationContext.h"
+#include "Application.h"
 #include "MainScene.h"
 #include "GameTimer.h"
 
-AppFacade::AppFacade(ApplicationContext* appContext, MainScene* mainScene)
+AppFacade::AppFacade(Application* appContext, MainScene* mainScene)
 {
 	this->appContext = appContext;
 	this->mainScene = mainScene;
