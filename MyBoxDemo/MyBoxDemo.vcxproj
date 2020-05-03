@@ -152,6 +152,7 @@
     <ClInclude Include="FrameResource.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="MyBoxDemo.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="FrameResource.cpp" />
     <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="MyBoxDemo.cpp" />

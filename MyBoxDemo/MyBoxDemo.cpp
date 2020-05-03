@@ -11,6 +11,7 @@
 #define MAX_LOADSTRING 100
 
 std::wstring mMainWndCaption = L"d3d App";
+
 HINSTANCE applicationInstanceHandle = nullptr;
 HWND mainWindowHandle = nullptr;
 AppFacade* appFacade = nullptr;

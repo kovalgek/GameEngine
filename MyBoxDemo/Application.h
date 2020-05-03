@@ -34,12 +34,19 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView()const;
 	D3D12_VIEWPORT getScreenViewport() const { return  screenViewport; }
 	D3D12_RECT getScissorRect() const { return scissorRect; }
+	ID3D12Fence* getFence() const { return fence.Get(); }
+	void swapChainMethod();
+	UINT64 currentFence = 0;
+
+
 
 	// Properties for PSO
 	DXGI_FORMAT getBackBufferFormat() const { return backBufferFormat; }
 	DXGI_FORMAT getDepthStencilFormat() const { return depthStencilFormat; }
-	bool  getMsaa4xState() const {	return msaa4xState; }
-	UINT   getMsaa4xQuality() const { return msaa4xQuality; }
+	bool getMsaa4xState() const {	return msaa4xState; }
+	UINT getMsaa4xQuality() const { return msaa4xQuality; }
+	int getClientWidth() const { return clientWidth; }
+	int getClientHeight() const { return clientHeight; }
 
 private:
 	void enableDebugModeIfNeeded();
@@ -67,7 +74,6 @@ private:
 	Microsoft::WRL::ComPtr<IDXGIFactory4> dxgiFactory;
 
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
-	UINT64 currentFence = 0;
 
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator;
@@ -93,5 +99,8 @@ private:
 	D3D_DRIVER_TYPE d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
 	DXGI_FORMAT backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+	int clientWidth = 800;
+	int clientHeight = 600;
 };
 

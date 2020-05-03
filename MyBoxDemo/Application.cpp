@@ -214,6 +214,9 @@ D3D12_CPU_DESCRIPTOR_HANDLE Application::depthStencilView()const
 
 void Application::onResize(int clientWidth, int clientHeight)
 {
+	this->clientWidth = clientWidth;
+	this->clientHeight = clientHeight;
+
 	assert(d3dDevice);
 	assert(swapChain);
 	assert(commandAllocator);
@@ -309,6 +312,13 @@ void Application::onResize(int clientWidth, int clientHeight)
 	screenViewport.MaxDepth = 1.0f;
 
 	scissorRect = { 0, 0, clientWidth, clientHeight };
+}
+
+void Application::swapChainMethod()
+{
+	// swap the back and front buffers
+	ThrowIfFailed(swapChain->Present(0, 0));
+	currBackBuffer = (currBackBuffer + 1) % Application::swapChainBufferCount;
 }
 
 void Application::draw()
