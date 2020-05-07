@@ -3,17 +3,22 @@
 #include "MainScene.h"
 #include "GameTimer.h"
 
-AppFacade::AppFacade(Application* appContext, MainScene* mainScene)
+AppFacade::AppFacade(std::shared_ptr<Application> appContext, std::unique_ptr<MainScene> mainScene) : 
+	appContext { appContext },
+	mainScene { std::move(mainScene) }
 {
-	this->appContext = appContext;
-	this->mainScene = mainScene;
+
+}
+
+AppFacade::~AppFacade()
+{
+
 }
 
 void AppFacade::update(const GameTimer& gameTimer)
 {
 	mainScene->update(gameTimer);
 	mainScene->draw(gameTimer);
-	//appContext->draw();
 }
 
 void AppFacade::onResize(int clientWidth, int clientHeight)

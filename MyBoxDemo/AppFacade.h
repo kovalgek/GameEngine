@@ -2,11 +2,14 @@ class Application;
 class MainScene;
 class GameTimer;
 
+#include <memory>
+
 #pragma once
 class AppFacade
 {
 public:
-	AppFacade(Application *appContext, MainScene *mainScene);
+	AppFacade(std::shared_ptr<Application> appContext, std::unique_ptr<MainScene> mainScene);
+	~AppFacade();
 	void update(const GameTimer& gameTimer);
 	void onResize(int clientWidth, int clientHeight);
 
@@ -14,7 +17,7 @@ public:
 	void onMouseUp(int x, int y);
 	void onMouseMove(int x, int y);
 private:
-	Application* appContext;
-	MainScene* mainScene;
+	std::shared_ptr<Application> appContext;
+	std::unique_ptr<MainScene> mainScene;
 };
 

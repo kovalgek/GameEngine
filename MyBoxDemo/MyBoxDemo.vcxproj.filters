@@ -54,6 +54,24 @@
     <ClInclude Include="GeometryGenerator.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="FrameResourceController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PipleneStateData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryStorage.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderItem.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppFacadeFactory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyBoxDemo.cpp">
@@ -81,6 +99,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameResourceController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PipleneStateData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryStorage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFacadeFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

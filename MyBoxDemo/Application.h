@@ -10,6 +10,14 @@
 
 #define MAX_LOADSTRING 100
 
+//struct AppConfig
+//{
+//	DXGI_FORMAT backBufferFormat;
+//	DXGI_FORMAT depthStencilFormat;
+//	bool msaa4xState;
+//	UINT msaa4xQuality;
+//};
+
 class Application
 {
 public:

@@ -4,6 +4,7 @@
 #include "MathHelper.h"
 #include "UploadBuffer.h"
 #include <memory>
+#include "Vertex.h"
 
 struct ObjectConstants
 {
@@ -28,11 +29,7 @@ struct PassConstants
     float DeltaTime = 0.0f;
 };
 
-struct Vertex
-{
-    DirectX::XMFLOAT3 Pos;
-    DirectX::XMFLOAT4 Color;
-};
+
 
 // Stores the resources needed for the CPU to build the command lists
 // for a frame.  

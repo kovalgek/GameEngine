@@ -7,6 +7,7 @@
 #include "GameTimer.h"
 #include "AppFacade.h"
 #include "d3dUtil.h"
+#include "AppFacadeFactory.h"
 
 #define MAX_LOADSTRING 100
 
@@ -14,7 +15,7 @@ std::wstring mMainWndCaption = L"d3d App";
 
 HINSTANCE applicationInstanceHandle = nullptr;
 HWND mainWindowHandle = nullptr;
-AppFacade* appFacade = nullptr;
+std::unique_ptr<AppFacade> appFacade;
 bool appPaused = false;
 GameTimer timer;
 
@@ -52,14 +53,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-	Application* appContext = nullptr;
-	MainScene* mainScene = nullptr;
-
     try
     {
-        appContext = new Application(mainWindowHandle);
-		mainScene = new MainScene(appContext);
-		appFacade = new AppFacade(appContext, mainScene);
+		//std::shared_ptr <Application> application = std::make_shared<Application>(mainWindowHandle);
+		//std::unique_ptr<MainScene> mainScene = std::make_unique <MainScene>(application);
+
+
+		appFacade = AppFacadeFactory::appFacade(mainWindowHandle);   //std::make_unique<AppFacade>(application, std::move(mainScene));
 
 		appFacade->onResize(clientWidth, clientHeight);
 
@@ -68,16 +68,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     catch (DxException& e)
     {
         MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
-
-		delete appContext;
-		delete mainScene;
-		delete appFacade;
         return 0;
     }
-
-    delete appContext;
-    delete mainScene;
-	delete appFacade;
 }
 
 ATOM registerClass(HINSTANCE hInstance)
