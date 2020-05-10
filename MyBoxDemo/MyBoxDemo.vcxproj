@@ -152,13 +152,18 @@
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="FrameResource.h" />
     <ClInclude Include="FrameResourceController.h" />
+    <ClInclude Include="FrameResourceUpdater.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="GeometryStorage.h" />
+    <ClInclude Include="MainPassData.h" />
+    <ClInclude Include="MainPassDataProvider.h" />
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="MyBoxDemo.h" />
+    <ClInclude Include="ObjectsDataProvider.h" />
+    <ClInclude Include="PassConstants.h" />
     <ClInclude Include="PipleneStateData.h" />
     <ClInclude Include="RenderItem.h" />
     <ClInclude Include="Resource.h" />
@@ -173,13 +178,16 @@
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="FrameResource.cpp" />
     <ClCompile Include="FrameResourceController.cpp" />
+    <ClCompile Include="FrameResourceUpdater.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="GeometryStorage.cpp" />
+    <ClCompile Include="MainPassDataProvider.cpp" />
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="MyBoxDemo.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="ObjectsDataProvider.cpp" />
     <ClCompile Include="PipleneStateData.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

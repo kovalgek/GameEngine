@@ -12,7 +12,8 @@ public:
 		ID3D12CommandAllocator* commandAllocator,
 		ID3D12CommandQueue* commandQueue);
 	~GeometryStorage();
-	std::vector<std::unique_ptr<RenderItem>> renderItems();
+
+	MeshGeometry *getGeometry(std::string name);
 private:
 	void buildShapeGeometry();
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> geometries;

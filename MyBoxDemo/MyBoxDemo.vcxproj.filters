@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\FrameResources">
+      <UniqueIdentifier>{5d51998f-90f9-4c7e-956f-72d95bf5f533}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,16 +48,10 @@
     <ClInclude Include="AppFacade.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="FrameResource.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="GeometryGenerator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameResourceController.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="PipleneStateData.h">
@@ -66,11 +63,32 @@
     <ClInclude Include="Vertex.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderItem.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="AppFacadeFactory.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PassConstants.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameResource.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameResourceController.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameResourceUpdater.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPassDataProvider.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPassData.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectsDataProvider.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderItem.h">
+      <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,16 +110,10 @@
     <ClCompile Include="AppFacade.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FrameResource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeometryGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameResourceController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PipleneStateData.cpp">
@@ -112,6 +124,21 @@
     </ClCompile>
     <ClCompile Include="AppFacadeFactory.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameResource.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameResourceController.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameResourceUpdater.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPassDataProvider.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectsDataProvider.cpp">
+      <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

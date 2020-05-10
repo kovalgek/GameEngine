@@ -3,14 +3,13 @@
 #include "d3dx12.h"
 #include "d3dUtil.h"
 #include "UploadBuffer.h"
-#include "GeometryGenerator.h"
 #include "GameTimer.h"
 #include <DirectXColors.h>
 #include <D3Dcompiler.h>
 #include <array>
 #include "FrameResourceController.h"
 #include "PipleneStateData.h"
-
+#include "ObjectsDataProvider.h"
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
@@ -19,24 +18,20 @@ using namespace DirectX::PackedVector;
 
 MainScene::MainScene(
 	std::weak_ptr<Application> appContext,
-	std::unique_ptr <PipleneStateData> pipleneStateData,
-	std::unique_ptr <GeometryStorage> geometryStorage,
-	std::unique_ptr <FrameResourceController> frameResourceController,
-	std::vector<std::unique_ptr<RenderItem>> allRitems) :
+	std::unique_ptr<PipleneStateData> pipleneStateData,
+	std::shared_ptr<FrameResourceController> frameResourceController,
+	std::shared_ptr<ObjectsDataProvider> objectsDataProvider) :
 
 	appContext{ appContext },
 	pipleneStateData { std::move(pipleneStateData) },
-	geometryStorage { std::move(geometryStorage) },
-	frameResourceController { std::move(frameResourceController) },
-	allRitems { std::move(allRitems) },
+	frameResourceController { frameResourceController },
+	objectsDataProvider{ objectsDataProvider },
 
 	device { appContext.lock()->getDevice() },
 	commandQueue { appContext.lock()->getCommandQueue() },
 	commandList { appContext.lock()->getCommandList() },
 	commandAllocator { appContext.lock()->getCommandAllocator() }
 {
-
-
 	//// Wait until initialization is complete.
 	appContext.lock()->flushCommandQueue();
 }
@@ -44,104 +39,6 @@ MainScene::MainScene(
 MainScene::~MainScene()
 {
 
-}
-
-void MainScene::onResize(int clientWidth, int clientHeight)
-{
-	// The window resized, so update the aspect ratio and recompute the projection matrix.
-	float aspectRatio = static_cast<float>(clientWidth) / clientHeight;
-	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, aspectRatio, 1.0f, 1000.0f);
-	XMStoreFloat4x4(&mProj, P);
-}
-
-void MainScene::updateCamera(const GameTimer& gameTimer)
-{
-	// Convert Spherical to Cartesian coordinates.
-	eyePosition.x = mRadius * sinf(mPhi) * cosf(mTheta);
-	eyePosition.z = mRadius * sinf(mPhi) * sinf(mTheta);
-	eyePosition.y = mRadius * cosf(mPhi);
-
-	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(eyePosition.x, eyePosition.y, eyePosition.z, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, view);
-}
-
-
-void MainScene::update(const GameTimer& gameTimer)
-{
-	onKeyboardInput(gameTimer);
-	updateCamera(gameTimer);
-
-
-	frameResourceController->changeFrameResource();
-	auto currFrameResource = frameResourceController->getCurrentFrameResource();
-
-	// Has the GPU finished processing the commands of the current frame resource?
-	// If not, wait until the GPU has completed commands up to this fence point.
-	if (currFrameResource->Fence != 0 && appContext.lock()->getFence()->GetCompletedValue() < currFrameResource->Fence)
-	{
-		HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
-		ThrowIfFailed(appContext.lock()->getFence()->SetEventOnCompletion(currFrameResource->Fence, eventHandle));
-		WaitForSingleObject(eventHandle, INFINITE);
-		CloseHandle(eventHandle);
-	}
-
-	updateObjectCBs(gameTimer);
-	updateMainPassCB(gameTimer);
-}
-
-void MainScene::updateObjectCBs(const GameTimer& gameTimer)
-{
-	auto currObjectCB = frameResourceController->getCurrentFrameResource()->ObjectCB.get();
-	for (auto& e : allRitems)
-	{
-		// Only update the cbuffer data if the constants have changed.  
-		// This needs to be tracked per frame resource.
-		if (e->NumFramesDirty > 0)
-		{
-			XMMATRIX world = XMLoadFloat4x4(&e->World);
-
-			ObjectConstants objConstants;
-			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
-
-			currObjectCB->CopyData(e->ObjCBIndex, objConstants);
-
-			// Next FrameResource need to be updated too.
-			e->NumFramesDirty--;
-		}
-	}
-}
-
-void MainScene::updateMainPassCB(const GameTimer& gameTimer)
-{
-	XMMATRIX view = XMLoadFloat4x4(&mView);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-
-	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
-	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
-	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
-
-	XMStoreFloat4x4(&mainPassCB.View, XMMatrixTranspose(view));
-	XMStoreFloat4x4(&mainPassCB.InvView, XMMatrixTranspose(invView));
-	XMStoreFloat4x4(&mainPassCB.Proj, XMMatrixTranspose(proj));
-	XMStoreFloat4x4(&mainPassCB.InvProj, XMMatrixTranspose(invProj));
-	XMStoreFloat4x4(&mainPassCB.ViewProj, XMMatrixTranspose(viewProj));
-	XMStoreFloat4x4(&mainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
-	mainPassCB.EyePosW = eyePosition;
-	mainPassCB.RenderTargetSize = XMFLOAT2((float)800, (float)600);
-	mainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / appContext.lock()->getClientWidth(), 1.0f / appContext.lock()->getClientHeight());
-	mainPassCB.NearZ = 1.0f;
-	mainPassCB.FarZ = 1000.0f;
-	mainPassCB.TotalTime = gameTimer.TotalTime();
-	mainPassCB.DeltaTime = gameTimer.DeltaTime();
-
-	auto currPassCB = frameResourceController->getCurrentFrameResource()->PassCB.get();
-	currPassCB->CopyData(0, mainPassCB);
 }
 
 void MainScene::onKeyboardInput(const GameTimer& gameTimer)
@@ -222,6 +119,8 @@ void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList)//, std::vect
 
 	auto objectCB = frameResourceController->getCurrentFrameResource()->ObjectCB->Resource();
 
+	auto allRitems = objectsDataProvider->renderItems();
+
 	// For each render item...
 	for (size_t i = 0; i < allRitems.size(); ++i)
 	{
@@ -239,33 +138,3 @@ void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList)//, std::vect
 }
 
 
-void MainScene::onMouseDown(int x, int y)
-{
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
-}
-
-void MainScene::onMouseUp(int x, int y)
-{
-
-}
-
-void MainScene::onMouseMove(int x, int y)
-{
-	//if ((btnState & MK_LBUTTON) != 0)
-	{
-		// Make each pixel correspond to a quarter of a degree.
-		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
-		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
-
-		// Update angles based on input to orbit camera around box.
-		mTheta += dx;
-		mPhi += dy;
-
-		// Restrict the angle mPhi.
-		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
-	}
-
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
-}
