@@ -1,5 +1,3 @@
-#include <DirectXMath.h>
-#include <windows.h>
 #include "MathHelper.h"
 #include "MainPassData.h"
 

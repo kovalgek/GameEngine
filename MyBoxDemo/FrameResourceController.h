@@ -1,11 +1,10 @@
 #include <memory>
 #include <vector>
-#include <windows.h>
-#include <wrl.h>
+#include <wrl/client.h>
 
-class ID3D12Device;
-class ID3D12DescriptorHeap;
-class FrameResource;
+struct ID3D12Device;
+struct ID3D12DescriptorHeap;
+struct FrameResource;
 struct D3D12_GPU_DESCRIPTOR_HANDLE;
 
 const int kFrameResourcesCount = 3;
@@ -15,6 +14,7 @@ class FrameResourceController
 {
 public:
 	FrameResourceController(ID3D12Device* device, UINT passCount, UINT objectCount);
+	~FrameResourceController();
 	void changeFrameResource();
 
 	FrameResource* getCurrentFrameResource();

@@ -1,5 +1,6 @@
 #include "FrameResourceController.h"
 #include "FrameResource.h"
+#include "UploadBuffer.h"
 #include <d3d12.h>
 
 FrameResourceController::FrameResourceController(ID3D12Device* device, UINT passCount, UINT objectCount) : 
@@ -16,6 +17,11 @@ FrameResourceController::FrameResourceController(ID3D12Device* device, UINT pass
 
 	createDescriptorHeaps();
 	createConstantBufferViews();
+}
+
+FrameResourceController::~FrameResourceController()
+{
+
 }
 
 void FrameResourceController::changeFrameResource()

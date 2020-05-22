@@ -1,29 +1,19 @@
 #include "ObjectsDataProvider.h"
 #include <DirectXPackedVector.h>
 #include "RenderItem.h"
-
+#include "GeometryStorage.h"
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 ObjectsDataProvider::ObjectsDataProvider(std::unique_ptr <GeometryStorage> geometryStorage) : geometryStorage { std::move(geometryStorage) }
 {
-
-}
-
-ObjectsDataProvider::~ObjectsDataProvider()
-{
-
-}
-
-std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
-{
-	std::vector<std::shared_ptr<RenderItem>> allRitems;
+	delta = 0.0f;
 
 	auto boxRitem = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&boxRitem->World, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+	XMStoreFloat4x4(&boxRitem->World, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixTranslation(delta, 0.5f, 0.0f));
 	boxRitem->ObjCBIndex = 0;
-	boxRitem->Geo = geometryStorage->getGeometry("shapeGeo");
+	boxRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 	boxRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
 	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
@@ -33,7 +23,7 @@ std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = MathHelper::Identity4x4();
 	gridRitem->ObjCBIndex = 1;
-	gridRitem->Geo = geometryStorage->getGeometry("shapeGeo");
+	gridRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 	gridRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
 	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
@@ -56,7 +46,7 @@ std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
 
 		XMStoreFloat4x4(&leftCylRitem->World, rightCylWorld);
 		leftCylRitem->ObjCBIndex = objCBIndex++;
-		leftCylRitem->Geo = geometryStorage->getGeometry("shapeGeo");
+		leftCylRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 		leftCylRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		leftCylRitem->IndexCount = leftCylRitem->Geo->DrawArgs["cylinder"].IndexCount;
 		leftCylRitem->StartIndexLocation = leftCylRitem->Geo->DrawArgs["cylinder"].StartIndexLocation;
@@ -64,7 +54,7 @@ std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
 
 		XMStoreFloat4x4(&rightCylRitem->World, leftCylWorld);
 		rightCylRitem->ObjCBIndex = objCBIndex++;
-		rightCylRitem->Geo = geometryStorage->getGeometry("shapeGeo");
+		rightCylRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 		rightCylRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		rightCylRitem->IndexCount = rightCylRitem->Geo->DrawArgs["cylinder"].IndexCount;
 		rightCylRitem->StartIndexLocation = rightCylRitem->Geo->DrawArgs["cylinder"].StartIndexLocation;
@@ -72,7 +62,7 @@ std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
 
 		XMStoreFloat4x4(&leftSphereRitem->World, leftSphereWorld);
 		leftSphereRitem->ObjCBIndex = objCBIndex++;
-		leftSphereRitem->Geo = geometryStorage->getGeometry("shapeGeo");
+		leftSphereRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 		leftSphereRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		leftSphereRitem->IndexCount = leftSphereRitem->Geo->DrawArgs["sphere"].IndexCount;
 		leftSphereRitem->StartIndexLocation = leftSphereRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
@@ -80,7 +70,7 @@ std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
 
 		XMStoreFloat4x4(&rightSphereRitem->World, rightSphereWorld);
 		rightSphereRitem->ObjCBIndex = objCBIndex++;
-		rightSphereRitem->Geo = geometryStorage->getGeometry("shapeGeo");
+		rightSphereRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 		rightSphereRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		rightSphereRitem->IndexCount = rightSphereRitem->Geo->DrawArgs["sphere"].IndexCount;
 		rightSphereRitem->StartIndexLocation = rightSphereRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
@@ -91,6 +81,16 @@ std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
 		allRitems.push_back(std::move(leftSphereRitem));
 		allRitems.push_back(std::move(rightSphereRitem));
 	}
+}
 
+ObjectsDataProvider::~ObjectsDataProvider() = default;
+
+void ObjectsDataProvider::onMouseDown(int x, int y)
+{
+	delta += 0.1;
+}
+
+std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
+{
 	return allRitems;
 }

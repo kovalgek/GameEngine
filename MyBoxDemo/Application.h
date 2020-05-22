@@ -25,7 +25,7 @@ public:
 	~Application();
 
 	void onResize(int clientWidth, int clientHeight);
-	void draw();
+	//void draw();
 	void flushCommandQueue();
 
 	// Factory for directx objects

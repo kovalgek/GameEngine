@@ -162,6 +162,7 @@
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="MyBoxDemo.h" />
+    <ClInclude Include="ObjectConstants.h" />
     <ClInclude Include="ObjectsDataProvider.h" />
     <ClInclude Include="PassConstants.h" />
     <ClInclude Include="PipleneStateData.h" />

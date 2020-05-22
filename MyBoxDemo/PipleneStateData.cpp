@@ -5,7 +5,13 @@
 
 using Microsoft::WRL::ComPtr;
 
-PipleneStateData::PipleneStateData(ID3D12Device* device, DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthStencilFormat, bool msaa4xState, UINT msaa4xQuality) : 
+PipleneStateData::PipleneStateData(
+	ID3D12Device* device,
+	DXGI_FORMAT backBufferFormat,
+	DXGI_FORMAT depthStencilFormat,
+	bool msaa4xState,
+	UINT msaa4xQuality
+) : 
 	device{ device }, 
 	backBufferFormat{ backBufferFormat },
 	depthStencilFormat { depthStencilFormat },

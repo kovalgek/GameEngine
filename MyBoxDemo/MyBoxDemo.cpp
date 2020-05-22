@@ -235,7 +235,7 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		appPaused = false;
 		resizing = false;
 		timer.Start();
-		//appFacade->onResize();
+		appFacade->onResize(clientWidth, clientHeight);
 		return 0;
 
 		// WM_DESTROY is sent when the window is being destroyed.

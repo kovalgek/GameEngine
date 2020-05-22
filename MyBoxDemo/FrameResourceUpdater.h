@@ -1,11 +1,13 @@
 #include "MainPassData.h"
-#include <DirectXMath.h>
-#include "GameTimer.h"
-#include "MainPassDataProvider.h"
-#include "ObjectsDataProvider.h"
-#include "FrameResourceController.h"
-#include <d3d12.h>
-#include "RenderItem.h"
+#include <memory>
+#include <vector>
+
+struct RenderItem;
+class FrameResourceController;
+class MainPassDataProvider;
+class ObjectsDataProvider;
+class GameTimer;
+struct ID3D12Fence;
 
 #pragma once
 class FrameResourceUpdater
@@ -16,14 +18,16 @@ public:
 		std::shared_ptr<FrameResourceController> frameResourceController,
 		ID3D12Fence *fence,
 		std::shared_ptr<MainPassDataProvider> mainPassDataProvider,
-		std::shared_ptr<ObjectsDataProvider> objectsDataProvider);
+		ObjectsDataProvider *objectsDataProvider
+	);
+
 	void update(const GameTimer& gameTimer);
 
 private:
 	std::shared_ptr<FrameResourceController> frameResourceController;
 	ID3D12Fence* fence;
 	std::shared_ptr<MainPassDataProvider> mainPassDataProvider;
-	std::shared_ptr<ObjectsDataProvider> objectsDataProvider;
+	ObjectsDataProvider *objectsDataProvider;
 
 	void waitForAvailableResource();
 	void updateMainPassCB(const GameTimer& gameTimer, MainPassData mainPassData);

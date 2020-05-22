@@ -16,6 +16,9 @@
     <Filter Include="Source Files\FrameResources">
       <UniqueIdentifier>{5d51998f-90f9-4c7e-956f-72d95bf5f533}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Helpers">
+      <UniqueIdentifier>{1cea9545-1aae-4dce-acd5-840744ab1f08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -30,19 +33,7 @@
     <ClInclude Include="MyBoxDemo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="d3dUtil.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="MainScene.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTimer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UploadBuffer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MathHelper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="AppFacade.h">
@@ -51,22 +42,7 @@
     <ClInclude Include="Application.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeometryGenerator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PipleneStateData.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryStorage.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="AppFacadeFactory.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PassConstants.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameResource.h">
@@ -90,36 +66,48 @@
     <ClInclude Include="RenderItem.h">
       <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UploadBuffer.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectConstants.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="PassConstants.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryStorage.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="PipleneStateData.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyBoxDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d3dUtil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MainScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameTimer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MathHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AppFacade.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PipleneStateData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryStorage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AppFacadeFactory.cpp">
@@ -138,6 +126,24 @@
       <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
     <ClCompile Include="ObjectsDataProvider.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="MathHelper.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryStorage.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="PipleneStateData.cpp">
       <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
   </ItemGroup>

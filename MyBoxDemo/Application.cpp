@@ -321,17 +321,17 @@ void Application::swapChainMethod()
 	currBackBuffer = (currBackBuffer + 1) % Application::swapChainBufferCount;
 }
 
-void Application::draw()
-{
-	// swap the back and front buffers
-	ThrowIfFailed(swapChain->Present(0, 0));
-	currBackBuffer = (currBackBuffer + 1) % Application::swapChainBufferCount;
-
-	// Wait until frame commands are complete.  This waiting is inefficient and is
-	// done for simplicity.  Later we will show how to organize our rendering code
-	// so we do not have to wait per frame.
-	flushCommandQueue();
-}
+//void Application::draw()
+//{
+//	// swap the back and front buffers
+//	ThrowIfFailed(swapChain->Present(0, 0));
+//	currBackBuffer = (currBackBuffer + 1) % Application::swapChainBufferCount;
+//
+//	// Wait until frame commands are complete.  This waiting is inefficient and is
+//	// done for simplicity.  Later we will show how to organize our rendering code
+//	// so we do not have to wait per frame.
+//	flushCommandQueue();
+//}
 
 void Application::logAdapters()
 {

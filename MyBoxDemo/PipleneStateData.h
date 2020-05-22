@@ -1,15 +1,21 @@
-
 #include <unordered_map>
-#include <wrl.h>
+#include <wrl/client.h>
 #include <vector>
 #include <string>
-#include <d3d12.h>
 
+struct ID3D12Device;
+enum DXGI_FORMAT;
+struct ID3D12PipelineState;
+struct ID3D12RootSignature;
+struct ID3D10Blob;
+typedef ID3D10Blob ID3DBlob;
+struct D3D12_INPUT_ELEMENT_DESC;
 
 class PipleneStateData
 {
 public:
-	PipleneStateData(ID3D12Device* device,
+	PipleneStateData(
+		ID3D12Device* device,
 		DXGI_FORMAT backBufferFormat,
 		DXGI_FORMAT depthStencilFormat,
 		bool msaa4xState,

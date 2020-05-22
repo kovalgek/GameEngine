@@ -1,20 +1,18 @@
-#include <windows.h>
-#include <wrl.h>
-#include <d3d12.h>
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
+#include <wrl/client.h>
 #include <vector>
 #include <memory>
-#include "MathHelper.h"
-#include "UploadBuffer.h"
-#include "FrameResource.h"
-#include "RenderItem.h"
+#include <string>
 
 class Application;
 class GameTimer;
 class FrameResourceController;
 class ObjectsDataProvider;
 class PipleneStateData;
+struct FrameResource;
+struct ID3D12Device;
+struct ID3D12CommandQueue;
+struct ID3D12CommandAllocator;
+struct ID3D12GraphicsCommandList;
 
 const int gNumFrameResources = 3;
 
@@ -23,29 +21,32 @@ class MainScene
 {
 public:
 	MainScene(
-		std::weak_ptr<Application> appContext,
+		Application *appContext,
 		std::unique_ptr<PipleneStateData> pipleneStateData,
-		std::shared_ptr<FrameResourceController> frameResourceController,
-		std::shared_ptr<ObjectsDataProvider> objectsDataProvider);
+		FrameResourceController *frameResourceController,
+		ObjectsDataProvider *objectsDataProvider);
 
 	~MainScene();
 	void draw(const GameTimer& gameTimer);
 
 private:
-	std::weak_ptr<Application> appContext;
+	Application *appContext;
 
 	ID3D12Device              *device;
 	ID3D12CommandQueue        *commandQueue;
 	ID3D12CommandAllocator    *commandAllocator;
 	ID3D12GraphicsCommandList *commandList;
 
-	std::shared_ptr <FrameResourceController> frameResourceController;
-	std::unique_ptr <PipleneStateData> pipleneStateData;
-	std::shared_ptr<ObjectsDataProvider> objectsDataProvider;
+	FrameResourceController *frameResourceController;
+	std::unique_ptr<PipleneStateData> pipleneStateData;
+	ObjectsDataProvider *objectsDataProvider;
 
 	void onKeyboardInput(const GameTimer& gameTimer);
 	void drawRenderItems(ID3D12GraphicsCommandList* cmdList);
 
 	bool isWireframe = false;
+
+	std::wstring text;
+	void calculateFrameStats(const GameTimer& gameTimer);
 };
 

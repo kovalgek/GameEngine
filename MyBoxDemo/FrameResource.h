@@ -1,20 +1,17 @@
 #pragma once
 
-#include "d3dUtil.h"
-#include "MathHelper.h"
-#include "UploadBuffer.h"
+#include <wrl/client.h>
 #include <memory>
-#include "Vertex.h"
 #include "PassConstants.h"
+#include "ObjectConstants.h"
 
-struct ObjectConstants
-{
-    DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
-};
+template<typename T> class UploadBuffer;
+struct ID3D12Device;
+struct ID3D12CommandAllocator;
 
-
-// Stores the resources needed for the CPU to build the command lists
-// for a frame.  
+/**
+ * Stores the resources needed for the CPU to build the command lists for a frame.
+**/
 struct FrameResource
 {
 public:

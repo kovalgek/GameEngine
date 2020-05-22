@@ -1,7 +1,12 @@
 #include "FrameResourceUpdater.h"
 #include "PassConstants.h"
 #include "FrameResource.h"
+#include "UploadBuffer.h"
+#include "FrameResourceController.h"
+#include "MainPassDataProvider.h"
 #include "ObjectsDataProvider.h"
+#include "RenderItem.h"
+#include "GameTimer.h"
 
 using namespace DirectX;
 
@@ -9,7 +14,7 @@ FrameResourceUpdater::FrameResourceUpdater(
 	std::shared_ptr<FrameResourceController> frameResourceController,
 	ID3D12Fence* fence,
 	std::shared_ptr<MainPassDataProvider> mainPassDataProvider,
-	std::shared_ptr<ObjectsDataProvider> objectsDataProvider) :
+	ObjectsDataProvider *objectsDataProvider) :
 
 	frameResourceController { frameResourceController },
 	fence { fence },

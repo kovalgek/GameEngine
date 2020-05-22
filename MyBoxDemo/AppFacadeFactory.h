@@ -1,6 +1,7 @@
 #include <memory>
 #include <windows.h>
-#include "AppFacade.h"
+
+class AppFacade;
 
 #pragma once
 class AppFacadeFactory
