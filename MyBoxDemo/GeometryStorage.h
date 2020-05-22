@@ -14,7 +14,7 @@ class GeometryStorage
 {
 public:
 	GeometryStorage(
-		std::weak_ptr<Application> application,
+		Application *application,
 		ID3D12Device* device,
 		ID3D12GraphicsCommandList* commandList,
 		ID3D12CommandAllocator* commandAllocator,
@@ -26,7 +26,7 @@ private:
 	void buildShapeGeometry();
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> geometries;
 
-	std::weak_ptr<Application> application;
+	Application *application;
 	ID3D12Device* device;
 	ID3D12GraphicsCommandList* commandList;
 	ID3D12CommandAllocator* commandAllocator;

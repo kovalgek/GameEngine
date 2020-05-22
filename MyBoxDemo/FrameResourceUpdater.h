@@ -15,18 +15,19 @@ class FrameResourceUpdater
 	
 public:
 	FrameResourceUpdater(
-		std::shared_ptr<FrameResourceController> frameResourceController,
+		std::unique_ptr<FrameResourceController> frameResourceController,
 		ID3D12Fence *fence,
-		std::shared_ptr<MainPassDataProvider> mainPassDataProvider,
+		MainPassDataProvider *mainPassDataProvider,
 		ObjectsDataProvider *objectsDataProvider
 	);
+	~FrameResourceUpdater();
 
 	void update(const GameTimer& gameTimer);
 
 private:
-	std::shared_ptr<FrameResourceController> frameResourceController;
+	std::unique_ptr<FrameResourceController> frameResourceController;
 	ID3D12Fence* fence;
-	std::shared_ptr<MainPassDataProvider> mainPassDataProvider;
+	MainPassDataProvider *mainPassDataProvider;
 	ObjectsDataProvider *objectsDataProvider;
 
 	void waitForAvailableResource();

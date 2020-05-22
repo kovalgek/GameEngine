@@ -12,9 +12,9 @@ class AppFacade
 {
 public:
 	AppFacade(
-		std::shared_ptr<Application> appContext,
+		std::unique_ptr<Application> appContext,
 		std::unique_ptr<MainScene> mainScene,
-		std::shared_ptr<MainPassDataProvider> mainPassDataProvider,
+		std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
 		std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
 		std::unique_ptr<FrameResourceUpdater> frameResourceUpdater);
 	~AppFacade();
@@ -25,9 +25,9 @@ public:
 	void onMouseUp(int x, int y);
 	void onMouseMove(int x, int y);
 private:
-	std::shared_ptr<Application> appContext;
+	std::unique_ptr<Application> appContext;
 	std::unique_ptr<MainScene> mainScene;
-	std::shared_ptr<MainPassDataProvider> mainPassDataProvider;
+	std::unique_ptr<MainPassDataProvider> mainPassDataProvider;
 	std::unique_ptr<ObjectsDataProvider> objectsDataProvider;
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater;
 };

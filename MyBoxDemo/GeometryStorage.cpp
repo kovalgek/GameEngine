@@ -14,7 +14,7 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 GeometryStorage::GeometryStorage(
-	std::weak_ptr<Application> application,
+	Application *application,
 	ID3D12Device* device,
 	ID3D12GraphicsCommandList* commandList,
 	ID3D12CommandAllocator* commandAllocator,
@@ -37,7 +37,7 @@ GeometryStorage::GeometryStorage(
 	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// Wait until initialization is complete.
-	application.lock()->flushCommandQueue();
+	application->flushCommandQueue();
 }
 
 GeometryStorage::~GeometryStorage()

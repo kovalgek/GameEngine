@@ -11,17 +11,19 @@
 using namespace DirectX;
 
 FrameResourceUpdater::FrameResourceUpdater(
-	std::shared_ptr<FrameResourceController> frameResourceController,
+	std::unique_ptr<FrameResourceController> frameResourceController,
 	ID3D12Fence* fence,
-	std::shared_ptr<MainPassDataProvider> mainPassDataProvider,
+	MainPassDataProvider *mainPassDataProvider,
 	ObjectsDataProvider *objectsDataProvider) :
 
-	frameResourceController { frameResourceController },
+	frameResourceController { std::move(frameResourceController) },
 	fence { fence },
 	mainPassDataProvider { mainPassDataProvider },
 	objectsDataProvider { objectsDataProvider }
 {
 }
+
+FrameResourceUpdater::~FrameResourceUpdater() = default;
 
 void FrameResourceUpdater::update(const GameTimer& gameTimer)
 {

@@ -7,15 +7,15 @@
 #include "FrameResourceUpdater.h"
 
 AppFacade::AppFacade(
-	std::shared_ptr<Application> appContext,
+	std::unique_ptr<Application> appContext,
 	std::unique_ptr<MainScene> mainScene,
-	std::shared_ptr<MainPassDataProvider> mainPassDataProvider,
+	std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
 	std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater
 ) :
-	appContext { appContext },
+	appContext { std::move(appContext) },
 	mainScene { std::move(mainScene) },
-	mainPassDataProvider { mainPassDataProvider },
+	mainPassDataProvider { std::move(mainPassDataProvider) },
 	objectsDataProvider { std::move(objectsDataProvider) },
 	frameResourceUpdater { std::move(frameResourceUpdater) }
 {
