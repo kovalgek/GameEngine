@@ -7,6 +7,7 @@
 struct RenderItem
 {
 	RenderItem() = default;
+	~RenderItem() = default;
 
 	// World matrix of the shape that describes the object's local space
 	// relative to the world space, which defines the position, orientation,

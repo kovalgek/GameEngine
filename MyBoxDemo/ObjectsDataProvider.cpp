@@ -81,6 +81,12 @@ ObjectsDataProvider::ObjectsDataProvider(std::unique_ptr <GeometryStorage> geome
 		allRitems.push_back(std::move(leftSphereRitem));
 		allRitems.push_back(std::move(rightSphereRitem));
 	}
+
+	// All the render items are opaque.
+	for (auto& e : allRitems)
+	{
+		mOpaqueRitems.push_back(e.get());
+	}
 }
 
 ObjectsDataProvider::~ObjectsDataProvider() = default;
@@ -93,4 +99,9 @@ void ObjectsDataProvider::onMouseDown(int x, int y)
 std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
 {
 	return allRitems;
+}
+
+std::vector<RenderItem*> ObjectsDataProvider::opaqueRitems()
+{
+	return mOpaqueRitems;
 }

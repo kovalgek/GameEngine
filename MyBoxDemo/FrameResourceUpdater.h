@@ -32,6 +32,6 @@ private:
 
 	void waitForAvailableResource();
 	void updateMainPassCB(const GameTimer& gameTimer, MainPassData mainPassData);
-	void updateObjectCBs(std::vector<std::shared_ptr<RenderItem>> allRitems);
+	void updateObjectCBs(std::vector<RenderItem*> allRitems);
 };
 

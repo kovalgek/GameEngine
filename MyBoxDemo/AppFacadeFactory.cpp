@@ -33,7 +33,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 
 	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(std::move(geometryStorage));
 
-	auto renderItems = objectsDataProvider->renderItems();
+	auto renderItems = objectsDataProvider->opaqueRitems();
 	auto frameResourceController = std::make_unique<FrameResourceController>(application->getDevice(), 1, (UINT)renderItems.size());
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();

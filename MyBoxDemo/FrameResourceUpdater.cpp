@@ -34,7 +34,7 @@ void FrameResourceUpdater::update(const GameTimer& gameTimer)
 	auto mainPassData = mainPassDataProvider->getMainPassData();
 	updateMainPassCB(gameTimer, mainPassData);
 
-	auto renderItems = objectsDataProvider->renderItems();
+	auto renderItems = objectsDataProvider->opaqueRitems();
 	updateObjectCBs(renderItems);
 }
 
@@ -82,7 +82,7 @@ void FrameResourceUpdater::updateMainPassCB(const GameTimer& gameTimer, MainPass
 	currPassCB->CopyData(0, mainPassCB);
 }
 
-void FrameResourceUpdater::updateObjectCBs(std::vector<std::shared_ptr<RenderItem>> allRitems)
+void FrameResourceUpdater::updateObjectCBs(std::vector<RenderItem*> allRitems)
 {
 	auto currObjectCB = frameResourceController->getCurrentFrameResource()->ObjectCB.get();
 	for (auto& e : allRitems)

@@ -45,8 +45,5 @@ private:
 	void drawRenderItems(ID3D12GraphicsCommandList* cmdList);
 
 	bool isWireframe = false;
-
-	std::wstring text;
-	void calculateFrameStats(const GameTimer& gameTimer);
 };
 

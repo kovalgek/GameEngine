@@ -55,13 +55,6 @@ void MainScene::onKeyboardInput(const GameTimer& gameTimer)
 
 void MainScene::draw(const GameTimer& gameTimer)
 {
-	//__int64 countsPerSec;
-	//QueryPerformanceFrequency((LARGE_INTEGER*)&countsPerSec);
-	//double mSecondsPerCount = 1.0 / (double)countsPerSec;
-
-	//__int64 startTime;
-	//QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
-
 	auto cmdListAlloc = frameResourceController->getCurrentFrameResource()->CmdListAlloc;
 
 	// Reuse the memory associated with command recording.
@@ -124,47 +117,18 @@ void MainScene::draw(const GameTimer& gameTimer)
 	commandQueue->Signal(appContext->getFence(), appContext->currentFence);
 }
 
-void MainScene::calculateFrameStats(const GameTimer& gameTimer)
-{
-	static int frameCnt = 0;
-	static float timeElapsed = 0.0f;
-
-	frameCnt++;
-
-	// Compute averages over one second period.
-	if ((gameTimer.TotalTime() - timeElapsed) >= 1.0f)
-	{
-		float fps = (float)frameCnt; // fps = frameCnt / 1
-		float mspf = 1000.0f / fps;
-
-		std::wstring fpsStr = std::to_wstring(fps);
-		std::wstring mspfStr = std::to_wstring(mspf);
-
-		std::wstring windowText = L"    fps: " + fpsStr +
-								  L"   mspf: " + mspfStr +  text + L"\n";
-
-		::OutputDebugString(windowText.c_str());
-
-
-		// Reset for next average.
-		frameCnt = 0;
-		timeElapsed += 1.0f;
-	}
-}
-
-
-void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList)//, std::vector<std::unique_ptr<RenderItem>>& ritems)
+void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList)
 {
 	UINT objCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
 
 	auto objectCB = frameResourceController->getCurrentFrameResource()->ObjectCB->Resource();
 
-	auto allRitems = objectsDataProvider->renderItems();
+	auto allRitems = objectsDataProvider->opaqueRitems();
 
 	// For each render item...
 	for (size_t i = 0; i < allRitems.size(); ++i)
 	{
-		auto ri = allRitems[i].get();
+		auto ri = allRitems[i];
 
 		cmdList->IASetVertexBuffers(0, 1, &ri->Geo->VertexBufferView());
 		cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
