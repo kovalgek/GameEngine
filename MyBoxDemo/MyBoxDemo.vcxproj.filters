@@ -96,6 +96,9 @@
     <ClInclude Include="Vertex.h">
       <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
+    <ClInclude Include="Waves.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyBoxDemo.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="PipleneStateData.cpp">
       <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="Waves.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

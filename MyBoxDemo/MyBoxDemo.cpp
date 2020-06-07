@@ -270,7 +270,11 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	case WM_MOUSEMOVE:
 		if ((wParam & MK_LBUTTON) != 0)
 		{
-			appFacade->onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			appFacade->onMouseMove(0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		}
+		else if ((wParam & MK_RBUTTON) != 0)
+		{
+			appFacade->onMouseMove(1, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		}
 		return 0;
 	case WM_KEYUP:

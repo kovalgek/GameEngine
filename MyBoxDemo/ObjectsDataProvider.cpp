@@ -8,6 +8,13 @@ using namespace DirectX::PackedVector;
 
 ObjectsDataProvider::ObjectsDataProvider(std::unique_ptr <GeometryStorage> geometryStorage) : geometryStorage { std::move(geometryStorage) }
 {
+	buildRenderItemsForLandAndWaves();
+}
+
+ObjectsDataProvider::~ObjectsDataProvider() = default;
+
+void ObjectsDataProvider::buildRenderItemsForShapes()
+{
 	delta = 0.0f;
 
 	auto boxRitem = std::make_unique<RenderItem>();
@@ -89,19 +96,52 @@ ObjectsDataProvider::ObjectsDataProvider(std::unique_ptr <GeometryStorage> geome
 	}
 }
 
-ObjectsDataProvider::~ObjectsDataProvider() = default;
+void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
+{
+	auto wavesRitem = std::make_unique<RenderItem>();
+	wavesRitem->World = MathHelper::Identity4x4();
+	wavesRitem->ObjCBIndex = 0;
+	wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");//mGeometries["waterGeo"].get();
+	wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
+	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
+
+	mWavesRitem = wavesRitem.get();
+
+	ritemLayer[(int)RenderLayer::Opaque].push_back(wavesRitem.get());
+
+	auto gridRitem = std::make_unique<RenderItem>();
+	gridRitem->World = MathHelper::Identity4x4();
+	gridRitem->ObjCBIndex = 0;
+	gridRitem->Geo = this->geometryStorage->getGeometry("landGeo"); //mGeometries["landGeo"].get();
+	gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
+	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
+
+	ritemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
+
+	allRitems.push_back(std::move(wavesRitem));
+	allRitems.push_back(std::move(gridRitem));
+}
 
 void ObjectsDataProvider::onMouseDown(int x, int y)
 {
 	delta += 0.1;
 }
 
-std::vector<std::shared_ptr<RenderItem>> ObjectsDataProvider::renderItems()
+std::vector<RenderItem*> ObjectsDataProvider::renderItems()
 {
-	return allRitems;
+	return ritemLayer[(int)RenderLayer::Opaque];
 }
 
 std::vector<RenderItem*> ObjectsDataProvider::opaqueRitems()
 {
 	return mOpaqueRitems;
+}
+
+std::vector<RenderItem*> ObjectsDataProvider::renderItemsForLayer(RenderLayer layer)
+{
+	return ritemLayer[(int)layer];
 }

@@ -32,9 +32,9 @@ void MainPassDataProvider::onMouseDown(int x, int y)
 	mLastMousePos.y = y;
 }
 
-void MainPassDataProvider::onMouseMove(int x, int y)
+void MainPassDataProvider::onMouseMove(int btnState, int x, int y)
 {
-	//if ((btnState & MK_LBUTTON) != 0)
+	if (btnState == 0)
 	{
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
@@ -46,6 +46,18 @@ void MainPassDataProvider::onMouseMove(int x, int y)
 
 		// Restrict the angle mPhi.
 		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
+	}
+	else if (btnState == 1)
+	{
+		// Make each pixel correspond to 0.2 unit in the scene.
+		float dx = 0.2f * static_cast<float>(x - mLastMousePos.x);
+		float dy = 0.2f * static_cast<float>(y - mLastMousePos.y);
+
+		// Update the camera radius based on input.
+		mRadius += dx - dy;
+
+		// Restrict the radius.
+		mRadius = MathHelper::Clamp(mRadius, 5.0f, 150.0f);
 	}
 
 	mLastMousePos.x = x;

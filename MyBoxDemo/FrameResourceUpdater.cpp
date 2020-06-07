@@ -7,6 +7,8 @@
 #include "ObjectsDataProvider.h"
 #include "RenderItem.h"
 #include "GameTimer.h"
+#include "Waves.h"
+#include <DirectXColors.h>
 
 using namespace DirectX;
 
@@ -14,12 +16,14 @@ FrameResourceUpdater::FrameResourceUpdater(
 	std::unique_ptr<FrameResourceController> frameResourceController,
 	ID3D12Fence* fence,
 	MainPassDataProvider *mainPassDataProvider,
-	ObjectsDataProvider *objectsDataProvider) :
+	ObjectsDataProvider *objectsDataProvider,
+	Waves *waves) :
 
 	frameResourceController { std::move(frameResourceController) },
 	fence { fence },
 	mainPassDataProvider { mainPassDataProvider },
-	objectsDataProvider { objectsDataProvider }
+	objectsDataProvider { objectsDataProvider },
+	waves { waves }
 {
 }
 
@@ -34,8 +38,11 @@ void FrameResourceUpdater::update(const GameTimer& gameTimer)
 	auto mainPassData = mainPassDataProvider->getMainPassData();
 	updateMainPassCB(gameTimer, mainPassData);
 
-	auto renderItems = objectsDataProvider->opaqueRitems();
+	auto renderItems = objectsDataProvider->renderItems();
 	updateObjectCBs(renderItems);
+
+	auto wavesRitem = objectsDataProvider->getWavesRitem();
+	updateWaves(gameTimer, wavesRitem);
 }
 
 void FrameResourceUpdater::waitForAvailableResource()
@@ -103,3 +110,39 @@ void FrameResourceUpdater::updateObjectCBs(std::vector<RenderItem*> allRitems)
 		}
 	}
 }
+
+void FrameResourceUpdater::updateWaves(const GameTimer& gameTimer, RenderItem* wavesRitem)
+{
+	// Every quarter second, generate a random wave.
+	static float t_base = 0.0f;
+	if ((gameTimer.TotalTime() - t_base) >= 0.25f)
+	{
+		t_base += 0.25f;
+
+		int i = MathHelper::Rand(4, waves->RowCount() - 5);
+		int j = MathHelper::Rand(4, waves->ColumnCount() - 5);
+
+		float r = MathHelper::RandF(0.2f, 0.5f);
+
+		waves->Disturb(i, j, r);
+	}
+
+	// Update the wave simulation.
+	waves->Update(gameTimer.DeltaTime());
+
+	// Update the wave vertex buffer with the new solution.
+	auto currWavesVB = frameResourceController->getCurrentFrameResource()->WavesVB.get();
+	for (int i = 0; i < waves->VertexCount(); ++i)
+	{
+		Vertex v;
+
+		v.Pos = waves->Position(i);
+		v.Color = XMFLOAT4(DirectX::Colors::Blue);
+
+		currWavesVB->CopyData(i, v);
+	}
+
+	// Set the dynamic VB of the wave renderitem to the current frame VB.
+	wavesRitem->Geo->VertexBufferGPU = currWavesVB->Resource();
+}
+

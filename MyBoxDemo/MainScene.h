@@ -8,6 +8,7 @@ class GameTimer;
 class FrameResourceController;
 class ObjectsDataProvider;
 class PipleneStateData;
+struct RenderItem;
 struct FrameResource;
 struct ID3D12Device;
 struct ID3D12CommandQueue;
@@ -42,7 +43,7 @@ private:
 	ObjectsDataProvider *objectsDataProvider;
 
 	void onKeyboardInput(const GameTimer& gameTimer);
-	void drawRenderItems(ID3D12GraphicsCommandList* cmdList);
+	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
 
 	bool isWireframe = false;
 };

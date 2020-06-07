@@ -8,7 +8,7 @@ public:
 	void onResize(int clientWidth, int clientHeight);
 	void updateCamera();
 	void onMouseDown(int x, int y);
-	void onMouseMove(int x, int y);
+	void onMouseMove(int btnState, int x, int y);
 
 	MainPassData getMainPassData();
 

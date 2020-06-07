@@ -8,6 +8,7 @@
 #include "ObjectsDataProvider.h"
 #include "GeometryStorage.h"
 #include "AppFacade.h"
+#include "Waves.h"
 
 std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 {
@@ -31,10 +32,12 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		application->getCommandQueue()
 		);
 
+	auto waves = geometryStorage->getWaves();
+
 	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(std::move(geometryStorage));
 
-	auto renderItems = objectsDataProvider->opaqueRitems();
-	auto frameResourceController = std::make_unique<FrameResourceController>(application->getDevice(), 1, (UINT)renderItems.size());
+	auto renderItems = objectsDataProvider->renderItems();
+	auto frameResourceController = std::make_unique<FrameResourceController>(application->getDevice(), 1, (UINT)renderItems.size(), waves->VertexCount());
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
 
@@ -48,7 +51,8 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		std::move(frameResourceController),
 		application->getFence(),
 		mainPassDataProvider.get(),
-		objectsDataProvider.get());
+		objectsDataProvider.get(),
+		waves);
 
 	auto appFacade = std::make_unique<AppFacade>(
 		std::move(application),

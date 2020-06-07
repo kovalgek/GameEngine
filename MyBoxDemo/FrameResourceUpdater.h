@@ -8,6 +8,7 @@ class MainPassDataProvider;
 class ObjectsDataProvider;
 class GameTimer;
 struct ID3D12Fence;
+class Waves;
 
 #pragma once
 class FrameResourceUpdater
@@ -16,9 +17,10 @@ class FrameResourceUpdater
 public:
 	FrameResourceUpdater(
 		std::unique_ptr<FrameResourceController> frameResourceController,
-		ID3D12Fence *fence,
-		MainPassDataProvider *mainPassDataProvider,
-		ObjectsDataProvider *objectsDataProvider
+		ID3D12Fence* fence,
+		MainPassDataProvider* mainPassDataProvider,
+		ObjectsDataProvider* objectsDataProvider,
+		Waves* waves
 	);
 	~FrameResourceUpdater();
 
@@ -29,9 +31,11 @@ private:
 	ID3D12Fence* fence;
 	MainPassDataProvider *mainPassDataProvider;
 	ObjectsDataProvider *objectsDataProvider;
+	Waves* waves;
 
 	void waitForAvailableResource();
 	void updateMainPassCB(const GameTimer& gameTimer, MainPassData mainPassData);
 	void updateObjectCBs(std::vector<RenderItem*> allRitems);
+	void updateWaves(const GameTimer& gameTimer, RenderItem* wavesRitem);
 };
 

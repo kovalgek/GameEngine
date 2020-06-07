@@ -23,7 +23,7 @@ public:
 
 	void onMouseDown(int x, int y);
 	void onMouseUp(int x, int y);
-	void onMouseMove(int x, int y);
+	void onMouseMove(int btnState, int x, int y);
 private:
 	std::unique_ptr<Application> appContext;
 	std::unique_ptr<MainScene> mainScene;

@@ -50,7 +50,7 @@ void AppFacade::onMouseUp(int x, int y)
 {
 }
 
-void AppFacade::onMouseMove(int x, int y)
+void AppFacade::onMouseMove(int btnState, int x, int y)
 {
-	mainPassDataProvider->onMouseMove(x, y);
+	mainPassDataProvider->onMouseMove(btnState, x, y);
 }

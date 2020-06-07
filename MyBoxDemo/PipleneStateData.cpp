@@ -37,18 +37,24 @@ void PipleneStateData::buildShadersAndInputLayout()
 
 void PipleneStateData::buildRootSignature()
 {
-	CD3DX12_DESCRIPTOR_RANGE cbvTable0;
-	cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+	//CD3DX12_DESCRIPTOR_RANGE cbvTable0;
+	//cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 
-	CD3DX12_DESCRIPTOR_RANGE cbvTable1;
-	cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+	//CD3DX12_DESCRIPTOR_RANGE cbvTable1;
+	//cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
 
-	// Root parameter can be a table, root descriptor or root constants.
+	//// Root parameter can be a table, root descriptor or root constants.
+	//CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+
+	//// Create root CBVs.
+	//slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
+	//slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
+
 	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
-	// Create root CBVs.
-	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
-	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
+	// Create root CBV.
+	slotRootParameter[0].InitAsConstantBufferView(0);
+	slotRootParameter[1].InitAsConstantBufferView(1);
 
 	// A root signature is an array of root parameters.
 	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,

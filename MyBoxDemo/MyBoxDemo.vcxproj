@@ -172,6 +172,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="UploadBuffer.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Waves.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFacade.cpp" />
@@ -190,6 +191,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="ObjectsDataProvider.cpp" />
     <ClCompile Include="PipleneStateData.cpp" />
+    <ClCompile Include="Waves.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

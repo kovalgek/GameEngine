@@ -91,9 +91,13 @@ void MainScene::draw(const GameTimer& gameTimer)
 
 	commandList->SetGraphicsRootSignature(pipleneStateData->getRootSignature());
 
-	commandList->SetGraphicsRootDescriptorTable(1, frameResourceController->passCbvHandle());
+	//commandList->SetGraphicsRootDescriptorTable(1, frameResourceController->passCbvHandle());
 
-	drawRenderItems(commandList);
+	auto passCB = frameResourceController->getCurrentFrameResource()->PassCB->Resource();
+	commandList->SetGraphicsRootConstantBufferView(1, passCB->GetGPUVirtualAddress());
+
+	auto allRitems = objectsDataProvider->renderItemsForLayer(RenderLayer::Opaque);
+	drawRenderItems(commandList, allRitems);
 
 	// Indicate a state transition on the resource usage.
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
@@ -117,25 +121,26 @@ void MainScene::draw(const GameTimer& gameTimer)
 	commandQueue->Signal(appContext->getFence(), appContext->currentFence);
 }
 
-void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList)
+void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
 {
 	UINT objCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
 
 	auto objectCB = frameResourceController->getCurrentFrameResource()->ObjectCB->Resource();
 
-	auto allRitems = objectsDataProvider->opaqueRitems();
-
-	// For each render item...
-	for (size_t i = 0; i < allRitems.size(); ++i)
+	for (size_t i = 0; i < ritems.size(); ++i)
 	{
-		auto ri = allRitems[i];
+		auto ri = ritems[i];
 
 		cmdList->IASetVertexBuffers(0, 1, &ri->Geo->VertexBufferView());
 		cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
 		cmdList->IASetPrimitiveTopology(ri->PrimitiveType);
 
 		// Offset to the CBV in the descriptor heap for this object and for this frame resource.
-		cmdList->SetGraphicsRootDescriptorTable(0, frameResourceController->cbvHandle(ri->ObjCBIndex));
+		//cmdList->SetGraphicsRootDescriptorTable(0, frameResourceController->cbvHandle(ri->ObjCBIndex));
+
+		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress();
+		objCBAddress += ri->ObjCBIndex * objCBByteSize;
+		cmdList->SetGraphicsRootConstantBufferView(0, objCBAddress);
 
 		cmdList->DrawIndexedInstanced(ri->IndexCount, 1, ri->StartIndexLocation, ri->BaseVertexLocation, 0);
 	}
