@@ -2,12 +2,14 @@
 #include <DirectXPackedVector.h>
 #include "RenderItem.h"
 #include "GeometryStorage.h"
+#include "d3dUtil.h"
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 ObjectsDataProvider::ObjectsDataProvider(std::unique_ptr <GeometryStorage> geometryStorage) : geometryStorage { std::move(geometryStorage) }
 {
+	buildMaterials();
 	buildRenderItemsForLandAndWaves();
 }
 
@@ -96,12 +98,45 @@ void ObjectsDataProvider::buildRenderItemsForShapes()
 	}
 }
 
+std::vector<Material*> ObjectsDataProvider::getMaterials()
+{
+	std::vector<Material*> result;
+	for (auto& e : materials)
+	{
+		result.push_back(e.second.get());
+	}
+	return result;
+}
+
+void ObjectsDataProvider::buildMaterials()
+{
+	auto grass = std::make_unique<Material>();
+	grass->Name = "grass";
+	grass->MatCBIndex = 0;
+	grass->DiffuseAlbedo = XMFLOAT4(0.2f, 0.6f, 0.2f, 1.0f);
+	grass->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	grass->Roughness = 0.125f;
+
+	// This is not a good water material definition, but we do not have all the rendering
+	// tools we need (transparency, environment reflection), so we fake it for now.
+	auto water = std::make_unique<Material>();
+	water->Name = "water";
+	water->MatCBIndex = 1;
+	water->DiffuseAlbedo = XMFLOAT4(0.0f, 0.2f, 0.6f, 1.0f);
+	water->FresnelR0 = XMFLOAT3(0.1f, 0.1f, 0.1f);
+	water->Roughness = 0.0f;
+
+	materials["grass"] = std::move(grass);
+	materials["water"] = std::move(water);
+}
+
 void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 {
 	auto wavesRitem = std::make_unique<RenderItem>();
 	wavesRitem->World = MathHelper::Identity4x4();
 	wavesRitem->ObjCBIndex = 0;
-	wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");//mGeometries["waterGeo"].get();
+	wavesRitem->Mat = materials["water"].get();
+	wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
 	wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
 	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
@@ -113,8 +148,9 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = MathHelper::Identity4x4();
-	gridRitem->ObjCBIndex = 0;
-	gridRitem->Geo = this->geometryStorage->getGeometry("landGeo"); //mGeometries["landGeo"].get();
+	gridRitem->ObjCBIndex = 1;
+	gridRitem->Mat = materials["grass"].get();
+	gridRitem->Geo = this->geometryStorage->getGeometry("landGeo");
 	gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
 	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;

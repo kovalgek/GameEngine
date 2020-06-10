@@ -36,8 +36,10 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 
 	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(std::move(geometryStorage));
 
+	auto materials = objectsDataProvider->getMaterials();
 	auto renderItems = objectsDataProvider->renderItems();
-	auto frameResourceController = std::make_unique<FrameResourceController>(application->getDevice(), 1, (UINT)renderItems.size(), waves->VertexCount());
+
+	auto frameResourceController = std::make_unique<FrameResourceController>(application->getDevice(), 1, (UINT)renderItems.size(), (UINT)materials.size(), waves->VertexCount());
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
 

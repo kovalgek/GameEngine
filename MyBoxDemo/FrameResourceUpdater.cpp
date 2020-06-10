@@ -35,11 +35,14 @@ void FrameResourceUpdater::update(const GameTimer& gameTimer)
 
 	waitForAvailableResource();
 
-	auto mainPassData = mainPassDataProvider->getMainPassData();
-	updateMainPassCB(gameTimer, mainPassData);
-
 	auto renderItems = objectsDataProvider->renderItems();
 	updateObjectCBs(renderItems);
+
+	auto materials = objectsDataProvider->getMaterials();
+	updateMaterialCBs(gameTimer, materials);
+
+	auto mainPassData = mainPassDataProvider->getMainPassData();
+	updateMainPassCB(gameTimer, mainPassData);
 
 	auto wavesRitem = objectsDataProvider->getWavesRitem();
 	updateWaves(gameTimer, wavesRitem);
@@ -85,6 +88,13 @@ void FrameResourceUpdater::updateMainPassCB(const GameTimer& gameTimer, MainPass
 	mainPassCB.TotalTime = gameTimer.TotalTime();
 	mainPassCB.DeltaTime = gameTimer.DeltaTime();
 
+	float mSunTheta = 1.25f * XM_PI;
+	float mSunPhi = XM_PIDIV4;
+	XMVECTOR lightDir = -MathHelper::SphericalToCartesian(1.0f, mSunTheta, mSunPhi);
+
+	XMStoreFloat3(&mainPassCB.Lights[0].Direction, lightDir);
+	mainPassCB.Lights[0].Strength = { 1.0f, 1.0f, 0.9f };
+
 	auto currPassCB = frameResourceController->getCurrentFrameResource()->PassCB.get();
 	currPassCB->CopyData(0, mainPassCB);
 }
@@ -110,6 +120,32 @@ void FrameResourceUpdater::updateObjectCBs(std::vector<RenderItem*> allRitems)
 		}
 	}
 }
+
+void FrameResourceUpdater::updateMaterialCBs(const GameTimer& gt, std::vector<Material*> materials)
+{
+	auto currMaterialCB = frameResourceController->getCurrentFrameResource()->MaterialCB.get();
+	for (Material* mat : materials)
+	{
+		// Only update the cbuffer data if the constants have changed.  If the cbuffer
+		// data changes, it needs to be updated for each FrameResource.
+
+		if (mat->NumFramesDirty > 0)
+		{
+			XMMATRIX matTransform = XMLoadFloat4x4(&mat->MatTransform);
+
+			MaterialConstants matConstants;
+			matConstants.DiffuseAlbedo = mat->DiffuseAlbedo;
+			matConstants.FresnelR0 = mat->FresnelR0;
+			matConstants.Roughness = mat->Roughness;
+
+			currMaterialCB->CopyData(mat->MatCBIndex, matConstants);
+
+			// Next FrameResource need to be updated too.
+			mat->NumFramesDirty--;
+		}
+	}
+}
+
 
 void FrameResourceUpdater::updateWaves(const GameTimer& gameTimer, RenderItem* wavesRitem)
 {
@@ -137,7 +173,7 @@ void FrameResourceUpdater::updateWaves(const GameTimer& gameTimer, RenderItem* w
 		Vertex v;
 
 		v.Pos = waves->Position(i);
-		v.Color = XMFLOAT4(DirectX::Colors::Blue);
+		v.Normal = waves->Normal(i);
 
 		currWavesVB->CopyData(i, v);
 	}

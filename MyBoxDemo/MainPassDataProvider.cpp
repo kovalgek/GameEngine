@@ -66,5 +66,5 @@ void MainPassDataProvider::onMouseMove(int btnState, int x, int y)
 
 MainPassData MainPassDataProvider::getMainPassData()
 {
-	return MainPassData{ mView , mProj };
+	return MainPassData{ mView , mProj, eyePosition };
 }

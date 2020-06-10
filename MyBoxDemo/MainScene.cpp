@@ -86,15 +86,15 @@ void MainScene::draw(const GameTimer& gameTimer)
 	// Specify the buffers we are going to render to.
 	commandList->OMSetRenderTargets(1, &appContext->currentBackBufferView(), true, &appContext->depthStencilView());
 
-	ID3D12DescriptorHeap* descriptorHeaps[] = { frameResourceController->getCbvHeap() };
-	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+	//ID3D12DescriptorHeap* descriptorHeaps[] = { frameResourceController->getCbvHeap() };
+	//commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	commandList->SetGraphicsRootSignature(pipleneStateData->getRootSignature());
 
 	//commandList->SetGraphicsRootDescriptorTable(1, frameResourceController->passCbvHandle());
 
 	auto passCB = frameResourceController->getCurrentFrameResource()->PassCB->Resource();
-	commandList->SetGraphicsRootConstantBufferView(1, passCB->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
 
 	auto allRitems = objectsDataProvider->renderItemsForLayer(RenderLayer::Opaque);
 	drawRenderItems(commandList, allRitems);
@@ -124,8 +124,10 @@ void MainScene::draw(const GameTimer& gameTimer)
 void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
 {
 	UINT objCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
+	UINT matCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(MaterialConstants));
 
 	auto objectCB = frameResourceController->getCurrentFrameResource()->ObjectCB->Resource();
+	auto matCB = frameResourceController->getCurrentFrameResource()->MaterialCB->Resource();
 
 	for (size_t i = 0; i < ritems.size(); ++i)
 	{
@@ -135,12 +137,11 @@ void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::v
 		cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
 		cmdList->IASetPrimitiveTopology(ri->PrimitiveType);
 
-		// Offset to the CBV in the descriptor heap for this object and for this frame resource.
-		//cmdList->SetGraphicsRootDescriptorTable(0, frameResourceController->cbvHandle(ri->ObjCBIndex));
+		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + ri->ObjCBIndex * objCBByteSize;
+		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBByteSize;
 
-		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress();
-		objCBAddress += ri->ObjCBIndex * objCBByteSize;
 		cmdList->SetGraphicsRootConstantBufferView(0, objCBAddress);
+		cmdList->SetGraphicsRootConstantBufferView(1, matCBAddress);
 
 		cmdList->DrawIndexedInstanced(ri->IndexCount, 1, ri->StartIndexLocation, ri->BaseVertexLocation, 0);
 	}

@@ -9,6 +9,7 @@ class ObjectsDataProvider;
 class GameTimer;
 struct ID3D12Fence;
 class Waves;
+struct Material;
 
 #pragma once
 class FrameResourceUpdater
@@ -37,5 +38,6 @@ private:
 	void updateMainPassCB(const GameTimer& gameTimer, MainPassData mainPassData);
 	void updateObjectCBs(std::vector<RenderItem*> allRitems);
 	void updateWaves(const GameTimer& gameTimer, RenderItem* wavesRitem);
+	void updateMaterialCBs(const GameTimer& gt, std::vector<Material*> materials);
 };
 

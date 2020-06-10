@@ -25,39 +25,27 @@ PipleneStateData::PipleneStateData(
 
 void PipleneStateData::buildShadersAndInputLayout()
 {
-	shaders["standardVS"] = d3dUtil::compileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_1");
-	shaders["opaquePS"] = d3dUtil::compileShader(L"Shaders\\color.hlsl", nullptr, "PS", "ps_5_1");
+	shaders["standardVS"] = d3dUtil::compileShader(L"Shaders\\Default.hlsl", nullptr, "VS", "vs_5_0");
+	shaders["opaquePS"] = d3dUtil::compileShader(L"Shaders\\Default.hlsl", nullptr, "PS", "ps_5_0");
 
 	inputLayout =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 
 void PipleneStateData::buildRootSignature()
 {
-	//CD3DX12_DESCRIPTOR_RANGE cbvTable0;
-	//cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-
-	//CD3DX12_DESCRIPTOR_RANGE cbvTable1;
-	//cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
-
-	//// Root parameter can be a table, root descriptor or root constants.
-	//CD3DX12_ROOT_PARAMETER slotRootParameter[2];
-
-	//// Create root CBVs.
-	//slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
-	//slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
-
-	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[3];
 
 	// Create root CBV.
 	slotRootParameter[0].InitAsConstantBufferView(0);
 	slotRootParameter[1].InitAsConstantBufferView(1);
+	slotRootParameter[2].InitAsConstantBufferView(2);
 
 	// A root signature is an array of root parameters.
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(3, slotRootParameter, 0, nullptr,
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	// create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
@@ -100,7 +88,7 @@ void PipleneStateData::buildPSOs()
 		shaders["opaquePS"]->GetBufferSize()
 	};
 	opaquePsoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	opaquePsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	opaquePsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	opaquePsoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	opaquePsoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	opaquePsoDesc.SampleMask = UINT_MAX;

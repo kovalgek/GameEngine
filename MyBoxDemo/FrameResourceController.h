@@ -13,7 +13,7 @@ const int kFrameResourcesCount = 3;
 class FrameResourceController
 {
 public:
-	FrameResourceController(ID3D12Device* device, UINT passCount, UINT objectCount, UINT waveVertCount);
+	FrameResourceController(ID3D12Device* device, UINT passCount, UINT objectCount, UINT materialCount, UINT waveVertCount);
 	~FrameResourceController();
 	void changeFrameResource();
 

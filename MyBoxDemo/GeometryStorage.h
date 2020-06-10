@@ -1,6 +1,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <DirectXMath.h>
 
 struct MeshGeometry;
 struct ID3D12Device;
@@ -30,6 +31,7 @@ private:
 	void buildWavesGeometryBuffers();
 
 	float getHillsHeight(float x, float z)const;
+	DirectX::XMFLOAT3 getHillsNormal(float x, float z)const;
 
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> geometries;
 
