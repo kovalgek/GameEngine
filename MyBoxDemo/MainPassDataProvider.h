@@ -1,5 +1,6 @@
 #include "MathHelper.h"
 #include "MainPassData.h"
+#include <DirectXMath.h>
 
 #pragma once
 class MainPassDataProvider
@@ -22,5 +23,8 @@ private:
 	float mRadius = 15.0f;
 
 	POINT mLastMousePos;
+
+	float mSunTheta = 1.25f * DirectX::XM_PI;
+	float mSunPhi = DirectX::XM_PIDIV4;
 };
 

@@ -173,6 +173,9 @@ struct MaterialConstants
 // would likely create a class hierarchy of Materials.
 struct Material
 {
+	Material() = default;
+	~Material() = default;
+
 	// Unique material name for lookup.
 	std::string Name;
 

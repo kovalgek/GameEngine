@@ -6,10 +6,17 @@ struct RenderItem;
 class FrameResourceController;
 class MainPassDataProvider;
 class ObjectsDataProvider;
+class MaterialsDataProvider;
 class GameTimer;
 struct ID3D12Fence;
 class Waves;
 struct Material;
+struct FrameResource;
+
+template<typename T> class UploadBuffer;
+struct ObjectConstants;
+struct MaterialConstants;
+struct PassConstants;
 
 #pragma once
 class FrameResourceUpdater
@@ -21,6 +28,7 @@ public:
 		ID3D12Fence* fence,
 		MainPassDataProvider* mainPassDataProvider,
 		ObjectsDataProvider* objectsDataProvider,
+		MaterialsDataProvider *materialsDataProvider,
 		Waves* waves
 	);
 	~FrameResourceUpdater();
@@ -32,12 +40,23 @@ private:
 	ID3D12Fence* fence;
 	MainPassDataProvider *mainPassDataProvider;
 	ObjectsDataProvider *objectsDataProvider;
+	MaterialsDataProvider* materialsDataProvider;
 	Waves* waves;
 
-	void waitForAvailableResource();
-	void updateMainPassCB(const GameTimer& gameTimer, MainPassData mainPassData);
-	void updateObjectCBs(std::vector<RenderItem*> allRitems);
+	void waitForFrameResourceAvailable(FrameResource* frameResource);
+	
+	void updateObjectConstantBufferForFrameResource(FrameResource *frameResource);
+	void updateObjectConstantBuffer(UploadBuffer<ObjectConstants> *objectConstantBuffer, std::vector<RenderItem*> renderItems);
+	ObjectConstants objectConstantsFromRenderItem(RenderItem* renderItem);
+	
+	void updateMaterialConstantBufferForFrameResource(FrameResource* frameResource);
+	void updateMaterialConstantBuffer(UploadBuffer<MaterialConstants>* materialConstantBuffer, std::vector<Material*> materials);
+	MaterialConstants materialConstantsFromMaterial(Material* material);
+
+	void updateMainPassConstantBufferForFrameResource(FrameResource* frameResource, const GameTimer& gameTimer);
+	void updateMainPassConstantBuffer(UploadBuffer<PassConstants>* mainPassConstantBuffer, MainPassData mainPassData, const GameTimer& gameTimer);
+	PassConstants passConstantsFromMainPassData(MainPassData mainPassData, const GameTimer& gameTimer);
+
 	void updateWaves(const GameTimer& gameTimer, RenderItem* wavesRitem);
-	void updateMaterialCBs(const GameTimer& gt, std::vector<Material*> materials);
 };
 

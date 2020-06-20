@@ -6,6 +6,7 @@
 #include "MainPassDataProvider.h"
 #include "FrameResourceUpdater.h"
 #include "ObjectsDataProvider.h"
+#include "MaterialsDataProvider.h"
 #include "GeometryStorage.h"
 #include "AppFacade.h"
 #include "Waves.h"
@@ -34,9 +35,10 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 
 	auto waves = geometryStorage->getWaves();
 
-	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(std::move(geometryStorage));
+	auto materialsDataProvider = std::make_unique<MaterialsDataProvider>();
+	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(std::move(geometryStorage), materialsDataProvider.get());
 
-	auto materials = objectsDataProvider->getMaterials();
+	auto materials = materialsDataProvider->getMaterials();
 	auto renderItems = objectsDataProvider->renderItems();
 
 	auto frameResourceController = std::make_unique<FrameResourceController>(application->getDevice(), 1, (UINT)renderItems.size(), (UINT)materials.size(), waves->VertexCount());
@@ -54,6 +56,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		application->getFence(),
 		mainPassDataProvider.get(),
 		objectsDataProvider.get(),
+		materialsDataProvider.get(),
 		waves);
 
 	auto appFacade = std::make_unique<AppFacade>(
@@ -61,6 +64,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		std::move(mainScene),
 		std::move(mainPassDataProvider),
 		std::move(objectsDataProvider),
+		std::move(materialsDataProvider),
 		std::move(frameResourceUpdater));
 
 	return std::move(appFacade);

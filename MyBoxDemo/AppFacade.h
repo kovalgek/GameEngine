@@ -6,6 +6,7 @@ class GameTimer;
 class MainPassDataProvider;
 class FrameResourceUpdater;
 class ObjectsDataProvider;
+class MaterialsDataProvider;
 
 #pragma once
 class AppFacade
@@ -16,6 +17,7 @@ public:
 		std::unique_ptr<MainScene> mainScene,
 		std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
 		std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
+		std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
 		std::unique_ptr<FrameResourceUpdater> frameResourceUpdater);
 	~AppFacade();
 	void update(const GameTimer& gameTimer);
@@ -29,6 +31,7 @@ private:
 	std::unique_ptr<MainScene> mainScene;
 	std::unique_ptr<MainPassDataProvider> mainPassDataProvider;
 	std::unique_ptr<ObjectsDataProvider> objectsDataProvider;
+	std::unique_ptr<MaterialsDataProvider> materialsDataProvider;
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater;
 };
 

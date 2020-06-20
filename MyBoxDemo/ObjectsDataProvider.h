@@ -3,8 +3,8 @@
 #include <unordered_map>
 
 struct RenderItem;
-struct Material;
 class GeometryStorage;
+class MaterialsDataProvider;
 
 enum class RenderLayer : int
 {
@@ -16,7 +16,10 @@ enum class RenderLayer : int
 class ObjectsDataProvider
 {
 public:
-	ObjectsDataProvider(std::unique_ptr <GeometryStorage> geometryStorage);
+	ObjectsDataProvider(
+		std::unique_ptr <GeometryStorage> geometryStorage, 
+		MaterialsDataProvider* materialsDataProvider
+	);
 	~ObjectsDataProvider();
 
 	void onMouseDown(int x, int y);
@@ -26,17 +29,15 @@ public:
 	std::vector<RenderItem*> renderItemsForLayer(RenderLayer layer);
 	RenderItem* getWavesRitem() { return mWavesRitem; }
 
-	std::vector <Material*> getMaterials();
 private:
 	void buildRenderItemsForShapes();
 	void buildRenderItemsForLandAndWaves();
-	void buildMaterials();
 
 	std::unique_ptr <GeometryStorage> geometryStorage;
+	MaterialsDataProvider* materialsDataProvider;
+
 	std::vector<std::shared_ptr<RenderItem>> allRitems;
 	std::vector<RenderItem*> mOpaqueRitems;
-
-	std::unordered_map<std::string, std::unique_ptr<Material>> materials;
 
 	// Render items divided by PSO.
 	std::vector<RenderItem*> ritemLayer[(int)RenderLayer::Count];

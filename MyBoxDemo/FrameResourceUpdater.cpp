@@ -5,6 +5,7 @@
 #include "FrameResourceController.h"
 #include "MainPassDataProvider.h"
 #include "ObjectsDataProvider.h"
+#include "MaterialsDataProvider.h"
 #include "RenderItem.h"
 #include "GameTimer.h"
 #include "Waves.h"
@@ -17,12 +18,14 @@ FrameResourceUpdater::FrameResourceUpdater(
 	ID3D12Fence* fence,
 	MainPassDataProvider *mainPassDataProvider,
 	ObjectsDataProvider *objectsDataProvider,
+	MaterialsDataProvider* materialsDataProvider,
 	Waves *waves) :
 
 	frameResourceController { std::move(frameResourceController) },
 	fence { fence },
 	mainPassDataProvider { mainPassDataProvider },
 	objectsDataProvider { objectsDataProvider },
+	materialsDataProvider { materialsDataProvider },
 	waves { waves }
 {
 }
@@ -33,38 +36,47 @@ void FrameResourceUpdater::update(const GameTimer& gameTimer)
 {
 	frameResourceController->changeFrameResource();
 
-	waitForAvailableResource();
+	auto currFrameResource = frameResourceController->getCurrentFrameResource();
+	waitForFrameResourceAvailable(currFrameResource);
 
-	auto renderItems = objectsDataProvider->renderItems();
-	updateObjectCBs(renderItems);
-
-	auto materials = objectsDataProvider->getMaterials();
-	updateMaterialCBs(gameTimer, materials);
-
-	auto mainPassData = mainPassDataProvider->getMainPassData();
-	updateMainPassCB(gameTimer, mainPassData);
+	updateObjectConstantBufferForFrameResource(currFrameResource);
+	updateMaterialConstantBufferForFrameResource(currFrameResource);
+	updateMainPassConstantBufferForFrameResource(currFrameResource, gameTimer);
 
 	auto wavesRitem = objectsDataProvider->getWavesRitem();
 	updateWaves(gameTimer, wavesRitem);
 }
 
-void FrameResourceUpdater::waitForAvailableResource()
+void FrameResourceUpdater::waitForFrameResourceAvailable(FrameResource *frameResource)
 {
-	auto currFrameResource = frameResourceController->getCurrentFrameResource();
-
 	// Has the GPU finished processing the commands of the current frame resource?
 	// If not, wait until the GPU has completed commands up to this fence point.
-	if (currFrameResource->Fence != 0 && fence->GetCompletedValue() < currFrameResource->Fence)
+	if (frameResource->Fence != 0 && fence->GetCompletedValue() < frameResource->Fence)
 	{
 		HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
-		ThrowIfFailed(fence->SetEventOnCompletion(currFrameResource->Fence, eventHandle));
+		ThrowIfFailed(fence->SetEventOnCompletion(frameResource->Fence, eventHandle));
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
 	}
 }
 
-void FrameResourceUpdater::updateMainPassCB(const GameTimer& gameTimer, MainPassData mainPassData)
+void FrameResourceUpdater::updateMainPassConstantBufferForFrameResource(FrameResource* frameResource, const GameTimer& gameTimer)
 {
+	auto mainPassConstantBuffer = frameResource->PassCB.get();
+	auto mainPassData = mainPassDataProvider->getMainPassData();
+	updateMainPassConstantBuffer(mainPassConstantBuffer, mainPassData, gameTimer);
+}
+
+void FrameResourceUpdater::updateMainPassConstantBuffer(UploadBuffer<PassConstants>* mainPassConstantBuffer, MainPassData mainPassData, const GameTimer& gameTimer)
+{
+	PassConstants passConstants = passConstantsFromMainPassData(mainPassData, gameTimer);
+	mainPassConstantBuffer->CopyData(0, passConstants);
+}
+
+PassConstants FrameResourceUpdater::passConstantsFromMainPassData(MainPassData mainPassData, const GameTimer& gameTimer)
+{
+	PassConstants mainPassCB;
+
 	XMMATRIX view = XMLoadFloat4x4(&mainPassData.mView);
 	XMMATRIX proj = XMLoadFloat4x4(&mainPassData.mProj);
 
@@ -73,7 +85,6 @@ void FrameResourceUpdater::updateMainPassCB(const GameTimer& gameTimer, MainPass
 	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
 	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
 
-	PassConstants mainPassCB;
 	XMStoreFloat4x4(&mainPassCB.View, XMMatrixTranspose(view));
 	XMStoreFloat4x4(&mainPassCB.InvView, XMMatrixTranspose(invView));
 	XMStoreFloat4x4(&mainPassCB.Proj, XMMatrixTranspose(proj));
@@ -88,64 +99,85 @@ void FrameResourceUpdater::updateMainPassCB(const GameTimer& gameTimer, MainPass
 	mainPassCB.TotalTime = gameTimer.TotalTime();
 	mainPassCB.DeltaTime = gameTimer.DeltaTime();
 
-	float mSunTheta = 1.25f * XM_PI;
-	float mSunPhi = XM_PIDIV4;
-	XMVECTOR lightDir = -MathHelper::SphericalToCartesian(1.0f, mSunTheta, mSunPhi);
+	XMVECTOR lightDir = -MathHelper::SphericalToCartesian(1.0f, mainPassData.sunTheta, mainPassData.sunPhi);
 
 	XMStoreFloat3(&mainPassCB.Lights[0].Direction, lightDir);
 	mainPassCB.Lights[0].Strength = { 1.0f, 1.0f, 0.9f };
 
-	auto currPassCB = frameResourceController->getCurrentFrameResource()->PassCB.get();
-	currPassCB->CopyData(0, mainPassCB);
+	return mainPassCB;
 }
 
-void FrameResourceUpdater::updateObjectCBs(std::vector<RenderItem*> allRitems)
+void FrameResourceUpdater::updateObjectConstantBufferForFrameResource(FrameResource *frameResource)
 {
-	auto currObjectCB = frameResourceController->getCurrentFrameResource()->ObjectCB.get();
-	for (auto& e : allRitems)
+	auto objectConstantBuffer = frameResource->ObjectCB.get();
+	auto renderItems = objectsDataProvider->renderItems();
+	updateObjectConstantBuffer(objectConstantBuffer, renderItems);
+}
+
+void FrameResourceUpdater::updateObjectConstantBuffer(UploadBuffer<ObjectConstants> * objectConstantBuffer, std::vector<RenderItem*> renderItems)
+{
+	for (auto& renderItem : renderItems)
 	{
 		// Only update the cbuffer data if the constants have changed.  
 		// This needs to be tracked per frame resource.
-		if (e->NumFramesDirty > 0)
+		if (renderItem->NumFramesDirty == 0)
 		{
-			XMMATRIX world = XMLoadFloat4x4(&e->World);
-
-			ObjectConstants objConstants;
-			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
-
-			currObjectCB->CopyData(e->ObjCBIndex, objConstants);
-
-			// Next FrameResource need to be updated too.
-			e->NumFramesDirty--;
+			continue;
 		}
+		// Next FrameResource need to be updated too.
+		renderItem->NumFramesDirty--;
+
+		ObjectConstants objConstants = objectConstantsFromRenderItem(renderItem);
+		objectConstantBuffer->CopyData(renderItem->ObjCBIndex, objConstants);
 	}
 }
 
-void FrameResourceUpdater::updateMaterialCBs(const GameTimer& gt, std::vector<Material*> materials)
+ObjectConstants FrameResourceUpdater::objectConstantsFromRenderItem(RenderItem* renderItem)
 {
-	auto currMaterialCB = frameResourceController->getCurrentFrameResource()->MaterialCB.get();
-	for (Material* mat : materials)
+	ObjectConstants objConstants;
+
+	XMMATRIX world = XMLoadFloat4x4(&renderItem->World);
+	XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
+
+	return objConstants;
+}
+
+void FrameResourceUpdater::updateMaterialConstantBufferForFrameResource(FrameResource* frameResource)
+{
+	auto materialConstantBuffer = frameResource->MaterialCB.get();
+	auto materials = materialsDataProvider->getMaterials();
+	updateMaterialConstantBuffer(materialConstantBuffer, materials);
+}
+
+void FrameResourceUpdater::updateMaterialConstantBuffer(UploadBuffer<MaterialConstants>* materialConstantBuffer, std::vector<Material*> materials)
+{
+	for (Material* material : materials)
 	{
 		// Only update the cbuffer data if the constants have changed.  If the cbuffer
 		// data changes, it needs to be updated for each FrameResource.
-
-		if (mat->NumFramesDirty > 0)
+		if (material->NumFramesDirty == 0)
 		{
-			XMMATRIX matTransform = XMLoadFloat4x4(&mat->MatTransform);
-
-			MaterialConstants matConstants;
-			matConstants.DiffuseAlbedo = mat->DiffuseAlbedo;
-			matConstants.FresnelR0 = mat->FresnelR0;
-			matConstants.Roughness = mat->Roughness;
-
-			currMaterialCB->CopyData(mat->MatCBIndex, matConstants);
-
-			// Next FrameResource need to be updated too.
-			mat->NumFramesDirty--;
+			continue;
 		}
+		// Next FrameResource need to be updated too.
+		material->NumFramesDirty--;
+		
+		MaterialConstants matConstants = materialConstantsFromMaterial(material);
+		materialConstantBuffer->CopyData(material->MatCBIndex, matConstants);
 	}
 }
 
+MaterialConstants FrameResourceUpdater::materialConstantsFromMaterial(Material* material)
+{
+	MaterialConstants matConstants;
+
+	XMMATRIX matTransform = XMLoadFloat4x4(&material->MatTransform);
+	matConstants.DiffuseAlbedo = material->DiffuseAlbedo;
+	matConstants.FresnelR0 = material->FresnelR0;
+	matConstants.Roughness = material->Roughness;
+
+	return matConstants;
+}
 
 void FrameResourceUpdater::updateWaves(const GameTimer& gameTimer, RenderItem* wavesRitem)
 {

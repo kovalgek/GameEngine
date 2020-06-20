@@ -160,6 +160,7 @@
     <ClInclude Include="MainPassData.h" />
     <ClInclude Include="MainPassDataProvider.h" />
     <ClInclude Include="MainScene.h" />
+    <ClInclude Include="MaterialsDataProvider.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="MyBoxDemo.h" />
     <ClInclude Include="ObjectConstants.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="GeometryStorage.cpp" />
     <ClCompile Include="MainPassDataProvider.cpp" />
     <ClCompile Include="MainScene.cpp" />
+    <ClCompile Include="MaterialsDataProvider.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="MyBoxDemo.cpp" />
     <ClCompile Include="Application.cpp" />

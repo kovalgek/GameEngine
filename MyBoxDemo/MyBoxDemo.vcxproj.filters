@@ -99,6 +99,9 @@
     <ClInclude Include="Waves.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="MaterialsDataProvider.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyBoxDemo.cpp">
@@ -151,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="Waves.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialsDataProvider.cpp">
+      <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
