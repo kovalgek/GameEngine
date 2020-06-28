@@ -102,6 +102,15 @@
     <ClInclude Include="MaterialsDataProvider.h">
       <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
+    <ClInclude Include="TexturesController.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureStaticSamplers.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyBoxDemo.cpp">
@@ -156,6 +165,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MaterialsDataProvider.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturesController.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureStaticSamplers.cpp">
       <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
   </ItemGroup>

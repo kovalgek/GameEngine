@@ -98,11 +98,13 @@ PassConstants FrameResourceUpdater::passConstantsFromMainPassData(MainPassData m
 	mainPassCB.FarZ = 1000.0f;
 	mainPassCB.TotalTime = gameTimer.TotalTime();
 	mainPassCB.DeltaTime = gameTimer.DeltaTime();
-
-	XMVECTOR lightDir = -MathHelper::SphericalToCartesian(1.0f, mainPassData.sunTheta, mainPassData.sunPhi);
-
-	XMStoreFloat3(&mainPassCB.Lights[0].Direction, lightDir);
-	mainPassCB.Lights[0].Strength = { 1.0f, 1.0f, 0.9f };
+	mainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	mainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	mainPassCB.Lights[0].Strength = { 0.9f, 0.9f, 0.9f };
+	mainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
+	mainPassCB.Lights[1].Strength = { 0.5f, 0.5f, 0.5f };
+	mainPassCB.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
+	mainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
 
 	return mainPassCB;
 }
@@ -138,6 +140,9 @@ ObjectConstants FrameResourceUpdater::objectConstantsFromRenderItem(RenderItem* 
 
 	XMMATRIX world = XMLoadFloat4x4(&renderItem->World);
 	XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
+
+	XMMATRIX texTransform = XMLoadFloat4x4(&renderItem->TexTransform);
+	XMStoreFloat4x4(&objConstants.TexTransform, XMMatrixTranspose(texTransform));
 
 	return objConstants;
 }
@@ -175,6 +180,7 @@ MaterialConstants FrameResourceUpdater::materialConstantsFromMaterial(Material* 
 	matConstants.DiffuseAlbedo = material->DiffuseAlbedo;
 	matConstants.FresnelR0 = material->FresnelR0;
 	matConstants.Roughness = material->Roughness;
+	XMStoreFloat4x4(&matConstants.MatTransform, XMMatrixTranspose(matTransform));
 
 	return matConstants;
 }
@@ -206,6 +212,11 @@ void FrameResourceUpdater::updateWaves(const GameTimer& gameTimer, RenderItem* w
 
 		v.Pos = waves->Position(i);
 		v.Normal = waves->Normal(i);
+
+		// Derive tex-coords from position by 
+		// mapping [-w/2,w/2] --> [0,1]
+		v.TexC.x = 0.5f + v.Pos.x / waves->Width();
+		v.TexC.y = 0.5f - v.Pos.z / waves->Depth();
 
 		currWavesVB->CopyData(i, v);
 	}

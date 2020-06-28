@@ -9,6 +9,7 @@
 #include "ObjectsDataProvider.h"
 #include "RenderItem.h"
 #include "FrameResource.h"
+#include "TexturesController.h"
 
 #include <DirectXColors.h>
 #include <DirectXPackedVector.h>
@@ -25,13 +26,14 @@ MainScene::MainScene(
 	Application* appContext,
 	std::unique_ptr<PipleneStateData> pipleneStateData,
 	FrameResourceController* frameResourceController,
-	ObjectsDataProvider* objectsDataProvider) :
+	ObjectsDataProvider* objectsDataProvider,
+	std::unique_ptr <TexturesController> texturesController) :
 
 	appContext{ appContext },
 	pipleneStateData { std::move(pipleneStateData) },
 	frameResourceController { frameResourceController },
-	objectsDataProvider{ objectsDataProvider },
-
+	objectsDataProvider { objectsDataProvider },
+	texturesController { std::move(texturesController) },
 	device { appContext->getDevice() },
 	commandQueue { appContext->getCommandQueue() },
 	commandList { appContext->getCommandList() },
@@ -63,14 +65,14 @@ void MainScene::draw(const GameTimer& gameTimer)
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	if (isWireframe)
-	{
-		ThrowIfFailed(commandList->Reset(cmdListAlloc.Get(), pipleneStateData->getPSO("opaque_wireframe")));
-	}
-	else
-	{
+	//if (isWireframe)
+	//{
+	//	ThrowIfFailed(commandList->Reset(cmdListAlloc.Get(), pipleneStateData->getPSO("opaque_wireframe")));
+	//}
+	//else
+	//{
 		ThrowIfFailed(commandList->Reset(cmdListAlloc.Get(), pipleneStateData->getPSO("opaque")));
-	}
+//	}
 
 	commandList->RSSetViewports(1, &appContext->getScreenViewport());
 	commandList->RSSetScissorRects(1, &appContext->getScissorRect());
@@ -88,6 +90,9 @@ void MainScene::draw(const GameTimer& gameTimer)
 
 	//ID3D12DescriptorHeap* descriptorHeaps[] = { frameResourceController->getCbvHeap() };
 	//commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+	ID3D12DescriptorHeap* descriptorHeaps[] = { texturesController->getSrvDescriptorHeap() };
+	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	commandList->SetGraphicsRootSignature(pipleneStateData->getRootSignature());
 
@@ -137,11 +142,17 @@ void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::v
 		cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
 		cmdList->IASetPrimitiveTopology(ri->PrimitiveType);
 
+		//auto tex = texturesController->getHandleForIndex(ri->Mat->DiffuseSrvHeapIndex);
+
+		CD3DX12_GPU_DESCRIPTOR_HANDLE tex(texturesController->srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+		tex.Offset(ri->Mat->DiffuseSrvHeapIndex, texturesController->cbvSrvDescriptorSize);
+
 		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + ri->ObjCBIndex * objCBByteSize;
 		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBByteSize;
 
-		cmdList->SetGraphicsRootConstantBufferView(0, objCBAddress);
-		cmdList->SetGraphicsRootConstantBufferView(1, matCBAddress);
+		cmdList->SetGraphicsRootDescriptorTable(0, tex);
+		cmdList->SetGraphicsRootConstantBufferView(1, objCBAddress);
+		cmdList->SetGraphicsRootConstantBufferView(3, matCBAddress);
 
 		cmdList->DrawIndexedInstanced(ri->IndexCount, 1, ri->StartIndexLocation, ri->BaseVertexLocation, 0);
 	}

@@ -13,10 +13,10 @@ FrameResourceController::FrameResourceController(ID3D12Device* device, UINT pass
 		frameResources.push_back(std::make_unique<FrameResource>(device, passCount, objectCount, materialCount, waveVertCount));
 	}
 
-	cbvSrvUavDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//cbvSrvUavDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	createDescriptorHeaps();
-	createConstantBufferViews();
+	//createDescriptorHeaps();
+	//createConstantBufferViews();
 }
 
 FrameResourceController::~FrameResourceController()

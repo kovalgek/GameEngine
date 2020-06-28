@@ -14,6 +14,8 @@ struct RenderItem
 	// and scale of the object in the world.
 	DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
 
+	DirectX::XMFLOAT4X4 TexTransform = MathHelper::Identity4x4();
+
 	// Dirty flag indicating the object data has changed and we need to update the constant buffer.
 	// Because we have an object cbuffer for each FrameResource, we have to apply the
 	// update to each FrameResource.  Thus, when we modify obect data we should set 

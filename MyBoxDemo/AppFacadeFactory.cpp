@@ -10,12 +10,21 @@
 #include "GeometryStorage.h"
 #include "AppFacade.h"
 #include "Waves.h"
+#include "TexturesController.h"
+#include "d3dUtil.h"
 
 std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 {
-	// The order is importaint
 
+
+
+	// The order is importaint
 	auto application = std::make_unique<Application>(mainWindowHandle);
+
+
+	// Reset the command list to prep for initialization commands.
+	ThrowIfFailed(application->getCommandList()->Reset(application->getCommandAllocator(), nullptr));
+
 
 	auto pipleneStateData = std::make_unique <PipleneStateData>(
 		application->getDevice(),
@@ -45,11 +54,23 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
 
+	auto texturesController = std::make_unique<TexturesController>(application->getDevice(), application->getCommandList());
+
+	// Execute the initialization commands.
+	ThrowIfFailed(application->getCommandList()->Close());
+	ID3D12CommandList* cmdsLists[] = { application->getCommandList() };
+	application->getCommandQueue()->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	// Wait until initialization is complete.
+	application->flushCommandQueue();
+
+
 	auto mainScene = std::make_unique <MainScene>(
 		application.get(),
 		std::move(pipleneStateData),
 		frameResourceController.get(),
-		objectsDataProvider.get());
+		objectsDataProvider.get(),
+		std::move(texturesController));
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
 		std::move(frameResourceController),

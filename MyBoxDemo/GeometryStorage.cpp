@@ -28,19 +28,19 @@ GeometryStorage::GeometryStorage(
 	commandQueue { commandQueue }
 {
 	// Reset the command list to prep for initialization commands.
-	ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
+	//ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
 
 	//buildShapeGeometry();
 	buildLandGeometry();
 	buildWavesGeometryBuffers();
 
-	// Execute the initialization commands.
-	ThrowIfFailed(commandList->Close());
-	ID3D12CommandList* cmdsLists[] = { commandList };
-	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	//// Execute the initialization commands.
+	//ThrowIfFailed(commandList->Close());
+	//ID3D12CommandList* cmdsLists[] = { commandList };
+	//commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-	// Wait until initialization is complete.
-	application->flushCommandQueue();
+	//// Wait until initialization is complete.
+	//application->flushCommandQueue();
 }
 
 GeometryStorage::~GeometryStorage()
@@ -189,6 +189,7 @@ void GeometryStorage::buildLandGeometry()
 		vertices[i].Pos = p;
 		vertices[i].Pos.y = getHillsHeight(p.x, p.z);
 		vertices[i].Normal = getHillsNormal(p.x, p.z);
+		vertices[i].TexC = grid.Vertices[i].TexC;
 	}
 
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);

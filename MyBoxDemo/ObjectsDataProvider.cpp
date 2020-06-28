@@ -106,6 +106,7 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 {
 	auto wavesRitem = std::make_unique<RenderItem>();
 	wavesRitem->World = MathHelper::Identity4x4();
+	XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
 	wavesRitem->ObjCBIndex = 0;
 	wavesRitem->Mat = materialsDataProvider->getMaterialForName("water");
 	wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
@@ -120,6 +121,7 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = MathHelper::Identity4x4();
+	XMStoreFloat4x4(&gridRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
 	gridRitem->ObjCBIndex = 1;
 	gridRitem->Mat = materialsDataProvider->getMaterialForName("grass");
 	gridRitem->Geo = this->geometryStorage->getGeometry("landGeo");
@@ -130,8 +132,21 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 
 	ritemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
 
+	//auto boxRitem = std::make_unique<RenderItem>();
+	//XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
+	//boxRitem->ObjCBIndex = 2;
+	//boxRitem->Mat = materialsDataProvider->getMaterialForName("wirefence"); //mMaterials["wirefence"].get();
+	//boxRitem->Geo = this->geometryStorage->getGeometry("boxGeo"); //mGeometries["boxGeo"].get();
+	//boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	//boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
+	//boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
+	//boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
+
+	//ritemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
+
 	allRitems.push_back(std::move(wavesRitem));
 	allRitems.push_back(std::move(gridRitem));
+	//allRitems.push_back(std::move(boxRitem));
 }
 
 void ObjectsDataProvider::onMouseDown(int x, int y)

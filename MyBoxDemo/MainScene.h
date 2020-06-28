@@ -8,6 +8,7 @@ class GameTimer;
 class FrameResourceController;
 class ObjectsDataProvider;
 class PipleneStateData;
+class TexturesController;
 struct RenderItem;
 struct FrameResource;
 struct ID3D12Device;
@@ -25,7 +26,8 @@ public:
 		Application *appContext,
 		std::unique_ptr<PipleneStateData> pipleneStateData,
 		FrameResourceController *frameResourceController,
-		ObjectsDataProvider *objectsDataProvider);
+		ObjectsDataProvider *objectsDataProvider,
+		std::unique_ptr <TexturesController> texturesController);
 
 	~MainScene();
 	void draw(const GameTimer& gameTimer);
@@ -41,6 +43,7 @@ private:
 	FrameResourceController *frameResourceController;
 	std::unique_ptr<PipleneStateData> pipleneStateData;
 	ObjectsDataProvider *objectsDataProvider;
+	std::unique_ptr <TexturesController> texturesController;
 
 	void onKeyboardInput(const GameTimer& gameTimer);
 	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
