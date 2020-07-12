@@ -12,24 +12,28 @@ struct ID3D12DescriptorHeap;
 #pragma once
 class TexturesController
 {
+	// Load all used textures to memory
 	void loadTextures();
-
 	// Create the SRV heap.
 	void createHeap();
 	// Fill out the heap with actual descriptors.
 	void createViews();
 
+	std::unique_ptr<Texture> grassTexture();
+	std::unique_ptr<Texture> waterTexture();
+	std::unique_ptr<Texture> fenceTexture();
 
+	// Help loading textures
 	ID3D12Device* device;
 	ID3D12GraphicsCommandList* commandList;
-	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
 
-
-public:
+	// Uses for descriptors
 	UINT cbvSrvDescriptorSize = 0;
-
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
 
+	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
+
+public:
 	TexturesController(
 		ID3D12Device* device,
 		ID3D12GraphicsCommandList* commandList);

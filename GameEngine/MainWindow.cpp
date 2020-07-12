@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <WindowsX.h>
 #include "Application.h"
-#include "MainScene.h"
+#include "Renderer.h"
 #include "GameTimer.h"
 #include "AppFacade.h"
 #include "d3dUtil.h"
@@ -55,11 +55,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     try
     {
-		//std::shared_ptr <Application> application = std::make_shared<Application>(mainWindowHandle);
-		//std::unique_ptr<MainScene> mainScene = std::make_unique <MainScene>(application);
-
-
-		appFacade = AppFacadeFactory::appFacade(mainWindowHandle);   //std::make_unique<AppFacade>(application, std::move(mainScene));
+		appFacade = AppFacadeFactory::appFacade(mainWindowHandle);
 
 		appFacade->onResize(clientWidth, clientHeight);
 

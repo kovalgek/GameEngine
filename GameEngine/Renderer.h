@@ -19,17 +19,17 @@ struct ID3D12GraphicsCommandList;
 const int gNumFrameResources = 3;
 
 #pragma once
-class MainScene
+class Renderer
 {
 public:
-	MainScene(
+	Renderer(
 		Application *appContext,
 		std::unique_ptr<PipleneStateData> pipleneStateData,
 		FrameResourceController *frameResourceController,
 		ObjectsDataProvider *objectsDataProvider,
 		std::unique_ptr <TexturesController> texturesController);
 
-	~MainScene();
+	~Renderer();
 	void draw(const GameTimer& gameTimer);
 
 private:

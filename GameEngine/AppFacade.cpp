@@ -1,6 +1,6 @@
 #include "AppFacade.h"
 #include "Application.h"
-#include "MainScene.h"
+#include "Renderer.h"
 #include "GameTimer.h"
 #include "MainPassDataProvider.h"
 #include "ObjectsDataProvider.h"
@@ -9,14 +9,14 @@
 
 AppFacade::AppFacade(
 	std::unique_ptr<Application> appContext,
-	std::unique_ptr<MainScene> mainScene,
+	std::unique_ptr<Renderer> renderer,
 	std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
 	std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater
 ) :
 	appContext { std::move(appContext) },
-	mainScene { std::move(mainScene) },
+	renderer{ std::move(renderer) },
 	mainPassDataProvider { std::move(mainPassDataProvider) },
 	objectsDataProvider { std::move(objectsDataProvider) },
 	materialsDataProvider { std::move(materialsDataProvider) },
@@ -34,7 +34,7 @@ void AppFacade::update(const GameTimer& gameTimer)
 {
 	mainPassDataProvider->updateCamera();
 	frameResourceUpdater->update(gameTimer);
-	mainScene->draw(gameTimer);
+	renderer->draw(gameTimer);
 }
 
 void AppFacade::onResize(int clientWidth, int clientHeight)

@@ -19,6 +19,24 @@
     <Filter Include="Source Files\Helpers">
       <UniqueIdentifier>{1cea9545-1aae-4dce-acd5-840744ab1f08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{2553c0ea-3a74-4f43-866d-d48fe6366b14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DataProviders">
+      <UniqueIdentifier>{802448c9-8f8b-4079-92b3-5b2ec534ad20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ShaderHelpers">
+      <UniqueIdentifier>{ef2063c2-55ad-4c7e-b7b9-7bace16df357}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{ce855547-4aa7-4201-bfa7-e4e2c367205c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Textures">
+      <UniqueIdentifier>{159f8f3c-d9e1-4659-8a96-99ed215a3639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{4f93da43-d0c1-43d1-82af-48e47f953588}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -33,18 +51,6 @@
     <ClInclude Include="MyBoxDemo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainScene.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AppFacade.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AppFacadeFactory.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="FrameResource.h">
       <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
@@ -52,18 +58,6 @@
       <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
     <ClInclude Include="FrameResourceUpdater.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="MainPassDataProvider.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="MainPassData.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectsDataProvider.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderItem.h">
       <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
     <ClInclude Include="MathHelper.h">
@@ -81,53 +75,71 @@
     <ClInclude Include="ObjectConstants.h">
       <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
-    <ClInclude Include="PassConstants.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryStorage.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryGenerator.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="PipleneStateData.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
     <ClInclude Include="Waves.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialsDataProvider.h">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="TexturesController.h">
-      <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Source Files\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="TextureStaticSamplers.h">
+    <ClInclude Include="Application.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AppFacade.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AppFacadeFactory.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectsDataProvider.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialsDataProvider.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPassDataProvider.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPassData.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderItem.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="PipleneStateData.h">
+      <Filter>Source Files\ShaderHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryStorage.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PassConstants.h">
       <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialConstants.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureStaticSamplers.h">
+      <Filter>Source Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturesController.h">
+      <Filter>Source Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files\Textures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MyBoxDemo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AppFacade.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AppFacadeFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FrameResource.cpp">
       <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
@@ -135,12 +147,6 @@
       <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
     <ClCompile Include="FrameResourceUpdater.cpp">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClCompile>
-    <ClCompile Include="MainPassDataProvider.cpp">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectsDataProvider.cpp">
       <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
     <ClCompile Include="MathHelper.cpp">
@@ -152,29 +158,58 @@
     <ClCompile Include="GameTimer.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="GeometryGenerator.cpp">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryStorage.cpp">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClCompile>
-    <ClCompile Include="PipleneStateData.cpp">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClCompile>
     <ClCompile Include="Waves.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MaterialsDataProvider.cpp">
-      <Filter>Source Files\FrameResources</Filter>
-    </ClCompile>
-    <ClCompile Include="TexturesController.cpp">
-      <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="TextureStaticSamplers.cpp">
-      <Filter>Source Files\FrameResources</Filter>
+    <ClCompile Include="Application.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="AppFacade.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFacadeFactory.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectsDataProvider.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialsDataProvider.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPassDataProvider.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="PipleneStateData.cpp">
+      <Filter>Source Files\ShaderHelpers</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryStorage.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturesController.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureStaticSamplers.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\Default.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\LightingUtil.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

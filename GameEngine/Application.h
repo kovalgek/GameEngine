@@ -10,14 +10,6 @@
 
 #define MAX_LOADSTRING 100
 
-//struct AppConfig
-//{
-//	DXGI_FORMAT backBufferFormat;
-//	DXGI_FORMAT depthStencilFormat;
-//	bool msaa4xState;
-//	UINT msaa4xQuality;
-//};
-
 class Application
 {
 public:
@@ -25,7 +17,7 @@ public:
 	~Application();
 
 	void onResize(int clientWidth, int clientHeight);
-	//void draw();
+
 	void flushCommandQueue();
 
 	// Factory for directx objects
@@ -45,8 +37,6 @@ public:
 	ID3D12Fence* getFence() const { return fence.Get(); }
 	void swapChainMethod();
 	UINT64 currentFence = 0;
-
-
 
 	// Properties for PSO
 	DXGI_FORMAT getBackBufferFormat() const { return backBufferFormat; }

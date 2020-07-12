@@ -1,6 +1,7 @@
 #include "TexturesController.h"
 #include "d3dUtil.h"
 #include "DDSTextureLoader.h"
+#include "Texture.h"
 
 TexturesController::TexturesController(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) : device { device }, commandList { commandList }
 {
@@ -17,30 +18,54 @@ TexturesController::~TexturesController() = default;
 
 void TexturesController::loadTextures()
 {
+	textures["grassTex"] = grassTexture();
+	textures["waterTex"] = waterTexture();
+	textures["fenceTex"] = fenceTexture();
+}
+
+std::unique_ptr<Texture> TexturesController::grassTexture()
+{
 	auto grassTex = std::make_unique<Texture>();
 	grassTex->Name = "grassTex";
 	grassTex->Filename = L"Textures/grass.dds";
-	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(device,
-		commandList, grassTex->Filename.c_str(),
-		grassTex->Resource, grassTex->UploadHeap));
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(
+		device,
+		commandList,
+		grassTex->Filename.c_str(),
+		grassTex->Resource,
+		grassTex->UploadHeap)
+	);
+	return grassTex;
+}
 
+std::unique_ptr<Texture> TexturesController::waterTexture()
+{
 	auto waterTex = std::make_unique<Texture>();
 	waterTex->Name = "waterTex";
 	waterTex->Filename = L"Textures/water1.dds";
-	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(device,
-		commandList, waterTex->Filename.c_str(),
-		waterTex->Resource, waterTex->UploadHeap));
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(
+		device,
+		commandList,
+		waterTex->Filename.c_str(),
+		waterTex->Resource,
+		waterTex->UploadHeap)
+	);
+	return waterTex;
+}
 
+std::unique_ptr<Texture> TexturesController::fenceTexture()
+{
 	auto fenceTex = std::make_unique<Texture>();
 	fenceTex->Name = "fenceTex";
 	fenceTex->Filename = L"Textures/WoodCrate01.dds";
-	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(device,
-		commandList, fenceTex->Filename.c_str(),
-		fenceTex->Resource, fenceTex->UploadHeap));
-
-	textures[grassTex->Name] = std::move(grassTex);
-	textures[waterTex->Name] = std::move(waterTex);
-	textures[fenceTex->Name] = std::move(fenceTex);
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(
+		device,
+		commandList,
+		fenceTex->Filename.c_str(),
+		fenceTex->Resource,
+		fenceTex->UploadHeap)
+	);
+	return fenceTex;
 }
 
 void TexturesController::createHeap()

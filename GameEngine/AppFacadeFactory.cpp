@@ -1,6 +1,6 @@
 #include "AppFacadeFactory.h"
 #include "Application.h"
-#include "MainScene.h"
+#include "Renderer.h"
 #include "PipleneStateData.h"
 #include "FrameResourceController.h"
 #include "MainPassDataProvider.h"
@@ -65,7 +65,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 	application->flushCommandQueue();
 
 
-	auto mainScene = std::make_unique <MainScene>(
+	auto renderer = std::make_unique <Renderer>(
 		application.get(),
 		std::move(pipleneStateData),
 		frameResourceController.get(),
@@ -82,7 +82,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 
 	auto appFacade = std::make_unique<AppFacade>(
 		std::move(application),
-		std::move(mainScene),
+		std::move(renderer),
 		std::move(mainPassDataProvider),
 		std::move(objectsDataProvider),
 		std::move(materialsDataProvider),

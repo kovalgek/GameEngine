@@ -1,7 +1,7 @@
 #include <memory>
 
 class Application;
-class MainScene;
+class Renderer;
 class GameTimer;
 class MainPassDataProvider;
 class FrameResourceUpdater;
@@ -14,7 +14,7 @@ class AppFacade
 public:
 	AppFacade(
 		std::unique_ptr<Application> appContext,
-		std::unique_ptr<MainScene> mainScene,
+		std::unique_ptr<Renderer> renderer,
 		std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
 		std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
 		std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
@@ -28,7 +28,7 @@ public:
 	void onMouseMove(int btnState, int x, int y);
 private:
 	std::unique_ptr<Application> appContext;
-	std::unique_ptr<MainScene> mainScene;
+	std::unique_ptr<Renderer> renderer;
 	std::unique_ptr<MainPassDataProvider> mainPassDataProvider;
 	std::unique_ptr<ObjectsDataProvider> objectsDataProvider;
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider;

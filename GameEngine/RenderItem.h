@@ -1,6 +1,8 @@
 #include "MathHelper.h"
 #include "d3dUtil.h"
 
+struct Material;
+
 #pragma once
 // Lightweight structure stores parameters to draw a shape.  This will
 // vary from app-to-app.

@@ -1,4 +1,4 @@
-#include "MainScene.h"
+#include "Renderer.h"
 #include "Application.h"
 #include "d3dx12.h"
 #include "d3dUtil.h"
@@ -8,6 +8,7 @@
 #include "PipleneStateData.h"
 #include "ObjectsDataProvider.h"
 #include "RenderItem.h"
+#include "Material.h"
 #include "FrameResource.h"
 #include "TexturesController.h"
 
@@ -16,13 +17,11 @@
 #include <D3Dcompiler.h>
 #include <array>
 
-#include <iostream>
-
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
-MainScene::MainScene(
+Renderer::Renderer(
 	Application* appContext,
 	std::unique_ptr<PipleneStateData> pipleneStateData,
 	FrameResourceController* frameResourceController,
@@ -42,12 +41,12 @@ MainScene::MainScene(
 
 }
 
-MainScene::~MainScene()
+Renderer::~Renderer()
 {
 
 }
 
-void MainScene::onKeyboardInput(const GameTimer& gameTimer)
+void Renderer::onKeyboardInput(const GameTimer& gameTimer)
 {
 	if (GetAsyncKeyState('1') & 0x8000)
 		isWireframe = true;
@@ -55,7 +54,7 @@ void MainScene::onKeyboardInput(const GameTimer& gameTimer)
 		isWireframe = false;
 }
 
-void MainScene::draw(const GameTimer& gameTimer)
+void Renderer::draw(const GameTimer& gameTimer)
 {
 	auto cmdListAlloc = frameResourceController->getCurrentFrameResource()->CmdListAlloc;
 
@@ -126,7 +125,7 @@ void MainScene::draw(const GameTimer& gameTimer)
 	commandQueue->Signal(appContext->getFence(), appContext->currentFence);
 }
 
-void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
+void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
 {
 	UINT objCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
 	UINT matCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(MaterialConstants));
@@ -142,11 +141,7 @@ void MainScene::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::v
 		cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
 		cmdList->IASetPrimitiveTopology(ri->PrimitiveType);
 
-		//auto tex = texturesController->getHandleForIndex(ri->Mat->DiffuseSrvHeapIndex);
-
-		CD3DX12_GPU_DESCRIPTOR_HANDLE tex(texturesController->srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-		tex.Offset(ri->Mat->DiffuseSrvHeapIndex, texturesController->cbvSrvDescriptorSize);
-
+		auto tex = texturesController->getHandleForIndex(ri->Mat->DiffuseSrvHeapIndex);
 		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + ri->ObjCBIndex * objCBByteSize;
 		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBByteSize;
 

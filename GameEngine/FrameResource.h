@@ -4,18 +4,14 @@
 #include <memory>
 #include "PassConstants.h"
 #include "ObjectConstants.h"
+#include "MaterialConstants.h"
+#include "Vertex.h"
 #include "d3dUtil.h"
 
 template<typename T> class UploadBuffer;
 struct ID3D12Device;
 struct ID3D12CommandAllocator;
 
-struct Vertex
-{
-    DirectX::XMFLOAT3 Pos;
-    DirectX::XMFLOAT3 Normal;
-    DirectX::XMFLOAT2 TexC;
-};
 /**
  * Stores the resources needed for the CPU to build the command lists for a frame.
 **/

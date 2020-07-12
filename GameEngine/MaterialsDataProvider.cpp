@@ -1,6 +1,7 @@
 #include "MaterialsDataProvider.h"
 #include "d3dUtil.h"
 #include <DirectXMath.h>
+#include "Material.h"
 
 using namespace DirectX;
 

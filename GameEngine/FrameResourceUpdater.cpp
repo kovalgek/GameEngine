@@ -1,5 +1,6 @@
 #include "FrameResourceUpdater.h"
 #include "PassConstants.h"
+#include "MaterialConstants.h"
 #include "FrameResource.h"
 #include "UploadBuffer.h"
 #include "FrameResourceController.h"
@@ -7,6 +8,7 @@
 #include "ObjectsDataProvider.h"
 #include "MaterialsDataProvider.h"
 #include "RenderItem.h"
+#include "Material.h"
 #include "GameTimer.h"
 #include "Waves.h"
 #include <DirectXColors.h>
