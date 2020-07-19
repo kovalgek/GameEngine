@@ -29,7 +29,6 @@ class TexturesController
 
 	// Uses for descriptors
 	UINT cbvSrvDescriptorSize = 0;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
 
 	std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
 
@@ -38,6 +37,8 @@ public:
 		ID3D12Device* device,
 		ID3D12GraphicsCommandList* commandList);
 	~TexturesController();
+
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
 
 	D3D12_GPU_DESCRIPTOR_HANDLE getHandleForIndex(UINT index);
 	ID3D12DescriptorHeap* getSrvDescriptorHeap() { return srvDescriptorHeap.Get(); }

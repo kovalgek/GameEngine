@@ -4,6 +4,8 @@
 #include <cassert>
 #include <vector>
 
+
+
 using Microsoft::WRL::ComPtr;
 using namespace std;
 //using namespace DirectX;
@@ -26,6 +28,29 @@ Application::Application(HWND mainWindowHandle) : mainWindowHandle { mainWindowH
 #ifdef _DEBUG
 	logAdapters();
 #endif
+
+	//{
+	//	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+	//	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	//	desc.NumDescriptors = 1;
+	//	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	//	if (d3dDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&g_pd3dSrvDescHeap)) != S_OK)
+	//		return;
+	//}
+
+
+	//// Execute the resize commands.
+	//ThrowIfFailed(commandList->Close());
+	//ID3D12CommandList* cmdsLists[] = { commandList.Get() };
+	//commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	//// Wait until resize is complete.
+	//flushCommandQueue();
+
+	//commandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
+
+
+
 }
 
 void Application::enableDebugModeIfNeeded()

@@ -46,6 +46,9 @@ public:
 	int getClientWidth() const { return clientWidth; }
 	int getClientHeight() const { return clientHeight; }
 
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> g_pd3dSrvDescHeap;
+
+
 private:
 	void enableDebugModeIfNeeded();
 	void createDevice();
@@ -86,6 +89,8 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
+
+
 
 	D3D12_VIEWPORT screenViewport;
 	D3D12_RECT scissorRect;

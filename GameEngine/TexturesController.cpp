@@ -71,7 +71,7 @@ std::unique_ptr<Texture> TexturesController::fenceTexture()
 void TexturesController::createHeap()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	srvHeapDesc.NumDescriptors = 3;
+	srvHeapDesc.NumDescriptors = 4;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap)));
@@ -91,6 +91,9 @@ void TexturesController::createViews()
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
+
+	hDescriptor.Offset(1, cbvSrvDescriptorSize);
+
 	device->CreateShaderResourceView(grassTex.Get(), &srvDesc, hDescriptor);
 
 	// next descriptor

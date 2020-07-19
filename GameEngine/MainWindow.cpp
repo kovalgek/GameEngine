@@ -9,6 +9,9 @@
 #include "d3dUtil.h"
 #include "AppFacadeFactory.h"
 
+#include "ImGui\\imgui.h"
+
+
 #define MAX_LOADSTRING 100
 
 std::wstring mMainWndCaption = L"d3d App";
@@ -104,6 +107,8 @@ BOOL initMainWindow(HINSTANCE hInstance, int nCmdShow)
     ShowWindow(mainWindowHandle, nCmdShow);
     UpdateWindow(mainWindowHandle);
 
+
+
     return TRUE;
 }
 
@@ -139,8 +144,13 @@ int runMainLoop(HINSTANCE hInstance)
     return (int)msg.wParam;
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
+
 	switch (message)
 	{
 		// WM_ACTIVATE is sent when the window is activated or deactivated.  

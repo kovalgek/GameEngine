@@ -12,12 +12,10 @@
 #include "Waves.h"
 #include "TexturesController.h"
 #include "d3dUtil.h"
+#include "ImGuiController.h"
 
 std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 {
-
-
-
 	// The order is importaint
 	auto application = std::make_unique<Application>(mainWindowHandle);
 
@@ -56,6 +54,9 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 
 	auto texturesController = std::make_unique<TexturesController>(application->getDevice(), application->getCommandList());
 
+
+	auto imGuiController = std::make_unique<ImGuiController>(application.get(), texturesController.get(), mainWindowHandle);
+
 	// Execute the initialization commands.
 	ThrowIfFailed(application->getCommandList()->Close());
 	ID3D12CommandList* cmdsLists[] = { application->getCommandList() };
@@ -70,7 +71,8 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		std::move(pipleneStateData),
 		frameResourceController.get(),
 		objectsDataProvider.get(),
-		std::move(texturesController));
+		std::move(texturesController),
+		std::move(imGuiController));
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
 		std::move(frameResourceController),

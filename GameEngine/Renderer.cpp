@@ -11,11 +11,13 @@
 #include "Material.h"
 #include "FrameResource.h"
 #include "TexturesController.h"
+#include "ImGuiController.h"
 
 #include <DirectXColors.h>
 #include <DirectXPackedVector.h>
 #include <D3Dcompiler.h>
 #include <array>
+
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
@@ -26,19 +28,32 @@ Renderer::Renderer(
 	std::unique_ptr<PipleneStateData> pipleneStateData,
 	FrameResourceController* frameResourceController,
 	ObjectsDataProvider* objectsDataProvider,
-	std::unique_ptr <TexturesController> texturesController) :
+	std::unique_ptr <TexturesController> texturesController,
+	std::unique_ptr <ImGuiController> imGuiController) :
 
 	appContext{ appContext },
 	pipleneStateData { std::move(pipleneStateData) },
 	frameResourceController { frameResourceController },
 	objectsDataProvider { objectsDataProvider },
 	texturesController { std::move(texturesController) },
+	imGuiController { std::move(imGuiController) },
 	device { appContext->getDevice() },
 	commandQueue { appContext->getCommandQueue() },
 	commandList { appContext->getCommandList() },
 	commandAllocator { appContext->getCommandAllocator() }
 {
+	//// Setup Dear ImGui context
+	//IMGUI_CHECKVERSION();
+	//ImGui::CreateContext();
+	//ImGuiIO& io = ImGui::GetIO();
 
+	//ImGui_ImplWin32_Init(mainWindowHandle);
+	//ImGui_ImplDX12_Init(device, 3,
+	//	DXGI_FORMAT_R8G8B8A8_UNORM,
+	//	this->texturesController->getSrvDescriptorHeap(),
+	//	this->texturesController->getSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
+	//	this->texturesController->getSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
+	//ImGui::StyleColorsDark();
 }
 
 Renderer::~Renderer()
@@ -53,9 +68,12 @@ void Renderer::onKeyboardInput(const GameTimer& gameTimer)
 	else
 		isWireframe = false;
 }
+bool show_demo_window = true;
 
 void Renderer::draw(const GameTimer& gameTimer)
 {
+
+
 	auto cmdListAlloc = frameResourceController->getCurrentFrameResource()->CmdListAlloc;
 
 	// Reuse the memory associated with command recording.
@@ -90,7 +108,10 @@ void Renderer::draw(const GameTimer& gameTimer)
 	//ID3D12DescriptorHeap* descriptorHeaps[] = { frameResourceController->getCbvHeap() };
 	//commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-	ID3D12DescriptorHeap* descriptorHeaps[] = { texturesController->getSrvDescriptorHeap() };
+//	g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
+
+
+	ID3D12DescriptorHeap* descriptorHeaps[] = { texturesController->getSrvDescriptorHeap()};
 	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	commandList->SetGraphicsRootSignature(pipleneStateData->getRootSignature());
@@ -107,12 +128,27 @@ void Renderer::draw(const GameTimer& gameTimer)
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
+
+	//// Start the Dear ImGui frame
+	//ImGui_ImplDX12_NewFrame();
+	//ImGui_ImplWin32_NewFrame();
+	//ImGui::NewFrame();
+
+	//ImGui::Begin("Hello, world!");
+	//ImGui::End();
+	//ImGui::Render();
+	//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+
+	imGuiController->present();
+
 	// Done recording commands.
 	ThrowIfFailed(commandList->Close());
 
 	// Add the command list to the queue for execution.
 	ID3D12CommandList* cmdsLists[] = { commandList };
 	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+
 
 	appContext->swapChainMethod();
 
