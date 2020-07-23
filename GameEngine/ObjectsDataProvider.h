@@ -22,27 +22,29 @@ public:
 	);
 	~ObjectsDataProvider();
 
-	void onMouseDown(int x, int y);
 	std::vector<RenderItem*> renderItems();
-	std::vector<RenderItem*> opaqueRitems();
-
 	std::vector<RenderItem*> renderItemsForLayer(RenderLayer layer);
 	RenderItem* getWavesRitem() { return mWavesRitem; }
 
-private:
-	void buildRenderItemsForShapes();
-	void buildRenderItemsForLandAndWaves();
+	
+	void createPrimitive(
+		std::string name,
+		std::string material,
+		std::vector<float> position,
+		std::vector<float> scaling,
+		std::vector<float> textureTransform
+	);
 
+private:
 	std::unique_ptr <GeometryStorage> geometryStorage;
 	MaterialsDataProvider* materialsDataProvider;
 
 	std::vector<std::shared_ptr<RenderItem>> allRitems;
-	std::vector<RenderItem*> mOpaqueRitems;
-
-	// Render items divided by PSO.
-	std::vector<RenderItem*> ritemLayer[(int)RenderLayer::Count];
+	std::vector<RenderItem*> ritemLayer[(int)RenderLayer::Count]; // Render items divided by PSO.
 	RenderItem* mWavesRitem = nullptr;
+	int itemIndex = 0;
 
-	float delta;
+	void buildRenderItemsForShapes();
+	void buildRenderItemsForLandAndWaves();
 };
 

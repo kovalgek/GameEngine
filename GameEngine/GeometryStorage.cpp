@@ -1,151 +1,121 @@
 #include "GeometryStorage.h"
-#include "GeometryGenerator.h"
-#include "Application.h"
 #include "Vertex.h"
+#include "MathHelper.h"
+#include "d3dUtil.h"
+#include "Waves.h"
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <d3d12.h>
 #include <DirectXColors.h>
 #include <D3Dcompiler.h>
-#include "MathHelper.h"
-#include "d3dUtil.h"
-#include "Waves.h"
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 GeometryStorage::GeometryStorage(
-	Application *application,
-	ID3D12Device* device,
-	ID3D12GraphicsCommandList* commandList,
-	ID3D12CommandAllocator* commandAllocator,
-	ID3D12CommandQueue* commandQueue) :
-
-	application { application },
+	ID3D12Device* const device,
+	ID3D12GraphicsCommandList* const commandList
+) :
 	device { device },
-	commandList { commandList },
-	commandAllocator { commandAllocator },
-	commandQueue { commandQueue }
+	commandList { commandList }
 {
-	// Reset the command list to prep for initialization commands.
-	//ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
+	waves = std::make_unique<Waves>(128, 128, 1.0f, 0.03f, 4.0f, 0.2f);
 
-	//buildShapeGeometry();
-	buildLandGeometry();
-	buildWavesGeometryBuffers();
-
-	//// Execute the initialization commands.
-	//ThrowIfFailed(commandList->Close());
-	//ID3D12CommandList* cmdsLists[] = { commandList };
-	//commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-	//// Wait until initialization is complete.
-	//application->flushCommandQueue();
-}
-
-GeometryStorage::~GeometryStorage()
-{
-
-}
-
-void GeometryStorage::buildShapeGeometry()
-{
 	GeometryGenerator geoGen;
-	GeometryGenerator::MeshData box = geoGen.CreateBox(1.5f, 0.5f, 1.5f, 3);
+
+	std::vector<GeometryGenerator::MeshData> meshes;
+
+	GeometryGenerator::MeshData box = geoGen.CreateBox(8.0f, 8.0f, 8.0f, 3);
+	box.Name = "box";
+	meshes.push_back(box);
+
 	GeometryGenerator::MeshData grid = geoGen.CreateGrid(20.0f, 30.0f, 60, 40);
+	grid.Name = "grid";
+	meshes.push_back(grid);
+
 	GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
+	sphere.Name = "sphere";
+	meshes.push_back(sphere);
+
 	GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20);
+	cylinder.Name = "cylinder";
+	meshes.push_back(cylinder);
 
-	//
-	// We are concatenating all the geometry into one big vertex/index buffer.  So
-	// define the regions in the buffer each submesh covers.
-	//
+	GeometryGenerator::MeshData hills = geoGen.CreateGrid(160.0f, 160.0f, 50, 50);
+	hills.Name = "hills";
+	meshes.push_back(hills);
 
-	// Cache the vertex offsets to each object in the concatenated vertex buffer.
-	UINT boxVertexOffset = 0;
-	UINT gridVertexOffset = (UINT)box.Vertices.size();
-	UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
-	UINT cylinderVertexOffset = sphereVertexOffset + (UINT)sphere.Vertices.size();
+	buildGeometry(meshes);
+}
 
-	// Cache the starting index for each object in the concatenated index buffer.
-	UINT boxIndexOffset = 0;
-	UINT gridIndexOffset = (UINT)box.Indices32.size();
-	UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
-	UINT cylinderIndexOffset = sphereIndexOffset + (UINT)sphere.Indices32.size();
+GeometryStorage::~GeometryStorage() = default;
 
-	// Define the SubmeshGeometry that cover different 
-	// regions of the vertex/index buffers.
+void GeometryStorage::buildGeometry(std::vector<GeometryGenerator::MeshData> meshes)
+{
+	UINT currentVertexOffset = 0;
+	UINT currentIndexOffset = 0;
 
-	SubmeshGeometry boxSubmesh;
-	boxSubmesh.IndexCount = (UINT)box.Indices32.size();
-	boxSubmesh.StartIndexLocation = boxIndexOffset;
-	boxSubmesh.BaseVertexLocation = boxVertexOffset;
-
-	SubmeshGeometry gridSubmesh;
-	gridSubmesh.IndexCount = (UINT)grid.Indices32.size();
-	gridSubmesh.StartIndexLocation = gridIndexOffset;
-	gridSubmesh.BaseVertexLocation = gridVertexOffset;
-
-	SubmeshGeometry sphereSubmesh;
-	sphereSubmesh.IndexCount = (UINT)sphere.Indices32.size();
-	sphereSubmesh.StartIndexLocation = sphereIndexOffset;
-	sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
-
-	SubmeshGeometry cylinderSubmesh;
-	cylinderSubmesh.IndexCount = (UINT)cylinder.Indices32.size();
-	cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
-	cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
-
-	//
-	// Extract the vertex elements we are interested in and pack the
-	// vertices of all the meshes into one vertex buffer.
-	//
-
-	auto totalVertexCount =
-		box.Vertices.size() +
-		grid.Vertices.size() +
-		sphere.Vertices.size() +
-		cylinder.Vertices.size();
-
-	std::vector<Vertex> vertices(totalVertexCount);
-
-	UINT k = 0;
-	for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = box.Vertices[i].Position;
-		//vertices[k].Color = XMFLOAT4(DirectX::Colors::DarkGreen);
-	}
-
-	for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = grid.Vertices[i].Position;
-		//vertices[k].Color = XMFLOAT4(DirectX::Colors::ForestGreen);
-	}
-
-	for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = sphere.Vertices[i].Position;
-		//vertices[k].Color = XMFLOAT4(DirectX::Colors::Crimson);
-	}
-
-	for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = cylinder.Vertices[i].Position;
-		//vertices[k].Color = XMFLOAT4(DirectX::Colors::SteelBlue);
-	}
-
+	auto totalVertexCount = 0;
+	std::vector<Vertex> vertices;
 	std::vector<std::uint16_t> indices;
-	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
-	indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
-	indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
-	indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
-
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
+	UINT k = 0;
 
 	auto geo = std::make_unique<MeshGeometry>();
 	geo->Name = "shapeGeo";
 
+	for (GeometryGenerator::MeshData mesh : meshes)
+	{
+		SubmeshGeometry submeshGeometry = addSubmesh(mesh, currentVertexOffset, currentIndexOffset);
+		currentVertexOffset += (UINT)mesh.Vertices.size();
+		currentIndexOffset += (UINT)mesh.Indices32.size();
+
+		totalVertexCount += mesh.Vertices.size();
+
+		if (mesh.Name == "hills")
+		{		
+			for (size_t i = 0; i < mesh.Vertices.size(); ++i, ++k)
+			{
+				auto vertex = Vertex();
+
+				auto& p = mesh.Vertices[i].Position;
+				vertex.Pos = p;
+				vertex.Pos.y = getHillsHeight(p.x, p.z);
+				vertex.Normal = getHillsNormal(p.x, p.z);
+				vertex.TexC = mesh.Vertices[i].TexC;
+
+				vertices.push_back(vertex);
+			}
+		}
+		else if (mesh.Name == "box")
+		{
+			for (size_t i = 0; i < mesh.Vertices.size(); ++i)
+			{
+				auto vertex = Vertex();
+				auto& p = mesh.Vertices[i].Position;
+				vertex.Pos = p;
+				vertex.Normal = mesh.Vertices[i].Normal;
+				vertex.TexC = mesh.Vertices[i].TexC;
+				vertices.push_back(vertex);
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < mesh.Vertices.size(); ++i, ++k)
+			{
+				auto vertex = Vertex();
+				vertex.Pos = mesh.Vertices[i].Position;
+				vertices.push_back(vertex);
+			}
+		}
+
+		indices.insert(indices.end(), std::begin(mesh.GetIndices16()), std::end(mesh.GetIndices16()));
+
+		geo->DrawArgs[mesh.Name] = submeshGeometry;
+	}
+
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
+
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
 	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
 
@@ -162,69 +132,17 @@ void GeometryStorage::buildShapeGeometry()
 	geo->VertexBufferByteSize = vbByteSize;
 	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
 	geo->IndexBufferByteSize = ibByteSize;
-
-	geo->DrawArgs["box"] = boxSubmesh;
-	geo->DrawArgs["grid"] = gridSubmesh;
-	geo->DrawArgs["sphere"] = sphereSubmesh;
-	geo->DrawArgs["cylinder"] = cylinderSubmesh;
 
 	geometries[geo->Name] = std::move(geo);
 }
 
-void GeometryStorage::buildLandGeometry()
+SubmeshGeometry GeometryStorage::addSubmesh(GeometryGenerator::MeshData item, UINT itemVertexOffset, UINT itemIndexOffset)
 {
-	GeometryGenerator geoGen;
-	GeometryGenerator::MeshData grid = geoGen.CreateGrid(160.0f, 160.0f, 50, 50);
-
-	//
-	// Extract the vertex elements we are interested and apply the height function to
-	// each vertex.  In addition, color the vertices based on their height so we have
-	// sandy looking beaches, grassy low hills, and snow mountain peaks.
-	//
-
-	std::vector<Vertex> vertices(grid.Vertices.size());
-	for (size_t i = 0; i < grid.Vertices.size(); ++i)
-	{
-		auto& p = grid.Vertices[i].Position;
-		vertices[i].Pos = p;
-		vertices[i].Pos.y = getHillsHeight(p.x, p.z);
-		vertices[i].Normal = getHillsNormal(p.x, p.z);
-		vertices[i].TexC = grid.Vertices[i].TexC;
-	}
-
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-
-	std::vector<std::uint16_t> indices = grid.GetIndices16();
-	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
-
-	auto geo = std::make_unique<MeshGeometry>();
-	geo->Name = "landGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
-	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
-	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
-
-	geo->VertexBufferGPU = d3dUtil::createDefaultBuffer(device,
-		commandList, vertices.data(), vbByteSize, geo->VertexBufferUploader);
-
-	geo->IndexBufferGPU = d3dUtil::createDefaultBuffer(device,
-		commandList, indices.data(), ibByteSize, geo->IndexBufferUploader);
-
-	geo->VertexByteStride = sizeof(Vertex);
-	geo->VertexBufferByteSize = vbByteSize;
-	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	geo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)indices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	geo->DrawArgs["grid"] = submesh;
-
-	geometries["landGeo"] = std::move(geo);
+	SubmeshGeometry boxSubmesh;
+	boxSubmesh.IndexCount = (UINT)item.Indices32.size();
+	boxSubmesh.StartIndexLocation = itemIndexOffset;
+	boxSubmesh.BaseVertexLocation = itemVertexOffset;
+	return boxSubmesh;
 }
 
 void GeometryStorage::buildWavesGeometryBuffers()
@@ -304,7 +222,8 @@ XMFLOAT3 GeometryStorage::getHillsNormal(float x, float z)const
 	return n;
 }
 
-MeshGeometry *GeometryStorage::getGeometry(std::string name)
+MeshGeometry *GeometryStorage::getGeometry(const std::string name)
 {
 	return geometries[name].get();
 }
+

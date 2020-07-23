@@ -46,7 +46,6 @@ public:
 	int getClientWidth() const { return clientWidth; }
 	int getClientHeight() const { return clientHeight; }
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> g_pd3dSrvDescHeap;
 
 
 private:

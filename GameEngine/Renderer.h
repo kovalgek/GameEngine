@@ -8,7 +8,7 @@ class GameTimer;
 class FrameResourceController;
 class ObjectsDataProvider;
 class PipleneStateData;
-class TexturesController;
+class SrvHeapProvider;
 class ImGuiController;
 struct RenderItem;
 struct FrameResource;
@@ -28,7 +28,7 @@ public:
 		std::unique_ptr<PipleneStateData> pipleneStateData,
 		FrameResourceController *frameResourceController,
 		ObjectsDataProvider *objectsDataProvider,
-		std::unique_ptr <TexturesController> texturesController,
+		std::unique_ptr <SrvHeapProvider> srvHeapProvider,
 		std::unique_ptr <ImGuiController> imGuiController);
 
 	~Renderer();
@@ -45,7 +45,7 @@ private:
 	FrameResourceController *frameResourceController;
 	std::unique_ptr<PipleneStateData> pipleneStateData;
 	ObjectsDataProvider *objectsDataProvider;
-	std::unique_ptr <TexturesController> texturesController;
+	std::unique_ptr <SrvHeapProvider> srvHeapProvider;
 	std::unique_ptr <ImGuiController> imGuiController;
 
 	void onKeyboardInput(const GameTimer& gameTimer);

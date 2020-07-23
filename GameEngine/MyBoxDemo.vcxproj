@@ -207,7 +207,8 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TexturesController.h" />
+    <ClInclude Include="SrvHeapProvider.h" />
+    <ClInclude Include="TexturesProvider.h" />
     <ClInclude Include="TextureStaticSamplers.h" />
     <ClInclude Include="UploadBuffer.h" />
     <ClInclude Include="Vertex.h" />
@@ -238,7 +239,8 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="ObjectsDataProvider.cpp" />
     <ClCompile Include="PipleneStateData.cpp" />
-    <ClCompile Include="TexturesController.cpp" />
+    <ClCompile Include="SrvHeapProvider.cpp" />
+    <ClCompile Include="TexturesProvider.cpp" />
     <ClCompile Include="TextureStaticSamplers.cpp" />
     <ClCompile Include="Waves.cpp" />
   </ItemGroup>

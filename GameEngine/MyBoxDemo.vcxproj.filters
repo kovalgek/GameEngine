@@ -132,9 +132,6 @@
     <ClInclude Include="TextureStaticSamplers.h">
       <Filter>Source Files\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="TexturesController.h">
-      <Filter>Source Files\Textures</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Source Files\DataProviders</Filter>
     </ClInclude>
@@ -167,6 +164,12 @@
     </ClInclude>
     <ClInclude Include="ImGuiController.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SrvHeapProvider.h">
+      <Filter>Source Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturesProvider.h">
+      <Filter>Source Files\Textures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -227,9 +230,6 @@
     <ClCompile Include="GeometryStorage.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="TexturesController.cpp">
-      <Filter>Source Files\Textures</Filter>
-    </ClCompile>
     <ClCompile Include="TextureStaticSamplers.cpp">
       <Filter>Source Files\Textures</Filter>
     </ClCompile>
@@ -250,6 +250,12 @@
     </ClCompile>
     <ClCompile Include="ImGuiController.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SrvHeapProvider.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturesProvider.cpp">
+      <Filter>Source Files\Textures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

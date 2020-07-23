@@ -10,6 +10,7 @@ public:
 	void updateCamera();
 	void onMouseDown(int x, int y);
 	void onMouseMove(int btnState, int x, int y);
+	void updateData(float theta, float phi, float radius);
 
 	MainPassData getMainPassData();
 

@@ -10,7 +10,7 @@
 #include "RenderItem.h"
 #include "Material.h"
 #include "FrameResource.h"
-#include "TexturesController.h"
+#include "SrvHeapProvider.h"
 #include "ImGuiController.h"
 
 #include <DirectXColors.h>
@@ -28,14 +28,14 @@ Renderer::Renderer(
 	std::unique_ptr<PipleneStateData> pipleneStateData,
 	FrameResourceController* frameResourceController,
 	ObjectsDataProvider* objectsDataProvider,
-	std::unique_ptr <TexturesController> texturesController,
+	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
 	std::unique_ptr <ImGuiController> imGuiController) :
 
 	appContext{ appContext },
 	pipleneStateData { std::move(pipleneStateData) },
 	frameResourceController { frameResourceController },
 	objectsDataProvider { objectsDataProvider },
-	texturesController { std::move(texturesController) },
+	srvHeapProvider{ std::move(srvHeapProvider) },
 	imGuiController { std::move(imGuiController) },
 	device { appContext->getDevice() },
 	commandQueue { appContext->getCommandQueue() },
@@ -108,10 +108,9 @@ void Renderer::draw(const GameTimer& gameTimer)
 	//ID3D12DescriptorHeap* descriptorHeaps[] = { frameResourceController->getCbvHeap() };
 	//commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-//	g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
 
 
-	ID3D12DescriptorHeap* descriptorHeaps[] = { texturesController->getSrvDescriptorHeap()};
+	ID3D12DescriptorHeap* descriptorHeaps[] = { srvHeapProvider->getSrvDescriptorHeap()};
 	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	commandList->SetGraphicsRootSignature(pipleneStateData->getRootSignature());
@@ -177,7 +176,7 @@ void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::ve
 		cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
 		cmdList->IASetPrimitiveTopology(ri->PrimitiveType);
 
-		auto tex = texturesController->getHandleForIndex(ri->Mat->DiffuseSrvHeapIndex);
+		auto tex = srvHeapProvider->getHandleForIndex(ri->Mat->DiffuseSrvHeapIndex);
 		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + ri->ObjCBIndex * objCBByteSize;
 		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBByteSize;
 

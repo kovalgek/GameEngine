@@ -10,21 +10,46 @@ using namespace DirectX::PackedVector;
 
 ObjectsDataProvider::ObjectsDataProvider(
 	std::unique_ptr <GeometryStorage> geometryStorage,
-	MaterialsDataProvider* materialsDataProvider) :
+	MaterialsDataProvider* materialsDataProvider
+) :
 	geometryStorage { std::move(geometryStorage) },
 	materialsDataProvider { materialsDataProvider }
 {
-	buildRenderItemsForLandAndWaves();
+	//buildRenderItemsForLandAndWaves();
+
+	//createPrimitive("hills", "grass", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
+	//createPrimitive("box", "wirefence", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
 }
 
 ObjectsDataProvider::~ObjectsDataProvider() = default;
 
+void ObjectsDataProvider::createPrimitive(
+	std::string name,
+	std::string material,
+	std::vector<float> position,
+	std::vector<float> scaling,
+	std::vector<float> textureTransform)
+{
+	auto item = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&item->World, XMMatrixScaling(scaling[0], scaling[1], scaling[2]) * XMMatrixTranslation(position[0], position[1], position[2]));
+	XMStoreFloat4x4(&item->TexTransform, XMMatrixScaling(textureTransform[0], textureTransform[1], textureTransform[2]));
+
+	item->ObjCBIndex = itemIndex++;
+	item->Mat = materialsDataProvider->getMaterialForName(material);
+	item->Geo = this->geometryStorage->getGeometry("shapeGeo");
+	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	item->IndexCount = item->Geo->DrawArgs[name].IndexCount;
+	item->StartIndexLocation = item->Geo->DrawArgs[name].StartIndexLocation;
+	item->BaseVertexLocation = item->Geo->DrawArgs[name].BaseVertexLocation;
+
+	ritemLayer[(int)RenderLayer::Opaque].push_back(item.get());
+	allRitems.push_back(std::move(item));
+}
+
 void ObjectsDataProvider::buildRenderItemsForShapes()
 {
-	delta = 0.0f;
-
 	auto boxRitem = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&boxRitem->World, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixTranslation(delta, 0.5f, 0.0f));
+	XMStoreFloat4x4(&boxRitem->World, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
 	boxRitem->ObjCBIndex = 0;
 	boxRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 	boxRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -94,37 +119,31 @@ void ObjectsDataProvider::buildRenderItemsForShapes()
 		allRitems.push_back(std::move(leftSphereRitem));
 		allRitems.push_back(std::move(rightSphereRitem));
 	}
-
-	// All the render items are opaque.
-	for (auto& e : allRitems)
-	{
-		mOpaqueRitems.push_back(e.get());
-	}
 }
 
 void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 {
-	auto wavesRitem = std::make_unique<RenderItem>();
-	wavesRitem->World = MathHelper::Identity4x4();
-	XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
-	wavesRitem->ObjCBIndex = 0;
-	wavesRitem->Mat = materialsDataProvider->getMaterialForName("water");
-	wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
-	wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
-	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
-	wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
+	//auto wavesRitem = std::make_unique<RenderItem>();
+	//wavesRitem->World = MathHelper::Identity4x4();
+	//XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
+	//wavesRitem->ObjCBIndex = 0;
+	//wavesRitem->Mat = materialsDataProvider->getMaterialForName("water");
+	//wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
+	//wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	//wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
+	//wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	//wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
 
-	mWavesRitem = wavesRitem.get();
+	//mWavesRitem = wavesRitem.get();
 
-	ritemLayer[(int)RenderLayer::Opaque].push_back(wavesRitem.get());
+	//ritemLayer[(int)RenderLayer::Opaque].push_back(wavesRitem.get());
 
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = MathHelper::Identity4x4();
 	XMStoreFloat4x4(&gridRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
-	gridRitem->ObjCBIndex = 1;
+	gridRitem->ObjCBIndex = 0;
 	gridRitem->Mat = materialsDataProvider->getMaterialForName("grass");
-	gridRitem->Geo = this->geometryStorage->getGeometry("landGeo");
+	gridRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 	gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
 	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
@@ -132,36 +151,31 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 
 	ritemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
 
-	//auto boxRitem = std::make_unique<RenderItem>();
-	//XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
-	//boxRitem->ObjCBIndex = 2;
-	//boxRitem->Mat = materialsDataProvider->getMaterialForName("wirefence"); //mMaterials["wirefence"].get();
-	//boxRitem->Geo = this->geometryStorage->getGeometry("boxGeo"); //mGeometries["boxGeo"].get();
-	//boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
-	//boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
-	//boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
+	auto boxRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
+	boxRitem->ObjCBIndex = 1;
+	boxRitem->Mat = materialsDataProvider->getMaterialForName("grass");
+	boxRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
+	boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
+	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
+	boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
 
-	//ritemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
+	ritemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
 
-	allRitems.push_back(std::move(wavesRitem));
+	//allRitems.push_back(std::move(wavesRitem));
 	allRitems.push_back(std::move(gridRitem));
-	//allRitems.push_back(std::move(boxRitem));
-}
-
-void ObjectsDataProvider::onMouseDown(int x, int y)
-{
-	delta += 0.1;
+	allRitems.push_back(std::move(boxRitem));
 }
 
 std::vector<RenderItem*> ObjectsDataProvider::renderItems()
 {
-	return ritemLayer[(int)RenderLayer::Opaque];
-}
-
-std::vector<RenderItem*> ObjectsDataProvider::opaqueRitems()
-{
-	return mOpaqueRitems;
+	std::vector<RenderItem*> temp;
+	for (auto& e : allRitems)
+	{
+		temp.push_back(e.get());
+	}
+	return temp;
 }
 
 std::vector<RenderItem*> ObjectsDataProvider::renderItemsForLayer(RenderLayer layer)

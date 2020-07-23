@@ -46,7 +46,6 @@ void AppFacade::onResize(int clientWidth, int clientHeight)
 void AppFacade::onMouseDown(int x, int y)
 {
 	mainPassDataProvider->onMouseDown(x, y);
-	objectsDataProvider->onMouseDown(x, y);
 }
 
 void AppFacade::onMouseUp(int x, int y)

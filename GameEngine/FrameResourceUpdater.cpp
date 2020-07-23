@@ -224,6 +224,6 @@ void FrameResourceUpdater::updateWaves(const GameTimer& gameTimer, RenderItem* w
 	}
 
 	// Set the dynamic VB of the wave renderitem to the current frame VB.
-	wavesRitem->Geo->VertexBufferGPU = currWavesVB->Resource();
+	//wavesRitem->Geo->VertexBufferGPU = currWavesVB->Resource();
 }
 

@@ -32,6 +32,13 @@ void MainPassDataProvider::onMouseDown(int x, int y)
 	mLastMousePos.y = y;
 }
 
+void MainPassDataProvider::updateData(float theta, float phi, float radius)
+{
+	mTheta = theta;
+	mPhi = MathHelper::Clamp(phi, 0.1f, MathHelper::Pi - 0.1f);
+	mRadius = MathHelper::Clamp(radius, 5.0f, 150.0f);
+}
+
 void MainPassDataProvider::onMouseMove(int btnState, int x, int y)
 {
 	if (btnState == 0)
@@ -47,7 +54,8 @@ void MainPassDataProvider::onMouseMove(int btnState, int x, int y)
 		// Restrict the angle mPhi.
 		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
 	}
-	else if (btnState == 1)
+	else 
+		if (btnState == 1)
 	{
 		// Make each pixel correspond to 0.2 unit in the scene.
 		float dx = 0.2f * static_cast<float>(x - mLastMousePos.x);

@@ -10,7 +10,8 @@
 #include "GeometryStorage.h"
 #include "AppFacade.h"
 #include "Waves.h"
-#include "TexturesController.h"
+#include "SrvHeapProvider.h"
+#include "TexturesProvider.h"
 #include "d3dUtil.h"
 #include "ImGuiController.h"
 
@@ -33,11 +34,8 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		);
 
 	auto geometryStorage = std::make_unique <GeometryStorage>(
-		application.get(),
 		application->getDevice(),
-		application->getCommandList(),
-		application->getCommandAllocator(),
-		application->getCommandQueue()
+		application->getCommandList()
 		);
 
 	auto waves = geometryStorage->getWaves();
@@ -52,10 +50,12 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
 
-	auto texturesController = std::make_unique<TexturesController>(application->getDevice(), application->getCommandList());
+
+	auto texturesProvider = std::make_unique<TexturesProvider>(application->getDevice(), application->getCommandList());
+	auto srvHeapProvider = std::make_unique<SrvHeapProvider>(application->getDevice(), std::move(texturesProvider));
 
 
-	auto imGuiController = std::make_unique<ImGuiController>(application.get(), texturesController.get(), mainWindowHandle);
+	auto imGuiController = std::make_unique<ImGuiController>(application.get(), srvHeapProvider.get(), mainWindowHandle, mainPassDataProvider.get(), objectsDataProvider.get());
 
 	// Execute the initialization commands.
 	ThrowIfFailed(application->getCommandList()->Close());
@@ -71,7 +71,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		std::move(pipleneStateData),
 		frameResourceController.get(),
 		objectsDataProvider.get(),
-		std::move(texturesController),
+		std::move(srvHeapProvider),
 		std::move(imGuiController));
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
