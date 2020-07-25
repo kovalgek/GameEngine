@@ -17,6 +17,7 @@ template<typename T> class UploadBuffer;
 struct ObjectConstants;
 struct MaterialConstants;
 struct PassConstants;
+struct Vertex;
 
 #pragma once
 class FrameResourceUpdater
@@ -57,6 +58,7 @@ private:
 	void updateMainPassConstantBuffer(UploadBuffer<PassConstants>* mainPassConstantBuffer, MainPassData mainPassData, const GameTimer& gameTimer);
 	PassConstants passConstantsFromMainPassData(MainPassData mainPassData, const GameTimer& gameTimer);
 
-	void updateWaves(const GameTimer& gameTimer, RenderItem* wavesRitem);
+	void updateVertexUploadBufferForFrameResource(FrameResource* frameResource);
+	void updateVertexUploadBuffer(UploadBuffer<Vertex>* vertexBuffer, std::vector<RenderItem*> renderItems);
 };
 

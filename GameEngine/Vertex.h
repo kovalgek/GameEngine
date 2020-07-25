@@ -1,5 +1,6 @@
 #include <DirectXMath.h>
 
+#pragma once
 struct Vertex
 {
     DirectX::XMFLOAT3 Pos;

@@ -12,6 +12,7 @@
 #include "GameTimer.h"
 #include "Waves.h"
 #include <DirectXColors.h>
+#include "Vertex.h"
 
 using namespace DirectX;
 
@@ -44,9 +45,7 @@ void FrameResourceUpdater::update(const GameTimer& gameTimer)
 	updateObjectConstantBufferForFrameResource(currFrameResource);
 	updateMaterialConstantBufferForFrameResource(currFrameResource);
 	updateMainPassConstantBufferForFrameResource(currFrameResource, gameTimer);
-
-	auto wavesRitem = objectsDataProvider->getWavesRitem();
-	updateWaves(gameTimer, wavesRitem);
+	updateVertexUploadBufferForFrameResource(currFrameResource);
 }
 
 void FrameResourceUpdater::waitForFrameResourceAvailable(FrameResource *frameResource)
@@ -187,43 +186,25 @@ MaterialConstants FrameResourceUpdater::materialConstantsFromMaterial(Material* 
 	return matConstants;
 }
 
-void FrameResourceUpdater::updateWaves(const GameTimer& gameTimer, RenderItem* wavesRitem)
+void FrameResourceUpdater::updateVertexUploadBufferForFrameResource(FrameResource* frameResource)
 {
-	// Every quarter second, generate a random wave.
-	static float t_base = 0.0f;
-	if ((gameTimer.TotalTime() - t_base) >= 0.25f)
-	{
-		t_base += 0.25f;
-
-		int i = MathHelper::Rand(4, waves->RowCount() - 5);
-		int j = MathHelper::Rand(4, waves->ColumnCount() - 5);
-
-		float r = MathHelper::RandF(0.2f, 0.5f);
-
-		waves->Disturb(i, j, r);
-	}
-
-	// Update the wave simulation.
-	waves->Update(gameTimer.DeltaTime());
-
-	// Update the wave vertex buffer with the new solution.
-	auto currWavesVB = frameResourceController->getCurrentFrameResource()->WavesVB.get();
-	for (int i = 0; i < waves->VertexCount(); ++i)
-	{
-		Vertex v;
-
-		v.Pos = waves->Position(i);
-		v.Normal = waves->Normal(i);
-
-		// Derive tex-coords from position by 
-		// mapping [-w/2,w/2] --> [0,1]
-		v.TexC.x = 0.5f + v.Pos.x / waves->Width();
-		v.TexC.y = 0.5f - v.Pos.z / waves->Depth();
-
-		currWavesVB->CopyData(i, v);
-	}
-
-	// Set the dynamic VB of the wave renderitem to the current frame VB.
-	//wavesRitem->Geo->VertexBufferGPU = currWavesVB->Resource();
+	auto vertexBuffer = frameResourceController->getCurrentFrameResource()->WavesVB.get();
+	auto renderItems = objectsDataProvider->getRenderItemsWithDynamicVertexBuffer();
+	updateVertexUploadBuffer(vertexBuffer, renderItems);
 }
 
+void FrameResourceUpdater::updateVertexUploadBuffer(UploadBuffer<Vertex>* vertexBuffer, std::vector<RenderItem*> renderItems)
+{
+	for (auto& renderItem : renderItems)
+	{
+		auto dynamicVertices = renderItem->dynamicVertices;
+		std::vector<Vertex> verticies = dynamicVertices->getVertices();
+
+		for (int i = 0; i < verticies.size(); ++i)
+		{
+			vertexBuffer->CopyData(i, verticies[i]);
+		}
+
+		renderItem->Geo->VertexBufferGPU = vertexBuffer->Resource();
+	}
+}

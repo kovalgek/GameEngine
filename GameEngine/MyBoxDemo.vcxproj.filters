@@ -40,6 +40,9 @@
     <Filter Include="Source Files\ImGui">
       <UniqueIdentifier>{b41a87f3-5891-4693-9940-31b3741d52ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\DynamicVertex">
+      <UniqueIdentifier>{e2b5ed57-3db0-4ded-8f83-951b4a1b3b5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -77,9 +80,6 @@
     </ClInclude>
     <ClInclude Include="ObjectConstants.h">
       <Filter>Source Files\FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="Waves.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Source Files\Helpers</Filter>
@@ -171,6 +171,15 @@
     <ClInclude Include="TexturesProvider.h">
       <Filter>Source Files\Textures</Filter>
     </ClInclude>
+    <ClInclude Include="Waves.h">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicVertices.h">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicVerticesProvider.h">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FrameResource.cpp">
@@ -190,9 +199,6 @@
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
       <Filter>Source Files\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="Waves.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Source Files\Helpers</Filter>
@@ -256,6 +262,12 @@
     </ClCompile>
     <ClCompile Include="TexturesProvider.cpp">
       <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Waves.cpp">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicVerticesProvider.cpp">
+      <Filter>Source Files\DynamicVertex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

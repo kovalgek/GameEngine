@@ -2,6 +2,7 @@
 #include "d3dUtil.h"
 
 struct Material;
+class DynamicVertices;
 
 #pragma once
 // Lightweight structure stores parameters to draw a shape.  This will
@@ -29,6 +30,7 @@ struct RenderItem
 
 	Material* Mat = nullptr;
 	MeshGeometry* Geo = nullptr;
+	DynamicVertices* dynamicVertices = nullptr;
 
 	// Primitive topology.
 	D3D12_PRIMITIVE_TOPOLOGY PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;

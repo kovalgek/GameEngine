@@ -9,10 +9,11 @@
 #ifndef WAVES_H
 #define WAVES_H
 
+#include "DynamicVertices.h"
 #include <vector>
 #include <DirectXMath.h>
 
-class Waves
+class Waves : public DynamicVertices
 {
 public:
     Waves(int m, int n, float dx, float dt, float speed, float damping);
@@ -38,6 +39,9 @@ public:
 
 	void Update(float dt);
 	void Disturb(int i, int j, float magnitude);
+
+    void update(const GameTimer& gameTimer);
+    std::vector<Vertex> getVertices();
 
 private:
     int mNumRows = 0;

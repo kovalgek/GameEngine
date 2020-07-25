@@ -46,6 +46,8 @@ GeometryStorage::GeometryStorage(
 	meshes.push_back(hills);
 
 	buildGeometry(meshes);
+
+	buildWavesGeometryBuffers();
 }
 
 GeometryStorage::~GeometryStorage() = default;

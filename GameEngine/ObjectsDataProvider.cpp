@@ -4,16 +4,19 @@
 #include "GeometryStorage.h"
 #include "d3dUtil.h"
 #include "MaterialsDataProvider.h"
+#include "DynamicVerticesProvider.h"
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 ObjectsDataProvider::ObjectsDataProvider(
 	std::unique_ptr <GeometryStorage> geometryStorage,
-	MaterialsDataProvider* materialsDataProvider
+	MaterialsDataProvider* materialsDataProvider,
+	DynamicVerticesProvider* dynamicVerticesProvider
 ) :
 	geometryStorage { std::move(geometryStorage) },
-	materialsDataProvider { materialsDataProvider }
+	materialsDataProvider { materialsDataProvider },
+	dynamicVerticesProvider { dynamicVerticesProvider }
 {
 	//buildRenderItemsForLandAndWaves();
 
@@ -123,20 +126,21 @@ void ObjectsDataProvider::buildRenderItemsForShapes()
 
 void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 {
-	//auto wavesRitem = std::make_unique<RenderItem>();
-	//wavesRitem->World = MathHelper::Identity4x4();
-	//XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
-	//wavesRitem->ObjCBIndex = 0;
-	//wavesRitem->Mat = materialsDataProvider->getMaterialForName("water");
-	//wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
-	//wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
-	//wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
-	//wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
+	auto wavesRitem = std::make_unique<RenderItem>();
+	wavesRitem->World = MathHelper::Identity4x4();
+	XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
+	wavesRitem->ObjCBIndex = 0;
+	wavesRitem->Mat = materialsDataProvider->getMaterialForName("water");
+	wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
+	wavesRitem->dynamicVertices = dynamicVerticesProvider->getDynamicVerticesForName("waves");
+	wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
+	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
 
-	//mWavesRitem = wavesRitem.get();
+	renderItemsWithDynamicVertexBuffer.push_back(wavesRitem.get());
 
-	//ritemLayer[(int)RenderLayer::Opaque].push_back(wavesRitem.get());
+	ritemLayer[(int)RenderLayer::Opaque].push_back(wavesRitem.get());
 
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = MathHelper::Identity4x4();
@@ -145,16 +149,16 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 	gridRitem->Mat = materialsDataProvider->getMaterialForName("grass");
 	gridRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 	gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
-	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
-	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
+	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["hills"].IndexCount;
+	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["hills"].StartIndexLocation;
+	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["hills"].BaseVertexLocation;
 
 	ritemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
 
 	auto boxRitem = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
 	boxRitem->ObjCBIndex = 1;
-	boxRitem->Mat = materialsDataProvider->getMaterialForName("grass");
+	boxRitem->Mat = materialsDataProvider->getMaterialForName("wirefence");
 	boxRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 	boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
@@ -163,7 +167,7 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 
 	ritemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
 
-	//allRitems.push_back(std::move(wavesRitem));
+	allRitems.push_back(std::move(wavesRitem));
 	allRitems.push_back(std::move(gridRitem));
 	allRitems.push_back(std::move(boxRitem));
 }

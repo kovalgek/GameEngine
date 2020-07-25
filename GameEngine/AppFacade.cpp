@@ -6,6 +6,7 @@
 #include "ObjectsDataProvider.h"
 #include "FrameResourceUpdater.h"
 #include "MaterialsDataProvider.h"
+#include "DynamicVerticesProvider.h"
 
 AppFacade::AppFacade(
 	std::unique_ptr<Application> appContext,
@@ -13,27 +14,27 @@ AppFacade::AppFacade(
 	std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
 	std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
-	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater
+	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
+	std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider
 ) :
 	appContext { std::move(appContext) },
 	renderer{ std::move(renderer) },
 	mainPassDataProvider { std::move(mainPassDataProvider) },
 	objectsDataProvider { std::move(objectsDataProvider) },
 	materialsDataProvider { std::move(materialsDataProvider) },
-	frameResourceUpdater { std::move(frameResourceUpdater) }
+	frameResourceUpdater { std::move(frameResourceUpdater) },
+	dynamicVerticesProvider { std::move(dynamicVerticesProvider) }
 {
 
 }
 
-AppFacade::~AppFacade()
-{
-
-}
+AppFacade::~AppFacade() = default;
 
 void AppFacade::update(const GameTimer& gameTimer)
 {
 	mainPassDataProvider->updateCamera();
 	frameResourceUpdater->update(gameTimer);
+	dynamicVerticesProvider->update(gameTimer);
 	renderer->draw(gameTimer);
 }
 

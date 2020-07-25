@@ -5,6 +5,7 @@
 struct RenderItem;
 class GeometryStorage;
 class MaterialsDataProvider;
+class DynamicVerticesProvider;
 
 enum class RenderLayer : int
 {
@@ -18,13 +19,14 @@ class ObjectsDataProvider
 public:
 	ObjectsDataProvider(
 		std::unique_ptr <GeometryStorage> geometryStorage, 
-		MaterialsDataProvider* materialsDataProvider
+		MaterialsDataProvider* materialsDataProvider,
+		DynamicVerticesProvider* dynamicVerticesProvider
 	);
 	~ObjectsDataProvider();
 
 	std::vector<RenderItem*> renderItems();
 	std::vector<RenderItem*> renderItemsForLayer(RenderLayer layer);
-	RenderItem* getWavesRitem() { return mWavesRitem; }
+	std::vector<RenderItem*> getRenderItemsWithDynamicVertexBuffer() { return renderItemsWithDynamicVertexBuffer; }
 
 	
 	void createPrimitive(
@@ -38,10 +40,12 @@ public:
 private:
 	std::unique_ptr <GeometryStorage> geometryStorage;
 	MaterialsDataProvider* materialsDataProvider;
+	DynamicVerticesProvider* dynamicVerticesProvider;
 
 	std::vector<std::shared_ptr<RenderItem>> allRitems;
 	std::vector<RenderItem*> ritemLayer[(int)RenderLayer::Count]; // Render items divided by PSO.
-	RenderItem* mWavesRitem = nullptr;
+	std::vector<RenderItem*> renderItemsWithDynamicVertexBuffer;
+
 	int itemIndex = 0;
 
 	void buildRenderItemsForShapes();

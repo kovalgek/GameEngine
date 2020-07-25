@@ -7,6 +7,7 @@ class MainPassDataProvider;
 class FrameResourceUpdater;
 class ObjectsDataProvider;
 class MaterialsDataProvider;
+class DynamicVerticesProvider;
 
 #pragma once
 class AppFacade
@@ -18,7 +19,8 @@ public:
 		std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
 		std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
 		std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
-		std::unique_ptr<FrameResourceUpdater> frameResourceUpdater);
+		std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
+		std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider);
 	~AppFacade();
 	void update(const GameTimer& gameTimer);
 	void onResize(int clientWidth, int clientHeight);
@@ -33,5 +35,6 @@ private:
 	std::unique_ptr<ObjectsDataProvider> objectsDataProvider;
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider;
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater;
+	std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider;
 };
 

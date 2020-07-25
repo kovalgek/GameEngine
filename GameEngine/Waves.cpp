@@ -7,10 +7,13 @@
 #include <algorithm>
 #include <vector>
 #include <cassert>
+#include "Vertex.h"
+#include "GameTimer.h"
+#include "MathHelper.h"
 
 using namespace DirectX;
 
-Waves::Waves(int m, int n, float dx, float dt, float speed, float damping)
+Waves::Waves(int m, int n, float dx, float dt, float speed, float damping) : DynamicVertices()
 {
     mNumRows = m;
     mNumCols = n;
@@ -83,6 +86,48 @@ float Waves::Width()const
 float Waves::Depth()const
 {
 	return mNumRows*mSpatialStep;
+}
+
+void Waves::update(const GameTimer& gameTimer)
+{
+	// Every quarter second, generate a random wave.
+	static float t_base = 0.0f;
+	if ((gameTimer.TotalTime() - t_base) >= 0.25f)
+	{
+		t_base += 0.25f;
+
+		int i = MathHelper::Rand(4, RowCount() - 5);
+		int j = MathHelper::Rand(4, ColumnCount() - 5);
+
+		float r = MathHelper::RandF(0.2f, 0.5f);
+
+		Disturb(i, j, r);
+	}
+
+	// Update the wave simulation.
+	Update(gameTimer.DeltaTime());
+}
+
+std::vector<Vertex> Waves::getVertices()
+{
+	std::vector<Vertex> vertices;
+
+	for (int i = 0; i < VertexCount(); ++i)
+	{
+		Vertex v;
+
+		v.Pos = Position(i);
+		v.Normal = Normal(i);
+
+		// Derive tex-coords from position by 
+		// mapping [-w/2,w/2] --> [0,1]
+		v.TexC.x = 0.5f + v.Pos.x / Width();
+		v.TexC.y = 0.5f - v.Pos.z / Depth();
+
+		vertices.push_back(v);
+	}
+
+	return vertices;
 }
 
 void Waves::Update(float dt)

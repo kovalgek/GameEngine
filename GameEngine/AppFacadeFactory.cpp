@@ -7,6 +7,7 @@
 #include "FrameResourceUpdater.h"
 #include "ObjectsDataProvider.h"
 #include "MaterialsDataProvider.h"
+#include "DynamicVerticesProvider.h"
 #include "GeometryStorage.h"
 #include "AppFacade.h"
 #include "Waves.h"
@@ -41,7 +42,9 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 	auto waves = geometryStorage->getWaves();
 
 	auto materialsDataProvider = std::make_unique<MaterialsDataProvider>();
-	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(std::move(geometryStorage), materialsDataProvider.get());
+	auto dynamicVerticesProvider = std::make_unique<DynamicVerticesProvider>();
+
+	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(std::move(geometryStorage), materialsDataProvider.get(), dynamicVerticesProvider.get());
 
 	auto materials = materialsDataProvider->getMaterials();
 	auto renderItems = objectsDataProvider->renderItems();
@@ -88,7 +91,8 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		std::move(mainPassDataProvider),
 		std::move(objectsDataProvider),
 		std::move(materialsDataProvider),
-		std::move(frameResourceUpdater));
+		std::move(frameResourceUpdater),
+		std::move(dynamicVerticesProvider));
 
 	return std::move(appFacade);
 }
