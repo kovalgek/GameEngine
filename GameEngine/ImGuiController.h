@@ -6,6 +6,11 @@ class SrvHeapProvider;
 class MainPassDataProvider;
 class ObjectsDataProvider;
 
+struct CameraModel
+{
+
+};
+
 #pragma once
 class ImGuiController
 {

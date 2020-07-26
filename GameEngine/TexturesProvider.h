@@ -25,6 +25,7 @@ private:
 	std::unique_ptr<Texture> grassTexture();
 	std::unique_ptr<Texture> waterTexture();
 	std::unique_ptr<Texture> fenceTexture();
+	std::unique_ptr<Texture> white1x1Texture();
 
 	std::vector<std::unique_ptr<Texture>> textures;
 };

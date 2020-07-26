@@ -17,6 +17,7 @@ private:
 	std::unique_ptr<Material> grassMaterial();
 	std::unique_ptr<Material> waterMaterial();
 	std::unique_ptr<Material> wirefenceMaterial();
+	std::unique_ptr<Material> skullMaterial();
 	std::unordered_map<std::string, std::unique_ptr<Material>> materials;
 };
 

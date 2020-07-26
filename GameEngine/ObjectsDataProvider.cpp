@@ -18,7 +18,7 @@ ObjectsDataProvider::ObjectsDataProvider(
 	materialsDataProvider { materialsDataProvider },
 	dynamicVerticesProvider { dynamicVerticesProvider }
 {
-	//buildRenderItemsForLandAndWaves();
+	buildRenderItemsForLandAndWaves();
 
 	//createPrimitive("hills", "grass", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
 	//createPrimitive("box", "wirefence", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
@@ -126,50 +126,64 @@ void ObjectsDataProvider::buildRenderItemsForShapes()
 
 void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 {
-	auto wavesRitem = std::make_unique<RenderItem>();
-	wavesRitem->World = MathHelper::Identity4x4();
-	XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
-	wavesRitem->ObjCBIndex = 0;
-	wavesRitem->Mat = materialsDataProvider->getMaterialForName("water");
-	wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
-	wavesRitem->dynamicVertices = dynamicVerticesProvider->getDynamicVerticesForName("waves");
-	wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
-	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
-	wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
+	//auto wavesRitem = std::make_unique<RenderItem>();
+	//wavesRitem->World = MathHelper::Identity4x4();
+	//XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
+	//wavesRitem->ObjCBIndex = 0;
+	//wavesRitem->Mat = materialsDataProvider->getMaterialForName("water");
+	//wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
+	//wavesRitem->dynamicVertices = dynamicVerticesProvider->getDynamicVerticesForName("waves");
+	//wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	//wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
+	//wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	//wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
 
-	renderItemsWithDynamicVertexBuffer.push_back(wavesRitem.get());
+	//renderItemsWithDynamicVertexBuffer.push_back(wavesRitem.get());
 
-	ritemLayer[(int)RenderLayer::Opaque].push_back(wavesRitem.get());
+	//ritemLayer[(int)RenderLayer::Opaque].push_back(wavesRitem.get());
 
-	auto gridRitem = std::make_unique<RenderItem>();
-	gridRitem->World = MathHelper::Identity4x4();
-	XMStoreFloat4x4(&gridRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
-	gridRitem->ObjCBIndex = 0;
-	gridRitem->Mat = materialsDataProvider->getMaterialForName("grass");
-	gridRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
-	gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["hills"].IndexCount;
-	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["hills"].StartIndexLocation;
-	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["hills"].BaseVertexLocation;
+	//auto gridRitem = std::make_unique<RenderItem>();
+	//gridRitem->World = MathHelper::Identity4x4();
+	//XMStoreFloat4x4(&gridRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
+	//gridRitem->ObjCBIndex = 1;
+	//gridRitem->Mat = materialsDataProvider->getMaterialForName("grass");
+	//gridRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
+	//gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	//gridRitem->IndexCount = gridRitem->Geo->DrawArgs["hills"].IndexCount;
+	//gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["hills"].StartIndexLocation;
+	//gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["hills"].BaseVertexLocation;
 
-	ritemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
+	//ritemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
 
-	auto boxRitem = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
-	boxRitem->ObjCBIndex = 1;
-	boxRitem->Mat = materialsDataProvider->getMaterialForName("wirefence");
-	boxRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
-	boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
-	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
-	boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
+	//auto boxRitem = std::make_unique<RenderItem>();
+	//XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
+	//boxRitem->ObjCBIndex = 2;
+	//boxRitem->Mat = materialsDataProvider->getMaterialForName("wirefence");
+	//boxRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
+	//boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	//boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
+	//boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
+	//boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
 
-	ritemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
+	//ritemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
 
-	allRitems.push_back(std::move(wavesRitem));
-	allRitems.push_back(std::move(gridRitem));
-	allRitems.push_back(std::move(boxRitem));
+	auto skullRitem = std::make_unique<RenderItem>();
+	skullRitem->World = MathHelper::Identity4x4();
+	skullRitem->TexTransform = MathHelper::Identity4x4();
+	skullRitem->ObjCBIndex = 0;
+	skullRitem->Mat = materialsDataProvider->getMaterialForName("skullMat");// mMaterials["skullMat"].get();
+	skullRitem->Geo = this->geometryStorage->getGeometry("skullGeo");// mGeometries["skullGeo"].get();
+	skullRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["skull"].IndexCount;
+	skullRitem->StartIndexLocation = skullRitem->Geo->DrawArgs["skull"].StartIndexLocation;
+	skullRitem->BaseVertexLocation = skullRitem->Geo->DrawArgs["skull"].BaseVertexLocation;
+	//mSkullRitem = skullRitem.get();
+	ritemLayer[(int)RenderLayer::Opaque].push_back(skullRitem.get());
+
+	//allRitems.push_back(std::move(wavesRitem));
+	//allRitems.push_back(std::move(gridRitem));
+	//allRitems.push_back(std::move(boxRitem));
+	allRitems.push_back(std::move(skullRitem));
 }
 
 std::vector<RenderItem*> ObjectsDataProvider::renderItems()

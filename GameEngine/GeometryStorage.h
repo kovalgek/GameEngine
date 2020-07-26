@@ -37,5 +37,7 @@ private:
 
 	float getHillsHeight(float x, float z)const;
 	DirectX::XMFLOAT3 getHillsNormal(float x, float z)const;
+
+	void buildSkullGeometry();
 };
 

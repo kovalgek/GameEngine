@@ -17,6 +17,7 @@ void MaterialsDataProvider::buildMaterials()
 	materials["grass"] = grassMaterial();
 	materials["water"] = waterMaterial();
 	materials["wirefence"] = wirefenceMaterial();
+	materials["skullMat"] = skullMaterial();
 }
 
 std::unique_ptr<Material> MaterialsDataProvider::grassMaterial()
@@ -53,6 +54,18 @@ std::unique_ptr<Material> MaterialsDataProvider::wirefenceMaterial()
 	wirefence->FresnelR0 = XMFLOAT3(0.1f, 0.1f, 0.1f);
 	wirefence->Roughness = 0.25f;
 	return wirefence;
+}
+
+std::unique_ptr<Material> MaterialsDataProvider::skullMaterial()
+{
+	auto skullMat = std::make_unique<Material>();
+	skullMat->Name = "skullMat";
+	skullMat->MatCBIndex = 3;
+	skullMat->DiffuseSrvHeapIndex = 2;
+	skullMat->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	skullMat->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+	skullMat->Roughness = 0.3f;
+	return skullMat;
 }
 
 Material* MaterialsDataProvider::getMaterialForName(std::string name)
