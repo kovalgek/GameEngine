@@ -24,6 +24,9 @@ public:
 	MeshGeometry *getGeometry(const std::string name);
 	Waves* getWaves() { return waves.get(); }
 
+	std::unordered_map<std::string, std::vector<std::string>> getGeometryNames();
+
+
 private:
 	ID3D12Device *const device;
 	ID3D12GraphicsCommandList *const commandList;

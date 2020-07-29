@@ -7,6 +7,9 @@ struct ID3D12Device;
 struct ID3D12DescriptorHeap;
 class TexturesProvider;
 
+
+
+
 #pragma once
 class SrvHeapProvider
 {

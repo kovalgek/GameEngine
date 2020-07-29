@@ -1,14 +1,33 @@
 #include <windows.h>
 #include <DirectXMath.h>
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include "CameraViewModel.h"
 
 class Application;
 class SrvHeapProvider;
 class MainPassDataProvider;
 class ObjectsDataProvider;
+class GeometryStorage;
+class MaterialsDataProvider;
+struct PrimitiveModel;
 
-struct CameraModel
+struct PrimitiveViewModel
 {
+	std::string currentMesh;
+	std::string currentSubMesh;
+	std::string currentMaterial;
+	float position[3];
+	float scaling[3];
+	float texture[3];
+};
 
+struct LightsViewModel
+{
+	float ambient[4];
+	float direction[3];
+	float strength[3];
 };
 
 #pragma once
@@ -20,20 +39,31 @@ public:
 		SrvHeapProvider* texturesController,
 		HWND mainWindowHandle,
 		MainPassDataProvider *mainPassDataProvider,
-		ObjectsDataProvider *objectsDataProvider);
+		ObjectsDataProvider *objectsDataProvider,
+		GeometryStorage *geometryStorage,
+		MaterialsDataProvider * materialsDataProvider);
 	void present();
 private:
 	Application* application;
 	MainPassDataProvider* mainPassDataProvider;
 	ObjectsDataProvider* objectsDataProvider;
+	GeometryStorage* geometryStorage;
 
-	float theta = DirectX::XM_PI;
-	float phi = DirectX::XM_PIDIV4;
-	float radius = 70;
+	CameraViewModel cameraViewModel;
+	PrimitiveViewModel primitiveViewModel;
+	LightsViewModel lightsViewModel;
 
-	float hillsCoords[3] = { 0.0f, 0.0f, 0.0f };
-	float boxCoords[3] = { 0.0f, 0.0f, 0.0f };
-	float sphereCoords[3] = { 0.0f, 0.0f, 0.0f };
+	std::unordered_map<std::string, std::vector<std::string>> meshes;
+	std::vector<std::string> materials;
 
+	void createCameraView();
+	void createPrimitiveFactoryView();
+	void createLightView();
+
+	void createMeshCombo();
+	void createSubmeshCombo();
+	void createMaterialCombo();
+
+	PrimitiveModel convertModel(PrimitiveViewModel primitiveViewModel);
 };
 

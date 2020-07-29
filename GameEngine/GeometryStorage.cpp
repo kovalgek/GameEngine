@@ -231,6 +231,27 @@ MeshGeometry *GeometryStorage::getGeometry(const std::string name)
 	return geometries[name].get();
 }
 
+std::unordered_map<std::string, std::vector<std::string>> GeometryStorage::getGeometryNames()
+{
+	std::unordered_map<std::string, std::vector<std::string>> names;
+
+	for (auto& x : geometries)
+	{
+		std::string geomertyName = x.first;
+		auto &meshGeomerty = x.second;
+		auto drawArgs = meshGeomerty->DrawArgs;
+		std::vector<std::string> args;
+
+		for (auto& drawArg : drawArgs)
+		{
+			args.push_back(drawArg.first);
+		}
+
+		names[geomertyName] = args;
+	}
+	return names;
+}
+
 void GeometryStorage::buildSkullGeometry()
 {
 	std::ifstream fin("Models/skull.txt");

@@ -18,7 +18,7 @@ ObjectsDataProvider::ObjectsDataProvider(
 	materialsDataProvider { materialsDataProvider },
 	dynamicVerticesProvider { dynamicVerticesProvider }
 {
-	buildRenderItemsForLandAndWaves();
+	//buildRenderItemsForLandAndWaves();
 
 	//createPrimitive("hills", "grass", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
 	//createPrimitive("box", "wirefence", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
@@ -27,7 +27,8 @@ ObjectsDataProvider::ObjectsDataProvider(
 ObjectsDataProvider::~ObjectsDataProvider() = default;
 
 void ObjectsDataProvider::createPrimitive(
-	std::string name,
+	std::string meshName,
+	std::string subMeshName,
 	std::string material,
 	std::vector<float> position,
 	std::vector<float> scaling,
@@ -39,11 +40,29 @@ void ObjectsDataProvider::createPrimitive(
 
 	item->ObjCBIndex = itemIndex++;
 	item->Mat = materialsDataProvider->getMaterialForName(material);
-	item->Geo = this->geometryStorage->getGeometry("shapeGeo");
+	item->Geo = this->geometryStorage->getGeometry(meshName);
 	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	item->IndexCount = item->Geo->DrawArgs[name].IndexCount;
-	item->StartIndexLocation = item->Geo->DrawArgs[name].StartIndexLocation;
-	item->BaseVertexLocation = item->Geo->DrawArgs[name].BaseVertexLocation;
+	item->IndexCount = item->Geo->DrawArgs[subMeshName].IndexCount;
+	item->StartIndexLocation = item->Geo->DrawArgs[subMeshName].StartIndexLocation;
+	item->BaseVertexLocation = item->Geo->DrawArgs[subMeshName].BaseVertexLocation;
+
+	ritemLayer[(int)RenderLayer::Opaque].push_back(item.get());
+	allRitems.push_back(std::move(item));
+}
+
+void ObjectsDataProvider::createPrimitive(PrimitiveModel primitiveModel)
+{
+	auto item = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&item->World, XMMatrixScaling(primitiveModel.scaling[0], primitiveModel.scaling[1], primitiveModel.scaling[2]) * XMMatrixTranslation(primitiveModel.position[0], primitiveModel.position[1], primitiveModel.position[2]));
+	XMStoreFloat4x4(&item->TexTransform, XMMatrixScaling(primitiveModel.texture[0], primitiveModel.texture[1], primitiveModel.texture[2]));
+
+	item->ObjCBIndex = itemIndex++;
+	item->Mat = materialsDataProvider->getMaterialForName(primitiveModel.material);
+	item->Geo = this->geometryStorage->getGeometry(primitiveModel.mesh);
+	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	item->IndexCount = item->Geo->DrawArgs[primitiveModel.submesh].IndexCount;
+	item->StartIndexLocation = item->Geo->DrawArgs[primitiveModel.submesh].StartIndexLocation;
+	item->BaseVertexLocation = item->Geo->DrawArgs[primitiveModel.submesh].BaseVertexLocation;
 
 	ritemLayer[(int)RenderLayer::Opaque].push_back(item.get());
 	allRitems.push_back(std::move(item));

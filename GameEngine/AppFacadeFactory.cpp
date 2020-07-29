@@ -39,6 +39,8 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		application->getCommandList()
 		);
 
+	auto geometryStorageRaw = geometryStorage.get();
+
 	auto waves = geometryStorage->getWaves();
 
 	auto materialsDataProvider = std::make_unique<MaterialsDataProvider>();
@@ -58,7 +60,14 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 	auto srvHeapProvider = std::make_unique<SrvHeapProvider>(application->getDevice(), std::move(texturesProvider));
 
 
-	auto imGuiController = std::make_unique<ImGuiController>(application.get(), srvHeapProvider.get(), mainWindowHandle, mainPassDataProvider.get(), objectsDataProvider.get());
+	auto imGuiController = std::make_unique<ImGuiController>(
+		application.get(),
+		srvHeapProvider.get(),
+		mainWindowHandle,
+		mainPassDataProvider.get(),
+		objectsDataProvider.get(),
+		geometryStorageRaw,
+		materialsDataProvider.get());
 
 	// Execute the initialization commands.
 	ThrowIfFailed(application->getCommandList()->Close());

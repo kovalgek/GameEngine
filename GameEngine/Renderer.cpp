@@ -76,6 +76,7 @@ void Renderer::draw(const GameTimer& gameTimer)
 
 	auto cmdListAlloc = frameResourceController->getCurrentFrameResource()->CmdListAlloc;
 
+
 	// Reuse the memory associated with command recording.
 	// We can only reset when the associated command lists have finished execution on the GPU.
 	ThrowIfFailed(cmdListAlloc->Reset());
@@ -123,22 +124,14 @@ void Renderer::draw(const GameTimer& gameTimer)
 	auto allRitems = objectsDataProvider->renderItemsForLayer(RenderLayer::Opaque);
 	drawRenderItems(commandList, allRitems);
 
+	imGuiController->present();
+
 	// Indicate a state transition on the resource usage.
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 
-	//// Start the Dear ImGui frame
-	//ImGui_ImplDX12_NewFrame();
-	//ImGui_ImplWin32_NewFrame();
-	//ImGui::NewFrame();
 
-	//ImGui::Begin("Hello, world!");
-	//ImGui::End();
-	//ImGui::Render();
-	//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
-
-	imGuiController->present();
 
 	// Done recording commands.
 	ThrowIfFailed(commandList->Close());

@@ -2,28 +2,38 @@
 
 using namespace DirectX;
 
+MainPassDataProvider::MainPassDataProvider()
+{
+	mainPassData.sunTheta = 1.25f * DirectX::XM_PI;
+	mainPassData.sunPhi = DirectX::XM_PIDIV4;
+}
+
 void MainPassDataProvider::onResize(int clientWidth, int clientHeight)
 {
 	// The window resized, so update the aspect ratio and recompute the projection matrix.
 	float aspectRatio = static_cast<float>(clientWidth) / clientHeight;
 	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, aspectRatio, 1.0f, 1000.0f);
-	XMStoreFloat4x4(&mProj, P);
+	XMStoreFloat4x4(&mainPassData.mProj, P);
 }
 
 void MainPassDataProvider::updateCamera()
 {
 	// Convert Spherical to Cartesian coordinates.
-	eyePosition.x = mRadius * sinf(mPhi) * cosf(mTheta);
-	eyePosition.z = mRadius * sinf(mPhi) * sinf(mTheta);
-	eyePosition.y = mRadius * cosf(mPhi);
+	mainPassData.eyePosition.x = cameraModel.radius * sinf(cameraModel.phi) * cosf(cameraModel.theta);
+	mainPassData.eyePosition.z = cameraModel.radius * sinf(cameraModel.phi) * sinf(cameraModel.theta);
+	mainPassData.eyePosition.y = cameraModel.radius * cosf(cameraModel.phi);
 
 	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(eyePosition.x, eyePosition.y, eyePosition.z, 1.0f);
+	XMVECTOR pos = XMVectorSet(mainPassData.eyePosition.x, mainPassData.eyePosition.y, mainPassData.eyePosition.z, 1.0f);
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, view);
+	XMStoreFloat4x4(&mainPassData.mView, view);
+
+	mainPassData.ambientLight = lightModel.ambientLight;
+	mainPassData.direction = lightModel.direction;
+	mainPassData.strength = lightModel.strength;
 }
 
 void MainPassDataProvider::onMouseDown(int x, int y)
@@ -32,11 +42,16 @@ void MainPassDataProvider::onMouseDown(int x, int y)
 	mLastMousePos.y = y;
 }
 
-void MainPassDataProvider::updateData(float theta, float phi, float radius)
+void MainPassDataProvider::updateData(CameraModel cameraModel)
 {
-	mTheta = theta;
-	mPhi = MathHelper::Clamp(phi, 0.1f, MathHelper::Pi - 0.1f);
-	mRadius = MathHelper::Clamp(radius, 5.0f, 150.0f);
+	this->cameraModel.theta = cameraModel.theta;
+	this->cameraModel.phi = MathHelper::Clamp(cameraModel.phi, 0.1f, MathHelper::Pi - 0.1f);
+	this->cameraModel.radius = MathHelper::Clamp(cameraModel.radius, 5.0f, 150.0f);
+}
+
+void MainPassDataProvider::updateLight(LightModel lightModel)
+{
+	this->lightModel = lightModel;
 }
 
 void MainPassDataProvider::onMouseMove(int btnState, int x, int y)
@@ -48,11 +63,11 @@ void MainPassDataProvider::onMouseMove(int btnState, int x, int y)
 		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
 
 		// Update angles based on input to orbit camera around box.
-		mTheta += dx;
-		mPhi += dy;
+		cameraModel.theta += dx;
+		cameraModel.phi += dy;
 
 		// Restrict the angle mPhi.
-		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
+		cameraModel.phi = MathHelper::Clamp(cameraModel.phi, 0.1f, MathHelper::Pi - 0.1f);
 	}
 	else 
 		if (btnState == 1)
@@ -62,17 +77,12 @@ void MainPassDataProvider::onMouseMove(int btnState, int x, int y)
 		float dy = 0.2f * static_cast<float>(y - mLastMousePos.y);
 
 		// Update the camera radius based on input.
-		mRadius += dx - dy;
+		cameraModel.radius += dx - dy;
 
 		// Restrict the radius.
-		mRadius = MathHelper::Clamp(mRadius, 5.0f, 150.0f);
+		cameraModel.radius = MathHelper::Clamp(cameraModel.radius, 5.0f, 150.0f);
 	}
 
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-}
-
-MainPassData MainPassDataProvider::getMainPassData()
-{
-	return MainPassData{ mView , mProj, eyePosition, mSunTheta, mSunPhi };
 }

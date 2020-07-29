@@ -11,6 +11,8 @@ public:
 	MaterialsDataProvider();
 	~MaterialsDataProvider();
 	std::vector <Material*> getMaterials();
+	std::vector <std::string> getMaterialNames();
+
 	Material *getMaterialForName(std::string name);
 private:
 	void buildMaterials();

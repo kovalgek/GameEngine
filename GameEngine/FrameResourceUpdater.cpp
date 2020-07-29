@@ -99,8 +99,8 @@ PassConstants FrameResourceUpdater::passConstantsFromMainPassData(MainPassData m
 	mainPassCB.FarZ = 1000.0f;
 	mainPassCB.TotalTime = gameTimer.TotalTime();
 	mainPassCB.DeltaTime = gameTimer.DeltaTime();
-	mainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	mainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	mainPassCB.AmbientLight = { mainPassData.ambientLight.x, mainPassData.ambientLight.y, mainPassData.ambientLight.z, mainPassData.ambientLight.w }; //{ 0.25f, 0.25f, 0.35f, 1.0f };
+	mainPassCB.Lights[0].Direction = { mainPassData.direction.x, mainPassData.direction.y, mainPassData.direction.z }; // { 0.57735f, -0.57735f, 0.57735f };
 	mainPassCB.Lights[0].Strength = { 0.9f, 0.9f, 0.9f };
 	mainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
 	mainPassCB.Lights[1].Strength = { 0.5f, 0.5f, 0.5f };

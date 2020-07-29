@@ -43,6 +43,9 @@
     <Filter Include="Source Files\DynamicVertex">
       <UniqueIdentifier>{e2b5ed57-3db0-4ded-8f83-951b4a1b3b5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{8cfb4c9b-0e77-4abf-9ae8-36058e6e6dcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -162,9 +165,6 @@
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>Source Files\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiController.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="SrvHeapProvider.h">
       <Filter>Source Files\Textures</Filter>
     </ClInclude>
@@ -179,6 +179,12 @@
     </ClInclude>
     <ClInclude Include="DynamicVerticesProvider.h">
       <Filter>Source Files\DynamicVertex</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiController.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraViewModel.h">
+      <Filter>Source Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -254,9 +260,6 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>Source Files\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SrvHeapProvider.cpp">
       <Filter>Source Files\Textures</Filter>
     </ClCompile>
@@ -268,6 +271,9 @@
     </ClCompile>
     <ClCompile Include="DynamicVerticesProvider.cpp">
       <Filter>Source Files\DynamicVertex</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiController.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

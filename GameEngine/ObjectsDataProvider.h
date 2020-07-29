@@ -13,6 +13,16 @@ enum class RenderLayer : int
 	Count
 };
 
+struct PrimitiveModel
+{
+	std::string mesh;
+	std::string submesh;
+	std::string  material;
+	std::vector<float> position;
+	std::vector<float> scaling;
+	std::vector<float> texture;
+};
+
 #pragma once
 class ObjectsDataProvider
 {
@@ -30,12 +40,15 @@ public:
 
 	
 	void createPrimitive(
-		std::string name,
+		std::string meshName,
+		std::string subMeshName,
 		std::string material,
 		std::vector<float> position,
 		std::vector<float> scaling,
 		std::vector<float> textureTransform
 	);
+
+	void createPrimitive(PrimitiveModel primitiveModel);
 
 private:
 	std::unique_ptr <GeometryStorage> geometryStorage;

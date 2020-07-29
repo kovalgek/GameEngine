@@ -2,6 +2,20 @@
 #include "MainPassData.h"
 #include <DirectXMath.h>
 
+struct CameraModel
+{
+	float theta = DirectX::XM_PI;
+	float phi = DirectX::XM_PIDIV4;
+	float radius = 70;
+};
+
+struct LightModel
+{
+	DirectX::XMFLOAT4 ambientLight;
+	DirectX::XMFLOAT3 direction;
+	DirectX::XMFLOAT3 strength;
+};
+
 #pragma once
 class MainPassDataProvider
 {
@@ -10,22 +24,24 @@ public:
 	void updateCamera();
 	void onMouseDown(int x, int y);
 	void onMouseMove(int btnState, int x, int y);
-	void updateData(float theta, float phi, float radius);
+	void updateData(CameraModel cameraModel);
 
-	MainPassData getMainPassData();
+	void updateLight(LightModel lightModel);
+
+
+	MainPassData const getMainPassData() { return mainPassData; }
+
+	MainPassDataProvider();
 
 private:
-	DirectX::XMFLOAT3 eyePosition = { 0.0f, 0.0f, 0.0f };
-	DirectX::XMFLOAT4X4 mView = MathHelper::Identity4x4();
-	DirectX::XMFLOAT4X4 mProj = MathHelper::Identity4x4();
-
-	float mTheta = 1.5f * DirectX::XM_PI;
-	float mPhi = 0.2f * DirectX::XM_PI;
-	float mRadius = 15.0f;
+	//float mTheta = 1.5f * DirectX::XM_PI;
+	//float mPhi = 0.2f * DirectX::XM_PI;
+	//float mRadius = 15.0f;
 
 	POINT mLastMousePos;
 
-	float mSunTheta = 1.25f * DirectX::XM_PI;
-	float mSunPhi = DirectX::XM_PIDIV4;
+	CameraModel cameraModel;
+	LightModel lightModel;
+	MainPassData mainPassData;
 };
 

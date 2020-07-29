@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="AppFacade.h" />
     <ClInclude Include="AppFacadeFactory.h" />
+    <ClInclude Include="CameraViewModel.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DynamicVerticesProvider.h" />

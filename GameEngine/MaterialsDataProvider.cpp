@@ -61,7 +61,7 @@ std::unique_ptr<Material> MaterialsDataProvider::skullMaterial()
 	auto skullMat = std::make_unique<Material>();
 	skullMat->Name = "skullMat";
 	skullMat->MatCBIndex = 3;
-	skullMat->DiffuseSrvHeapIndex = 2;
+	skullMat->DiffuseSrvHeapIndex = 3;
 	skullMat->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	skullMat->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	skullMat->Roughness = 0.3f;
@@ -79,6 +79,16 @@ std::vector<Material*> MaterialsDataProvider::getMaterials()
 	for (auto& material : materials)
 	{
 		result.push_back(material.second.get());
+	}
+	return result;
+}
+
+std::vector <std::string> MaterialsDataProvider::getMaterialNames()
+{
+	std::vector<std::string> result;
+	for (auto& material : materials)
+	{
+		result.push_back(material.first);
 	}
 	return result;
 }
