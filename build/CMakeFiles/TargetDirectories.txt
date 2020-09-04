@@ -1,0 +1,4 @@
+C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/CMakeFiles/imgui.dir
+C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/CMakeFiles/KovalgekGameEngine.dir
+C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/CMakeFiles/ZERO_CHECK.dir

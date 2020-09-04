@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Application.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Renderer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MainPassDataProvider.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MaterialsDataProvider.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ObjectsDataProvider.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\DynamicVerticesProvider.cpp">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Waves.cpp">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\FrameResource.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\FrameResourceController.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\FrameResourceUpdater.cpp">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\GeometryGenerator.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\GeometryStorage.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ImGuiController.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\DDSTextureLoader.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\GameTimer.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MathHelper.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\d3dUtil.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\PipleneStateData.cpp">
+      <Filter>Source Files\ShaderHelpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\SrvHeapProvider.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\TexturesProvider.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\TextureStaticSamplers.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\AppFacade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\AppFacadeFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MainWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Application.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Renderer.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MainPassData.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MainPassDataProvider.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Material.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MaterialsDataProvider.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\RenderItem.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ObjectsDataProvider.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\DynamicVertices.h">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\DynamicVerticesProvider.h">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Waves.h">
+      <Filter>Source Files\DynamicVertex</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\FrameResource.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\FrameResourceController.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\FrameResourceUpdater.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MaterialConstants.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ObjectConstants.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\PassConstants.h">
+      <Filter>Source Files\FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Vertex.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\GeometryGenerator.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\GeometryStorage.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\CameraViewModel.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ImGuiController.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\DDSTextureLoader.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\GameTimer.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MathHelper.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\UploadBuffer.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\d3dUtil.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\d3dx12.h">
+      <Filter>Source Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\PipleneStateData.h">
+      <Filter>Source Files\ShaderHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\SrvHeapProvider.h">
+      <Filter>Source Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Texture.h">
+      <Filter>Source Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\TexturesProvider.h">
+      <Filter>Source Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\TextureStaticSamplers.h">
+      <Filter>Source Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\AppFacade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\AppFacadeFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MyBoxDemo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\shaders\Default.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\shaders\LightingUtil.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{CAD77156-B774-3434-931A-408B7BC0B283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{9DBD344E-17D7-3910-B8BD-5DE37AC5F18C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{FB1246CB-E3C3-335E-A9CD-733D2D1FC238}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{C2F23E51-89CB-3DA2-8805-79B36ED67CAC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{A56A906E-E397-343D-A943-51D11B428E86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DataProviders">
+      <UniqueIdentifier>{1BF89CBB-E3ED-3F55-8A17-12998FDF9FCB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DynamicVertex">
+      <UniqueIdentifier>{8E1ECFE5-86AF-3F5D-A868-D9C882759E0F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameResources">
+      <UniqueIdentifier>{552CDA03-8F5C-39E2-9014-8F1ED8CBEED0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{13EF6408-DD6D-3C87-9210-E66B6E74BC5E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{38C0CF27-A512-3658-9292-31901E0A3A39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Helpers">
+      <UniqueIdentifier>{397CF13C-3E1E-3D34-9CFD-F5A0FA4A7A68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ShaderHelpers">
+      <UniqueIdentifier>{B6CE6407-765E-38D4-90F4-6B0A0321E240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Textures">
+      <UniqueIdentifier>{2755888D-B07C-3F4D-A45A-1A0C1964DC27}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
