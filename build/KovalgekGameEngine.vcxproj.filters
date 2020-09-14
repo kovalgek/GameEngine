@@ -37,7 +37,7 @@
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\GeometryStorage.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ImGuiController.cpp">
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ViewController.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\DDSTextureLoader.cpp">
@@ -99,6 +99,12 @@
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ObjectsDataProvider.h">
       <Filter>Source Files\DataProviders</Filter>
     </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MainPassModelsListener.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\MainPassModels.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\DynamicVertices.h">
       <Filter>Source Files\DynamicVertex</Filter>
     </ClInclude>
@@ -135,10 +141,10 @@
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\GeometryStorage.h">
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\CameraViewModel.h">
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ViewModels.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ImGuiController.h">
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\ViewController.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\app\src\DDSTextureLoader.h">

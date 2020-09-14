@@ -7,7 +7,7 @@
 #include "FrameResourceUpdater.h"
 #include "MaterialsDataProvider.h"
 #include "DynamicVerticesProvider.h"
-#include "ImGuiController.h"
+#include "ViewController.h"
 
 AppFacade::AppFacade(
 	std::unique_ptr<Application> appContext,
@@ -17,7 +17,7 @@ AppFacade::AppFacade(
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
 	std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider,
-	std::unique_ptr<ImGuiController> imGuiController
+	std::unique_ptr<ViewController> viewController
 ) :
 	appContext { std::move(appContext) },
 	renderer{ std::move(renderer) },
@@ -26,7 +26,7 @@ AppFacade::AppFacade(
 	materialsDataProvider { std::move(materialsDataProvider) },
 	frameResourceUpdater { std::move(frameResourceUpdater) },
 	dynamicVerticesProvider { std::move(dynamicVerticesProvider) },
-	imGuiController { std::move(imGuiController) }
+	viewController{ std::move(viewController) }
 {
 
 }
@@ -35,22 +35,21 @@ AppFacade::~AppFacade() = default;
 
 void AppFacade::update(const GameTimer& gameTimer)
 {
-	mainPassDataProvider->updateCamera();
 	frameResourceUpdater->update(gameTimer);
 	dynamicVerticesProvider->update(gameTimer);
-	imGuiController->update();
+	viewController->update();
 	renderer->draw(gameTimer);
 }
 
 void AppFacade::onResize(int clientWidth, int clientHeight)
 {
 	appContext->onResize(clientWidth, clientHeight);
-	mainPassDataProvider->onResize(clientWidth, clientHeight);
+	viewController->onWindowResize(clientWidth, clientHeight);
 }
 
 void AppFacade::onMouseDown(int x, int y)
 {
-	mainPassDataProvider->onMouseDown(x, y);
+	viewController->onMouseDown(x, y);
 }
 
 void AppFacade::onMouseUp(int x, int y)
@@ -59,5 +58,5 @@ void AppFacade::onMouseUp(int x, int y)
 
 void AppFacade::onMouseMove(int btnState, int x, int y)
 {
-	mainPassDataProvider->onMouseMove(btnState, x, y);
+	viewController->onMouseMove(btnState, x, y);
 }

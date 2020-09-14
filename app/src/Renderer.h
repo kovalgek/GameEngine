@@ -9,7 +9,7 @@ class FrameResourceController;
 class ObjectsDataProvider;
 class PipleneStateData;
 class SrvHeapProvider;
-class ImGuiController;
+class ViewController;
 struct RenderItem;
 struct FrameResource;
 struct ID3D12Device;
@@ -29,7 +29,7 @@ public:
 		FrameResourceController *frameResourceController,
 		ObjectsDataProvider *objectsDataProvider,
 		std::unique_ptr <SrvHeapProvider> srvHeapProvider,
-		ImGuiController *imGuiController);
+		ViewController * viewController);
 
 	~Renderer();
 	void draw(const GameTimer& gameTimer);
@@ -46,7 +46,7 @@ private:
 	std::unique_ptr<PipleneStateData> pipleneStateData;
 	ObjectsDataProvider *objectsDataProvider;
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider;
-	ImGuiController *imGuiController;
+	ViewController * viewController;
 
 	void onKeyboardInput(const GameTimer& gameTimer);
 	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);

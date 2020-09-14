@@ -1,4 +1,4 @@
-#include "ImGuiController.h"
+#include "ViewController.h"
 #include "Application.h"
 #include "SrvHeapProvider.h"
 #include "MainPassDataProvider.h"
@@ -16,23 +16,26 @@
 
 using namespace DirectX;
 
-ImGuiController::ImGuiController(
+ViewController::ViewController(
 	HWND                      mainWindowHandle,
 	ID3D12Device              *device,
 	ID3D12GraphicsCommandList *commandList,
 	SrvHeapProvider           *srvHeapProvider,
-	MainPassDataProvider      *mainPassDataProvider,
+	MainPassModelsListener    *mainPassModelsListener,
 	ObjectsDataProvider       *objectsDataProvider,
 	MaterialsDataProvider     *materialsDataProvider,
 	GeometryStorage           *geometryStorage) :
 
 	device { device },
 	commandList { commandList },
-	mainPassDataProvider { mainPassDataProvider },
+	mainPassModelsListener{ mainPassModelsListener },
 	objectsDataProvider { objectsDataProvider },
 	materialsDataProvider { materialsDataProvider },
 	geometryStorage { geometryStorage }
 {
+	initPrimitiveViewModel(primitiveViewModel);
+	initLightsViewModel(lightsViewModel);
+
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -46,11 +49,76 @@ ImGuiController::ImGuiController(
 		srvHeapProvider->getSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
 	ImGui::StyleColorsDark();
 
-	initPrimitiveViewModel(primitiveViewModel);
 }
 
-void ImGuiController::initPrimitiveViewModel(PrimitiveViewModel& primitiveViewModel)
+void ViewController::onWindowResize(int clientWidth, int clientHeight)
 {
+	ClientSizeModel clientSizeModel;
+	clientSizeModel.clientWidth = clientWidth;
+	clientSizeModel.clientHeight = clientHeight;
+	mainPassModelsListener->onClientSizeUpdated(clientSizeModel);
+}
+
+void ViewController::onMouseDown(int x, int y)
+{
+	lastMousePosition.x = x;
+	lastMousePosition.y = y;
+}
+
+void ViewController::onMouseMove(int btnState, int x, int y)
+{
+	if (btnState == 0)
+	{
+		// Make each pixel correspond to a quarter of a degree.
+		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - lastMousePosition.x));
+		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - lastMousePosition.y));
+
+		// Update angles based on input to orbit camera around box.
+		cameraViewModel.theta += dx;
+		cameraViewModel.phi += dy;
+
+		// Restrict the angle mPhi.
+		cameraViewModel.phi = MathHelper::Clamp(cameraViewModel.phi, 0.1f, MathHelper::Pi - 0.1f);
+	}
+	else if (btnState == 1)
+	{
+		// Make each pixel correspond to 0.2 unit in the scene.
+		float dx = 0.2f * static_cast<float>(x - lastMousePosition.x);
+		float dy = 0.2f * static_cast<float>(y - lastMousePosition.y);
+
+		// Update the camera radius based on input.
+		cameraViewModel.radius += dx - dy;
+
+		// Restrict the radius.
+		cameraViewModel.radius = MathHelper::Clamp(cameraViewModel.radius, 5.0f, 150.0f);
+	}
+
+	lastMousePosition.x = x;
+	lastMousePosition.y = y;
+}
+
+void ViewController::initLightsViewModel(LightsViewModel& lightsViewModel)
+{
+	lightsViewModel.ambient[0] = 0;
+	lightsViewModel.ambient[1] = 0;
+	lightsViewModel.ambient[2] = 0;
+	lightsViewModel.ambient[3] = 0;
+
+	lightsViewModel.direction[0] = 0;
+	lightsViewModel.direction[1] = 0;
+	lightsViewModel.direction[2] = 0;
+
+	lightsViewModel.strength[0] = 0;
+	lightsViewModel.strength[1] = 0;
+	lightsViewModel.strength[2] = 0;
+}
+
+void ViewController::initPrimitiveViewModel(PrimitiveViewModel& primitiveViewModel)
+{
+	primitiveViewModel.position[0] = 0.0f;
+	primitiveViewModel.position[1] = 0.0f;
+	primitiveViewModel.position[2] = 0.0f;
+
 	primitiveViewModel.scaling[0] = 1.0f;
 	primitiveViewModel.scaling[1] = 1.0f;
 	primitiveViewModel.scaling[2] = 1.0f;
@@ -60,16 +128,26 @@ void ImGuiController::initPrimitiveViewModel(PrimitiveViewModel& primitiveViewMo
 	primitiveViewModel.texture[2] = 1.0f;
 
 	meshes = geometryStorage->getGeometryNames();
-	primitiveViewModel.currentMesh = meshes.begin()->first;
+	if (meshes.size() != 0)
+	{
+		auto firstMesh = meshes.begin();
+		primitiveViewModel.currentMesh = firstMesh->first;
 
-	auto submeshes = meshes.begin()->second;
-	primitiveViewModel.currentSubMesh = submeshes[0];
+		auto submeshes = firstMesh->second;
+		if (submeshes.size() != 0)
+		{
+			primitiveViewModel.currentSubMesh = submeshes[0];
+		}
+	}
 
 	materials = materialsDataProvider->getMaterialNames();
-	primitiveViewModel.currentMaterial = materials[0];
+	if (materials.size() != 0)
+	{
+		primitiveViewModel.currentMaterial = materials[0];
+	}
 }
 
-void ImGuiController::present()
+void ViewController::present()
 {
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -83,16 +161,16 @@ void ImGuiController::present()
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 }
 
-void ImGuiController::update()
+void ViewController::update()
 {
 	CameraModel model = cameraModel(cameraViewModel);
-	mainPassDataProvider->updateCameraModel(model);
+	mainPassModelsListener->onCameraModelUpdated(model);
 
 	LightModel updatedLightModel = lightModel(lightsViewModel);
-	mainPassDataProvider->updateLight(updatedLightModel);
+	mainPassModelsListener->onLightModelUpdated(updatedLightModel);
 }
 
-void ImGuiController::createCameraView()
+void ViewController::createCameraView()
 {
 	ImGui::Begin("Camera");
 	ImGui::SliderFloat("theta", &cameraViewModel.theta, 0.0f, XM_2PI);
@@ -101,7 +179,7 @@ void ImGuiController::createCameraView()
 	ImGui::End();
 }
 
-void ImGuiController::createLightView()
+void ViewController::createLightView()
 {
 	ImGui::Begin("Light");
 	ImGui::InputFloat4("ambient", lightsViewModel.ambient);
@@ -109,7 +187,7 @@ void ImGuiController::createLightView()
 	ImGui::End();
 }
 
-void ImGuiController::createPrimitiveFactoryView()
+void ViewController::createPrimitiveFactoryView()
 {
 	ImGui::Begin("Factory");
 
@@ -130,7 +208,7 @@ void ImGuiController::createPrimitiveFactoryView()
 	ImGui::End();
 }
 
-void ImGuiController::createMeshCombo()
+void ViewController::createMeshCombo()
 {
 	if (ImGui::BeginCombo("mesh", primitiveViewModel.currentMesh.c_str()))
 	{
@@ -151,7 +229,7 @@ void ImGuiController::createMeshCombo()
 	}
 }
 
-void ImGuiController::createSubmeshCombo()
+void ViewController::createSubmeshCombo()
 {
 	if (ImGui::BeginCombo("submesh", primitiveViewModel.currentSubMesh.c_str()))
 	{
@@ -171,7 +249,7 @@ void ImGuiController::createSubmeshCombo()
 	}
 }
 
-void ImGuiController::createMaterialCombo()
+void ViewController::createMaterialCombo()
 {
 	if (ImGui::BeginCombo("materials", primitiveViewModel.currentMaterial.c_str()))
 	{
@@ -191,7 +269,7 @@ void ImGuiController::createMaterialCombo()
 	}
 }
 
-CameraModel ImGuiController::cameraModel(CameraViewModel cameraViewModel)
+CameraModel ViewController::cameraModel(CameraViewModel cameraViewModel)
 {
 	CameraModel cameraModel;
 
@@ -202,7 +280,7 @@ CameraModel ImGuiController::cameraModel(CameraViewModel cameraViewModel)
 	return cameraModel;
 }
 
-LightModel ImGuiController::lightModel(LightsViewModel lightsViewModel)
+LightModel ViewController::lightModel(LightsViewModel lightsViewModel)
 {
 	LightModel lightModel;
 
@@ -212,7 +290,7 @@ LightModel ImGuiController::lightModel(LightsViewModel lightsViewModel)
 	return lightModel;
 }
 
-PrimitiveModel ImGuiController::primitiveModel(PrimitiveViewModel primitiveViewModel)
+PrimitiveModel ViewController::primitiveModel(PrimitiveViewModel primitiveViewModel)
 {
 	PrimitiveModel primitiveModel;
 

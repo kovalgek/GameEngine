@@ -14,7 +14,7 @@
 #include "SrvHeapProvider.h"
 #include "TexturesProvider.h"
 #include "d3dUtil.h"
-#include "ImGuiController.h"
+#include "ViewController.h"
 
 std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 {
@@ -60,7 +60,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 	auto srvHeapProvider = std::make_unique<SrvHeapProvider>(application->getDevice(), std::move(texturesProvider));
 
 
-	auto imGuiController = std::make_unique<ImGuiController>(
+	auto viewController = std::make_unique<ViewController>(
 		mainWindowHandle,
 		application->getDevice(),
 		application->getCommandList(),		
@@ -86,7 +86,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		frameResourceController.get(),
 		objectsDataProvider.get(),
 		std::move(srvHeapProvider),
-		imGuiController.get());
+		viewController.get());
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
 		std::move(frameResourceController),
@@ -104,7 +104,7 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		std::move(materialsDataProvider),
 		std::move(frameResourceUpdater),
 		std::move(dynamicVerticesProvider),
-		std::move(imGuiController));
+		std::move(viewController));
 
 	return std::move(appFacade);
 }

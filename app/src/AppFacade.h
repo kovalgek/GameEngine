@@ -8,7 +8,7 @@ class FrameResourceUpdater;
 class ObjectsDataProvider;
 class MaterialsDataProvider;
 class DynamicVerticesProvider;
-class ImGuiController;
+class ViewController;
 
 #pragma once
 class AppFacade
@@ -22,7 +22,7 @@ public:
 		std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
 		std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
 		std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider,
-		std::unique_ptr<ImGuiController> imGuiController);
+		std::unique_ptr<ViewController> viewController);
 	~AppFacade();
 	void update(const GameTimer& gameTimer);
 	void onResize(int clientWidth, int clientHeight);
@@ -38,6 +38,6 @@ private:
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider;
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater;
 	std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider;
-	std::unique_ptr<ImGuiController> imGuiController;
+	std::unique_ptr<ViewController> viewController;
 };
 

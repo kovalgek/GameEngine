@@ -11,7 +11,7 @@
 #include "Material.h"
 #include "FrameResource.h"
 #include "SrvHeapProvider.h"
-#include "ImGuiController.h"
+#include "ViewController.h"
 
 #include <DirectXColors.h>
 #include <DirectXPackedVector.h>
@@ -29,14 +29,14 @@ Renderer::Renderer(
 	FrameResourceController* frameResourceController,
 	ObjectsDataProvider* objectsDataProvider,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
-	ImGuiController *imGuiController) :
+	ViewController * viewController) :
 
 	appContext{ appContext },
 	pipleneStateData { std::move(pipleneStateData) },
 	frameResourceController { frameResourceController },
 	objectsDataProvider { objectsDataProvider },
 	srvHeapProvider{ std::move(srvHeapProvider) },
-	imGuiController { imGuiController },
+	viewController{ viewController },
 
 	device { appContext->getDevice() },
 	commandQueue { appContext->getCommandQueue() },
@@ -125,8 +125,8 @@ void Renderer::draw(const GameTimer& gameTimer)
 	auto allRitems = objectsDataProvider->renderItemsForLayer(RenderLayer::Opaque);
 	drawRenderItems(commandList, allRitems);
 
-	imGuiController->present();
-	imGuiController->update();
+	viewController->present();
+	viewController->update();
 
 	// Indicate a state transition on the resource usage.
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),

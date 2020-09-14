@@ -3,11 +3,12 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "CameraViewModel.h"
+#include "ViewModels.h"
+#include "MainPassModels.h"
 
 class Application;
 class SrvHeapProvider;
-class MainPassDataProvider;
+class MainPassModelsListener;
 class ObjectsDataProvider;
 class GeometryStorage;
 class MaterialsDataProvider;
@@ -17,33 +18,16 @@ struct LightModel;
 struct ID3D12Device;
 struct ID3D12GraphicsCommandList;
 
-struct PrimitiveViewModel
-{
-	std::string currentMesh;
-	std::string currentSubMesh;
-	std::string currentMaterial;
-	float position[3];
-	float scaling[3];
-	float texture[3];
-};
-
-struct LightsViewModel
-{
-	float ambient[4];
-	float direction[3];
-	float strength[3];
-};
-
 #pragma once
-class ImGuiController
+class ViewController
 {
 public:
-	ImGuiController(
+	ViewController(
 		HWND                      mainWindowHandle,
 		ID3D12Device              *device,
 		ID3D12GraphicsCommandList *commandList,
 		SrvHeapProvider           *srvHeapProvider,	
-		MainPassDataProvider      *mainPassDataProvider,
+		MainPassModelsListener	  *mainPassModelsListener,
 		ObjectsDataProvider       *objectsDataProvider,		
 		MaterialsDataProvider     *materialsDataProvider,
 		GeometryStorage           *geometryStorage);
@@ -51,10 +35,14 @@ public:
 	void present();
 	void update();
 
+	void onWindowResize(int clientWidth, int clientHeight);
+	void onMouseDown(int x, int y);
+	void onMouseMove(int btnState, int x, int y);
+
 private:
 	ID3D12Device              *device;
 	ID3D12GraphicsCommandList *commandList;
-	MainPassDataProvider  *mainPassDataProvider;
+	MainPassModelsListener* mainPassModelsListener;
 	ObjectsDataProvider   *objectsDataProvider;
 	MaterialsDataProvider *materialsDataProvider;
 	GeometryStorage       *geometryStorage;
@@ -73,9 +61,13 @@ private:
 	PrimitiveViewModel primitiveViewModel;
 	LightsViewModel    lightsViewModel;
 
+	void initLightsViewModel(LightsViewModel& lightsViewModel);
 	void initPrimitiveViewModel(PrimitiveViewModel& primitiveViewModel);
+
 	CameraModel cameraModel(CameraViewModel cameraViewModel);
 	LightModel lightModel(LightsViewModel lightsViewModel);
 	PrimitiveModel primitiveModel(PrimitiveViewModel primitiveViewModel);
+
+	POINT lastMousePosition;
 };
 
