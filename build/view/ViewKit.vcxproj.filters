@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\view\src\ViewController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\view\include\ViewKit\ViewController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\view\include\ViewKit\ViewModels.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\view\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{CAD77156-B774-3434-931A-408B7BC0B283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{C2F23E51-89CB-3DA2-8805-79B36ED67CAC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

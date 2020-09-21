@@ -169,13 +169,17 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\build\KovalgekGameEngine.vcxproj">
-      <Project>{AC1C08D0-E195-31BA-936C-D2498A4F0580}</Project>
-      <Name>KovalgekGameEngine</Name>
+    <ProjectReference Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\build\app\AppKit.vcxproj">
+      <Project>{311D6802-871A-3752-91E1-07D97623BD84}</Project>
+      <Name>AppKit</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\build\imgui.vcxproj">
-      <Project>{51ED1C97-6AC3-3281-930D-AC00CAD43A5A}</Project>
-      <Name>imgui</Name>
+    <ProjectReference Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\build\core\CoreKit.vcxproj">
+      <Project>{DBAECFB8-4514-3921-967E-4523F8678CBC}</Project>
+      <Name>CoreKit</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\build\imgui\ImGui.vcxproj">
+      <Project>{0C0370BD-035A-361D-A9DE-98A6A19C97B4}</Project>
+      <Name>ImGui</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

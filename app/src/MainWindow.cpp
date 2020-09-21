@@ -1,12 +1,16 @@
 #include "MyBoxDemo.h"
 #include <wchar.h>
 #include <stdio.h>
+#include <string>
+
+
+
 #include <WindowsX.h>
-#include "Application.h"
-#include "Renderer.h"
+//#include "Application.h"
+//#include "Renderer.h"
 #include "GameTimer.h"
 #include "AppFacade.h"
-#include "d3dUtil.h"
+//#include "d3dUtil.h"
 #include "AppFacadeFactory.h"
 
 #include "imgui.h"
@@ -56,19 +60,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    try
-    {
+    //try
+//    {
 		appFacade = AppFacadeFactory::appFacade(mainWindowHandle);
 
 		appFacade->onResize(clientWidth, clientHeight);
 
         return runMainLoop(hInstance);
-    }
-    catch (DxException& e)
-    {
-        MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
-        return 0;
-    }
+    // }
+    // catch (DxException& e)
+    // {
+    //     MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+    //     return 0;
+    // }
 }
 
 ATOM registerClass(HINSTANCE hInstance)
