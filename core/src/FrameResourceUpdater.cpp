@@ -107,6 +107,10 @@ PassConstants FrameResourceUpdater::passConstantsFromMainPassData(MainPassData m
 	mainPassCB.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
 	mainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
 
+	mainPassCB.FogColor = mainPassData.fogColor;
+	mainPassCB.gFogStart = mainPassData.fogStart;
+	mainPassCB.gFogRange = mainPassData.fogRange;
+
 	return mainPassCB;
 }
 

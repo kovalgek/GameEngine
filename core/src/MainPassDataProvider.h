@@ -16,6 +16,7 @@ public:
 	// MainPassModelsListener API
 	void onLightModelUpdated(LightModel lightModel);
 	void onCameraModelUpdated(CameraModel cameraModel);
+	void onFogModelUpdated(FogModel fogModel);
 	void onClientSizeUpdated(ClientSizeModel clientSizeModel);
 
 private:

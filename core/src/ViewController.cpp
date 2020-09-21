@@ -156,6 +156,7 @@ void ViewController::present()
 	createCameraView();
 	createLightView();
 	createPrimitiveFactoryView();
+	createFogView();
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
@@ -168,6 +169,9 @@ void ViewController::update()
 
 	LightModel updatedLightModel = lightModel(lightsViewModel);
 	mainPassModelsListener->onLightModelUpdated(updatedLightModel);
+
+	FogModel updatedFogModel = fogModel(fogViewModel);
+	mainPassModelsListener->onFogModelUpdated(updatedFogModel);
 }
 
 void ViewController::createCameraView()
@@ -184,6 +188,15 @@ void ViewController::createLightView()
 	ImGui::Begin("Light");
 	ImGui::InputFloat4("ambient", lightsViewModel.ambient);
 	ImGui::InputFloat3("direction", lightsViewModel.direction);
+	ImGui::End();
+}
+
+void ViewController::createFogView()
+{
+	ImGui::Begin("Fog");
+	ImGui::ColorPicker4("##picker", (float*)&fogViewModel.color, ImGuiColorEditFlags_NoSmallPreview);
+	ImGui::SliderFloat("start", &fogViewModel.start, 0.0f, 100.0f);
+	ImGui::SliderFloat("range", &fogViewModel.range, 0.0f, 100.0f);
 	ImGui::End();
 }
 
@@ -288,6 +301,17 @@ LightModel ViewController::lightModel(LightsViewModel lightsViewModel)
 	lightModel.direction = DirectX::XMFLOAT3(lightsViewModel.direction[0], lightsViewModel.direction[1], lightsViewModel.direction[2]);
 
 	return lightModel;
+}
+
+FogModel ViewController::fogModel(FogViewModel fogViewModel)
+{
+	FogModel fogModel;
+
+	fogModel.color = DirectX::XMFLOAT4(fogViewModel.color.x, fogViewModel.color.y, fogViewModel.color.z, fogViewModel.color.w);
+	fogModel.start = fogViewModel.start;
+	fogModel.range = fogViewModel.range;
+
+	return fogModel;
 }
 
 PrimitiveModel ViewController::primitiveModel(PrimitiveViewModel primitiveViewModel)

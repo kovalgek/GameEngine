@@ -21,3 +21,10 @@ struct ClientSizeModel
 	int clientWidth;
 	int clientHeight;
 };
+
+struct FogModel
+{
+	DirectX::XMFLOAT4 color;
+	float start;
+	float range;
+};

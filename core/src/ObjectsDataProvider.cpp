@@ -184,25 +184,25 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
 	boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
 
-	ritemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
+	//ritemLayer[(int)RenderLayer::Opaque].push_back(boxRitem.get());
 
 	auto skullRitem = std::make_unique<RenderItem>();
 	skullRitem->World = MathHelper::Identity4x4();
 	skullRitem->TexTransform = MathHelper::Identity4x4();
 	skullRitem->ObjCBIndex = 0;
-	skullRitem->Mat = materialsDataProvider->getMaterialForName("skullMat");// mMaterials["skullMat"].get();
-	skullRitem->Geo = this->geometryStorage->getGeometry("skullGeo");// mGeometries["skullGeo"].get();
+	skullRitem->Mat = materialsDataProvider->getMaterialForName("skullMat");
+	skullRitem->Geo = this->geometryStorage->getGeometry("skullGeo");
 	skullRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["skull"].IndexCount;
 	skullRitem->StartIndexLocation = skullRitem->Geo->DrawArgs["skull"].StartIndexLocation;
 	skullRitem->BaseVertexLocation = skullRitem->Geo->DrawArgs["skull"].BaseVertexLocation;
 	//mSkullRitem = skullRitem.get();
-	//ritemLayer[(int)RenderLayer::Opaque].push_back(skullRitem.get());
+	ritemLayer[(int)RenderLayer::Opaque].push_back(skullRitem.get());
 
 	allRitems.push_back(std::move(wavesRitem));
 	allRitems.push_back(std::move(gridRitem));
-	allRitems.push_back(std::move(boxRitem));
-	//allRitems.push_back(std::move(skullRitem));
+	//allRitems.push_back(std::move(boxRitem));
+	allRitems.push_back(std::move(skullRitem));
 }
 
 std::vector<RenderItem*> ObjectsDataProvider::renderItems()

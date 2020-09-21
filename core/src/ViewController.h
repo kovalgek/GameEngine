@@ -52,6 +52,7 @@ private:
 
 	void createCameraView();
 	void createLightView();
+	void createFogView();
 	void createPrimitiveFactoryView();
 	void createMeshCombo();
 	void createSubmeshCombo();
@@ -60,12 +61,14 @@ private:
 	CameraViewModel    cameraViewModel;
 	PrimitiveViewModel primitiveViewModel;
 	LightsViewModel    lightsViewModel;
+	FogViewModel       fogViewModel;
 
 	void initLightsViewModel(LightsViewModel& lightsViewModel);
 	void initPrimitiveViewModel(PrimitiveViewModel& primitiveViewModel);
 
 	CameraModel cameraModel(CameraViewModel cameraViewModel);
 	LightModel lightModel(LightsViewModel lightsViewModel);
+	FogModel fogModel(FogViewModel fogViewModel);
 	PrimitiveModel primitiveModel(PrimitiveViewModel primitiveViewModel);
 
 	POINT lastMousePosition;

@@ -1,6 +1,9 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+
+#include "imgui.h"
+
 #pragma once
 struct CameraViewModel
 {
@@ -24,4 +27,11 @@ struct LightsViewModel
 	float ambient[4];
 	float direction[3];
 	float strength[3];
+};
+
+struct FogViewModel
+{
+	ImVec4 color;
+	float start;
+	float range;
 };

@@ -25,4 +25,8 @@ struct MainPassData
 	float sunPhi;
 	int clientWidth;
 	int clientHeight;
+
+	DirectX::XMFLOAT4 fogColor;
+	float fogStart;
+	float fogRange;
 };

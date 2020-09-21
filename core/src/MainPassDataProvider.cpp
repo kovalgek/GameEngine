@@ -29,6 +29,13 @@ void MainPassDataProvider::onLightModelUpdated(LightModel lightModel)
 	mainPassData.strength = lightModel.strength;
 }
 
+void MainPassDataProvider::onFogModelUpdated(FogModel fogModel)
+{
+	mainPassData.fogColor = fogModel.color;
+	mainPassData.fogStart = fogModel.start;
+	mainPassData.fogRange = fogModel.range;
+}
+
 void MainPassDataProvider::onClientSizeUpdated(ClientSizeModel clientSizeModel)
 {
 	// The window resized, so update the aspect ratio and recompute the projection matrix.
