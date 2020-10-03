@@ -18,7 +18,8 @@ ObjectsDataProvider::ObjectsDataProvider(
 	materialsDataProvider { materialsDataProvider },
 	dynamicVerticesProvider { dynamicVerticesProvider }
 {
-	buildRenderItemsForLandAndWaves();
+	buildStencilDemoRenderItems();
+	//buildRenderItemsForLandAndWaves();
 
 	//createPrimitive("hills", "grass", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
 	//createPrimitive("box", "wirefence", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
@@ -204,6 +205,82 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 	//allRitems.push_back(std::move(boxRitem));
 	allRitems.push_back(std::move(skullRitem));
 }
+
+void ObjectsDataProvider::buildStencilDemoRenderItems()
+{
+	auto floorRitem = std::make_unique<RenderItem>();
+	floorRitem->World = MathHelper::Identity4x4();
+	floorRitem->TexTransform = MathHelper::Identity4x4();
+	floorRitem->ObjCBIndex = 0;
+	floorRitem->Mat = materialsDataProvider->getMaterialForName("checkertile");
+	floorRitem->Geo = this->geometryStorage->getGeometry("roomGeo");
+	floorRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	floorRitem->IndexCount = floorRitem->Geo->DrawArgs["floor"].IndexCount;
+	floorRitem->StartIndexLocation = floorRitem->Geo->DrawArgs["floor"].StartIndexLocation;
+	floorRitem->BaseVertexLocation = floorRitem->Geo->DrawArgs["floor"].BaseVertexLocation;
+	ritemLayer[(int)RenderLayer::Opaque].push_back(floorRitem.get());
+
+	auto wallsRitem = std::make_unique<RenderItem>();
+	wallsRitem->World = MathHelper::Identity4x4();
+	wallsRitem->TexTransform = MathHelper::Identity4x4();
+	wallsRitem->ObjCBIndex = 1;
+	wallsRitem->Mat = materialsDataProvider->getMaterialForName("bricks");
+	wallsRitem->Geo = this->geometryStorage->getGeometry("roomGeo");
+	wallsRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	wallsRitem->IndexCount = wallsRitem->Geo->DrawArgs["wall"].IndexCount;
+	wallsRitem->StartIndexLocation = wallsRitem->Geo->DrawArgs["wall"].StartIndexLocation;
+	wallsRitem->BaseVertexLocation = wallsRitem->Geo->DrawArgs["wall"].BaseVertexLocation;
+	ritemLayer[(int)RenderLayer::Opaque].push_back(wallsRitem.get());
+
+	auto skullRitem = std::make_unique<RenderItem>();
+	skullRitem->World = MathHelper::Identity4x4();
+	skullRitem->TexTransform = MathHelper::Identity4x4();
+	skullRitem->ObjCBIndex = 2;
+	skullRitem->Mat = materialsDataProvider->getMaterialForName("skullMat");
+	skullRitem->Geo = this->geometryStorage->getGeometry("skullGeo");
+	skullRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["skull"].IndexCount;
+	skullRitem->StartIndexLocation = skullRitem->Geo->DrawArgs["skull"].StartIndexLocation;
+	skullRitem->BaseVertexLocation = skullRitem->Geo->DrawArgs["skull"].BaseVertexLocation;
+	//mSkullRitem = skullRitem.get();
+	ritemLayer[(int)RenderLayer::Opaque].push_back(skullRitem.get());
+
+	// Reflected skull will have different world matrix, so it needs to be its own render item.
+	auto reflectedSkullRitem = std::make_unique<RenderItem>();
+	*reflectedSkullRitem = *skullRitem;
+	reflectedSkullRitem->ObjCBIndex = 3;
+	//mReflectedSkullRitem = reflectedSkullRitem.get();
+	ritemLayer[(int)RenderLayer::Reflected].push_back(reflectedSkullRitem.get());
+
+	// Shadowed skull will have different world matrix, so it needs to be its own render item.
+	auto shadowedSkullRitem = std::make_unique<RenderItem>();
+	*shadowedSkullRitem = *skullRitem;
+	shadowedSkullRitem->ObjCBIndex = 4;
+	shadowedSkullRitem->Mat = materialsDataProvider->getMaterialForName("shadowMat");
+	//mShadowedSkullRitem = shadowedSkullRitem.get();
+	ritemLayer[(int)RenderLayer::Shadow].push_back(shadowedSkullRitem.get());
+
+	auto mirrorRitem = std::make_unique<RenderItem>();
+	mirrorRitem->World = MathHelper::Identity4x4();
+	mirrorRitem->TexTransform = MathHelper::Identity4x4();
+	mirrorRitem->ObjCBIndex = 5;
+	mirrorRitem->Mat = materialsDataProvider->getMaterialForName("icemirror");
+	mirrorRitem->Geo = this->geometryStorage->getGeometry("roomGeo");
+	mirrorRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	mirrorRitem->IndexCount = mirrorRitem->Geo->DrawArgs["mirror"].IndexCount;
+	mirrorRitem->StartIndexLocation = mirrorRitem->Geo->DrawArgs["mirror"].StartIndexLocation;
+	mirrorRitem->BaseVertexLocation = mirrorRitem->Geo->DrawArgs["mirror"].BaseVertexLocation;
+	ritemLayer[(int)RenderLayer::Mirrors].push_back(mirrorRitem.get());
+	ritemLayer[(int)RenderLayer::Transparent].push_back(mirrorRitem.get());
+
+	allRitems.push_back(std::move(floorRitem));
+	allRitems.push_back(std::move(wallsRitem));
+	allRitems.push_back(std::move(skullRitem));
+	allRitems.push_back(std::move(reflectedSkullRitem));
+	allRitems.push_back(std::move(shadowedSkullRitem));
+	allRitems.push_back(std::move(mirrorRitem));
+}
+
 
 std::vector<RenderItem*> ObjectsDataProvider::renderItems()
 {

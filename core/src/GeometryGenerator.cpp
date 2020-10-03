@@ -655,3 +655,74 @@ GeometryGenerator::MeshData GeometryGenerator::CreateQuad(float x, float y, floa
 
     return meshData;
 }
+
+//GeometryGenerator::MeshData GeometryGenerator::CreateRoom()
+//{
+//	MeshData meshData;
+//
+//	 Create and specify geometry.  For this sample we draw a floor
+// and a wall with a mirror on it.  We put the floor, wall, and
+// mirror geometry in one vertex buffer.
+//
+//   |--------------|
+//   |              |
+//   |----|----|----|
+//   |Wall|Mirr|Wall|
+//   |    | or |    |
+//   /--------------/
+//  /   Floor      /
+// /--------------/
+//
+//	std::array<Vertex, 20> vertices =
+//	{
+//		 Floor: Observe we tile texture coordinates.
+//		Vertex(-3.5f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 4.0f), // 0 
+//		Vertex(-3.5f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f),
+//		Vertex(7.5f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f, 4.0f, 0.0f),
+//		Vertex(7.5f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f, 4.0f, 4.0f),
+//
+//		 Wall: Observe we tile texture coordinates, and that we
+//		 leave a gap in the middle for the mirror.
+//		Vertex(-3.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 2.0f), // 4
+//		Vertex(-3.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
+//		Vertex(-2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.5f, 0.0f),
+//		Vertex(-2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.5f, 2.0f),
+//
+//		Vertex(2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 2.0f), // 8 
+//		Vertex(2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
+//		Vertex(7.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 0.0f),
+//		Vertex(7.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 2.0f),
+//
+//		Vertex(-3.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f), // 12
+//		Vertex(-3.5f, 6.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
+//		Vertex(7.5f, 6.0f, 0.0f, 0.0f, 0.0f, -1.0f, 6.0f, 0.0f),
+//		Vertex(7.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 6.0f, 1.0f),
+//
+//		 Mirror
+//		Vertex(-2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f), // 16
+//		Vertex(-2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
+//		Vertex(2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f),
+//		Vertex(2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f)
+//	};
+//
+//	std::array<std::int16_t, 30> indices =
+//	{
+//		 Floor
+//		0, 1, 2,
+//		0, 2, 3,
+//
+//		 Walls
+//		4, 5, 6,
+//		4, 6, 7,
+//
+//		8, 9, 10,
+//		8, 10, 11,
+//
+//		12, 13, 14,
+//		12, 14, 15,
+//
+//		 Mirror
+//		16, 17, 18,
+//		16, 18, 19
+//	};
+//}

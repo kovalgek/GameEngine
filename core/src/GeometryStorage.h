@@ -11,9 +11,24 @@ struct ID3D12Device;
 struct ID3D12GraphicsCommandList;
 class Waves;
 
+struct Vertex2
+{
+	Vertex2() = default;
+	Vertex2(float x, float y, float z, float nx, float ny, float nz, float u, float v) :
+		Pos(x, y, z),
+		Normal(nx, ny, nz),
+		TexC(u, v) {}
+
+	DirectX::XMFLOAT3 Pos;
+	DirectX::XMFLOAT3 Normal;
+	DirectX::XMFLOAT2 TexC;
+};
+
 #pragma once
 class GeometryStorage
 {
+
+
 public:
 	GeometryStorage(
 		ID3D12Device *const device,
@@ -42,5 +57,6 @@ private:
 	DirectX::XMFLOAT3 getHillsNormal(float x, float z)const;
 
 	void buildSkullGeometry();
+	void buildRoomGeometry();
 };
 

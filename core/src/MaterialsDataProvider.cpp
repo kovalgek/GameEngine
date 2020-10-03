@@ -18,6 +18,10 @@ void MaterialsDataProvider::buildMaterials()
 	materials["water"] = waterMaterial();
 	materials["wirefence"] = wirefenceMaterial();
 	materials["skullMat"] = skullMaterial();
+	materials["bricks"] = bricksMaterial();
+	materials["checkertile"] = checkertileMaterial();
+	materials["icemirror"] = icemirrorMaterial();
+	materials["shadowMat"] = shadowMatMaterial();
 }
 
 std::unique_ptr<Material> MaterialsDataProvider::grassMaterial()
@@ -66,6 +70,54 @@ std::unique_ptr<Material> MaterialsDataProvider::skullMaterial()
 	skullMat->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	skullMat->Roughness = 0.3f;
 	return skullMat;
+}
+
+std::unique_ptr<Material> MaterialsDataProvider::bricksMaterial()
+{
+	auto bricks = std::make_unique<Material>();
+	bricks->Name = "bricks";
+	bricks->MatCBIndex = 4;
+	bricks->DiffuseSrvHeapIndex = 0;
+	bricks->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+	bricks->Roughness = 0.25f;
+	return bricks;
+}
+
+std::unique_ptr<Material> MaterialsDataProvider::checkertileMaterial()
+{
+	auto checkertile = std::make_unique<Material>();
+	checkertile->Name = "checkertile";
+	checkertile->MatCBIndex = 5;
+	checkertile->DiffuseSrvHeapIndex = 1;
+	checkertile->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	checkertile->FresnelR0 = XMFLOAT3(0.07f, 0.07f, 0.07f);
+	checkertile->Roughness = 0.3f;
+	return checkertile;
+}
+
+std::unique_ptr<Material> MaterialsDataProvider::icemirrorMaterial()
+{
+	auto icemirror = std::make_unique<Material>();
+	icemirror->Name = "icemirror";
+	icemirror->MatCBIndex = 6;
+	icemirror->DiffuseSrvHeapIndex = 2;
+	icemirror->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.3f);
+	icemirror->FresnelR0 = XMFLOAT3(0.1f, 0.1f, 0.1f);
+	icemirror->Roughness = 0.5f;
+	return icemirror;
+}
+
+std::unique_ptr<Material> MaterialsDataProvider::shadowMatMaterial()
+{
+	auto shadowMat = std::make_unique<Material>();
+	shadowMat->Name = "shadowMat";
+	shadowMat->MatCBIndex = 7;
+	shadowMat->DiffuseSrvHeapIndex = 3;
+	shadowMat->DiffuseAlbedo = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f);
+	shadowMat->FresnelR0 = XMFLOAT3(0.001f, 0.001f, 0.001f);
+	shadowMat->Roughness = 0.0f;
+	return shadowMat;
 }
 
 Material* MaterialsDataProvider::getMaterialForName(std::string name)

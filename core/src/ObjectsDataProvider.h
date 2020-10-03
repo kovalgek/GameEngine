@@ -10,7 +10,10 @@ class DynamicVerticesProvider;
 enum class RenderLayer : int
 {
 	Opaque = 0,
+	Mirrors,
+	Reflected,
 	Transparent,
+	Shadow,
 	AlphaTested,
 	Count
 };
@@ -65,5 +68,6 @@ private:
 
 	void buildRenderItemsForShapes();
 	void buildRenderItemsForLandAndWaves();
+	void buildStencilDemoRenderItems();
 };
 
