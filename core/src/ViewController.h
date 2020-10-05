@@ -31,6 +31,7 @@ public:
 		ObjectsDataProvider       *objectsDataProvider,		
 		MaterialsDataProvider     *materialsDataProvider,
 		GeometryStorage           *geometryStorage);
+	~ViewController();
 
 	void present();
 	void update();

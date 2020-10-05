@@ -51,6 +51,8 @@ ViewController::ViewController(
 
 }
 
+ViewController::~ViewController() = default;
+
 void ViewController::onWindowResize(int clientWidth, int clientHeight)
 {
 	ClientSizeModel clientSizeModel;

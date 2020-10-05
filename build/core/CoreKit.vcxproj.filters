@@ -67,7 +67,10 @@
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppFacade.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppFacadeFactory.cpp">
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContextFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -76,9 +79,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\include\core\AppFacade.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\include\core\AppFacadeFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Application.h">
@@ -182,6 +182,12 @@
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\TextureStaticSamplers.h">
       <Filter>Source Files\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContextFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContext.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

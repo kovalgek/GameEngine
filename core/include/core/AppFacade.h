@@ -1,43 +1,25 @@
 #include <memory>
+#include <windows.h>
 
-class Application;
-class Renderer;
+class AppContext;
 class GameTimer;
-class MainPassDataProvider;
-class FrameResourceUpdater;
-class ObjectsDataProvider;
-class MaterialsDataProvider;
-class DynamicVerticesProvider;
-class ViewController;
 
 #pragma once
 class AppFacade
 {
 public:
-	AppFacade(
-		std::unique_ptr<Application> appContext,
-		std::unique_ptr<Renderer> renderer,
-		std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
-		std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
-		std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
-		std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
-		std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider,
-		std::unique_ptr<ViewController> viewController);
+	AppFacade(HWND mainWindowHandle);
 	~AppFacade();
+
 	void update(const GameTimer& gameTimer);
 	void onResize(int clientWidth, int clientHeight);
 
 	void onMouseDown(int x, int y);
 	void onMouseUp(int x, int y);
 	void onMouseMove(int btnState, int x, int y);
+
 private:
-	std::unique_ptr<Application> appContext;
-	std::unique_ptr<Renderer> renderer;
-	std::unique_ptr<MainPassDataProvider> mainPassDataProvider;
-	std::unique_ptr<ObjectsDataProvider> objectsDataProvider;
-	std::unique_ptr<MaterialsDataProvider> materialsDataProvider;
-	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater;
-	std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider;
-	std::unique_ptr<ViewController> viewController;
+
+	std::unique_ptr<AppContext> appContext;
 };
 

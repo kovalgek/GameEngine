@@ -8,6 +8,8 @@ MainPassDataProvider::MainPassDataProvider()
 	mainPassData.sunPhi = DirectX::XM_PIDIV4;
 }
 
+MainPassDataProvider::~MainPassDataProvider() = default;
+
 #pragma region listeners
 
 void MainPassDataProvider::onCameraModelUpdated(CameraModel cameraModel)

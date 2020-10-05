@@ -9,6 +9,7 @@ class MainPassDataProvider : public MainPassModelsListener
 {
 public:
 	MainPassDataProvider();
+	~MainPassDataProvider();
 
 	// main API
 	MainPassData const getMainPassData() { return mainPassData; }

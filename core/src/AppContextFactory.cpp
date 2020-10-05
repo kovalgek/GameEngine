@@ -1,4 +1,5 @@
-#include "AppFacadeFactory.h"
+#include "AppContextFactory.h"
+
 #include "Application.h"
 #include "Renderer.h"
 #include "PipleneStateData.h"
@@ -15,21 +16,34 @@
 #include "TexturesProvider.h"
 #include "d3dUtil.h"
 #include "ViewController.h"
+#include "AppContext.h"
 
-std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
+std::unique_ptr<AppContext> AppContextFactory::appContext(HWND mainWindowHandle)
 {
-	// The order is importaint
 	auto application = std::make_unique<Application>(mainWindowHandle);
-
 
 	// Reset the command list to prep for initialization commands.
 	ThrowIfFailed(application->getCommandList()->Reset(application->getCommandAllocator(), nullptr));
 
+	std::unique_ptr<AppContext> appContext = halfBakedAppContext(mainWindowHandle, std::move(application));
 
+	// Execute the initialization commands.
+	ThrowIfFailed(appContext->getApplication()->getCommandList()->Close());
+	ID3D12CommandList* cmdsLists[] = { appContext->getApplication()->getCommandList() };
+	appContext->getApplication()->getCommandQueue()->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	// Wait until initialization is complete.
+	appContext->getApplication()->flushCommandQueue();
+
+	return appContext;
+}
+
+std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWindowHandle, std::unique_ptr<Application> application)
+{
 	auto pipleneStateData = std::make_unique <PipleneStateData>(
 		application->getDevice(),
-		application->getBackBufferFormat(), 
-		application->getDepthStencilFormat(), 
+		application->getBackBufferFormat(),
+		application->getDepthStencilFormat(),
 		application->getMsaa4xState(),
 		application->getMsaa4xQuality()
 		);
@@ -55,30 +69,19 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
 
-
 	auto texturesProvider = std::make_unique<TexturesProvider>(application->getDevice(), application->getCommandList());
 	auto srvHeapProvider = std::make_unique<SrvHeapProvider>(application->getDevice(), std::move(texturesProvider));
-
 
 	auto viewController = std::make_unique<ViewController>(
 		mainWindowHandle,
 		application->getDevice(),
-		application->getCommandList(),		
-		srvHeapProvider.get(),		
+		application->getCommandList(),
+		srvHeapProvider.get(),
 		mainPassDataProvider.get(),
 		objectsDataProvider.get(),
 		materialsDataProvider.get(),
 		geometryStorageRaw
 		);
-
-	// Execute the initialization commands.
-	ThrowIfFailed(application->getCommandList()->Close());
-	ID3D12CommandList* cmdsLists[] = { application->getCommandList() };
-	application->getCommandQueue()->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-	// Wait until initialization is complete.
-	application->flushCommandQueue();
-
 
 	auto renderer = std::make_unique <Renderer>(
 		application.get(),
@@ -96,15 +99,13 @@ std::unique_ptr<AppFacade> AppFacadeFactory::appFacade(HWND mainWindowHandle)
 		materialsDataProvider.get(),
 		waves);
 
-	auto appFacade = std::make_unique<AppFacade>(
+	return std::make_unique<AppContext>(
 		std::move(application),
 		std::move(renderer),
 		std::move(mainPassDataProvider),
 		std::move(objectsDataProvider),
 		std::move(materialsDataProvider),
-		std::move(frameResourceUpdater),
 		std::move(dynamicVerticesProvider),
+		std::move(frameResourceUpdater),
 		std::move(viewController));
-
-	return std::move(appFacade);
 }

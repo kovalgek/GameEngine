@@ -11,8 +11,6 @@
 #include "GameTimer.h"
 #include "AppFacade.h"
 //#include "d3dUtil.h"
-#include "AppFacadeFactory.h"
-
 #include "imgui.h"
 
 
@@ -22,7 +20,7 @@ std::wstring mMainWndCaption = L"d3d App";
 
 HINSTANCE applicationInstanceHandle = nullptr;
 HWND mainWindowHandle = nullptr;
-std::unique_ptr<AppFacade> appFacade;
+AppFacade* appFacade = nullptr;
 bool appPaused = false;
 GameTimer timer;
 
@@ -62,8 +60,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     //try
 //    {
-		appFacade = AppFacadeFactory::appFacade(mainWindowHandle);
-
+		appFacade = new AppFacade(mainWindowHandle);
 		appFacade->onResize(clientWidth, clientHeight);
 
         return runMainLoop(hInstance);

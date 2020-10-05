@@ -107,13 +107,15 @@ source_group( ${SOURCE_FILES_DIR}/Textures FILES ${TEXTURES_FILES} )
 #other
 set( OTHER_FILES
 	src/AppFacade.cpp
-	src/AppFacadeFactory.cpp
+	src/AppContextFactory.h
+	src/AppContextFactory.cpp
+	src/AppContext.h
+	src/AppContext.cpp
 )
 
 set( HEADER_FILES
 	include/core/GameTimer.h
 	include/core/AppFacade.h
-	include/core/AppFacadeFactory.h
 )
 
 # ------------------------------------------------

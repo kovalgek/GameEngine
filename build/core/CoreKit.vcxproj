@@ -382,7 +382,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\include\core\GameTimer.h" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\include\core\AppFacade.h" />
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\include\core\AppFacadeFactory.h" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Application.h" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Application.cpp" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Renderer.h" />
@@ -439,7 +438,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\TexturesProvider.cpp" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\TextureStaticSamplers.cpp" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppFacade.cpp" />
-    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppFacadeFactory.cpp" />
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContextFactory.h" />
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContextFactory.cpp" />
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContext.h" />
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\build\ZERO_CHECK.vcxproj">
