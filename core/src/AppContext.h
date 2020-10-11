@@ -1,6 +1,6 @@
 #include <memory>
 
-class Application;
+class GPUService;
 class Renderer;
 class MainPassDataProvider;
 class ObjectsDataProvider;
@@ -14,7 +14,7 @@ class AppContext
 {
 public:
 	AppContext(
-		std::unique_ptr<Application> application,
+		std::unique_ptr<GPUService> gpuService,
 		std::unique_ptr<Renderer> renderer,
 		std::unique_ptr<MainPassDataProvider> mainPassDataProvider,
 		std::unique_ptr<ObjectsDataProvider> objectsDataProvider,
@@ -25,7 +25,7 @@ public:
 	~AppContext();
 
 
-	Application* getApplication() { return application.get(); }
+	GPUService* getGPUService() { return gpuService.get(); }
 	Renderer* getRenderer() { return renderer.get(); }
 	MainPassDataProvider* getMainPassDataProvider() { return mainPassDataProvider.get(); }
 	ObjectsDataProvider* getObjectsDataProvider() { return objectsDataProvider.get(); }
@@ -35,7 +35,7 @@ public:
 	ViewController* getViewController() { return viewController.get(); }
 
 private:
-	std::unique_ptr<Application> application;
+	std::unique_ptr<GPUService> gpuService;
 	std::unique_ptr<Renderer> renderer;
 	std::unique_ptr<MainPassDataProvider> mainPassDataProvider;
 	std::unique_ptr<ObjectsDataProvider> objectsDataProvider;

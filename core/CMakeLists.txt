@@ -10,6 +10,12 @@ set( CORE_FILES
 	src/Application.cpp
 	src/Renderer.h
 	src/Renderer.cpp
+	src/RendererFactory.cpp
+	src/RendererFactory.h
+	src/GPUService.cpp
+	src/GPUService.h
+	src/GPUServiceFactory.cpp
+	src/GPUServiceFactory.h
 )
 source_group( ${SOURCE_FILES_DIR}/Core FILES ${CORE_FILES} )
 

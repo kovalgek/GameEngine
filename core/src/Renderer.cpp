@@ -18,49 +18,66 @@
 #include <D3Dcompiler.h>
 #include <array>
 
+#include "GPUService.h"
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 Renderer::Renderer(
-	Application* appContext,
+	GPUService* gpuService,
+
+	D3D_DRIVER_TYPE d3dDriverType,
+	DXGI_FORMAT backBufferFormat,
+	DXGI_FORMAT depthStencilFormat,
+	bool      msaa4xState,
+	UINT      msaa4xQuality,
+	UINT rtvDescriptorSize,
+	UINT dsvDescriptorSize,
+	UINT cbvSrvUavDescriptorSize,
+
+	ComPtr<IDXGISwapChain> swapChain,
+
+	ComPtr<ID3D12DescriptorHeap> rtvHeap,
+	ComPtr<ID3D12DescriptorHeap> dsvHeap,
+
+
 	std::unique_ptr<PipleneStateData> pipleneStateData,
 	FrameResourceController* frameResourceController,
 	ObjectsDataProvider* objectsDataProvider,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
-	ViewController * viewController) :
+	ViewController * viewController
+) :
+	gpuService{ gpuService },
+	device { gpuService->getDevice() },
+	commandQueue{ gpuService->getCommandQueue() },
+	commandAllocator{ gpuService->getCommandAllocator() },
+	commandList{ gpuService->getCommandList() },
+	fence { gpuService->getFence() },
 
-	appContext{ appContext },
+	d3dDriverType{ d3dDriverType },
+	backBufferFormat{ backBufferFormat },
+	depthStencilFormat{ depthStencilFormat },
+	msaa4xState { msaa4xState },
+	msaa4xQuality{ msaa4xQuality },
+	rtvDescriptorSize { rtvDescriptorSize },
+	dsvDescriptorSize { dsvDescriptorSize },
+	cbvSrvUavDescriptorSize { cbvSrvUavDescriptorSize },
+
+	swapChain{ swapChain },
+	rtvHeap { rtvHeap },
+	dsvHeap { dsvHeap },
+
 	pipleneStateData { std::move(pipleneStateData) },
 	frameResourceController { frameResourceController },
 	objectsDataProvider { objectsDataProvider },
 	srvHeapProvider{ std::move(srvHeapProvider) },
-	viewController{ viewController },
-
-	device { appContext->getDevice() },
-	commandQueue { appContext->getCommandQueue() },
-	commandList { appContext->getCommandList() },
-	commandAllocator { appContext->getCommandAllocator() }
-{
-	//// Setup Dear ImGui context
-	//IMGUI_CHECKVERSION();
-	//ImGui::CreateContext();
-	//ImGuiIO& io = ImGui::GetIO();
-
-	//ImGui_ImplWin32_Init(mainWindowHandle);
-	//ImGui_ImplDX12_Init(device, 3,
-	//	DXGI_FORMAT_R8G8B8A8_UNORM,
-	//	this->texturesController->getSrvDescriptorHeap(),
-	//	this->texturesController->getSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
-	//	this->texturesController->getSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
-	//ImGui::StyleColorsDark();
-}
-
-Renderer::~Renderer()
+	viewController{ viewController }
 {
 
 }
+
+Renderer::~Renderer() = default;
 
 void Renderer::onKeyboardInput(const GameTimer& gameTimer)
 {
@@ -84,19 +101,19 @@ void Renderer::draw(const GameTimer& gameTimer)
 	ThrowIfFailed(commandList->Reset(cmdListAlloc.Get(), pipleneStateData->getPSO("opaque")));
 
 
-	commandList->RSSetViewports(1, &appContext->getScreenViewport());
-	commandList->RSSetScissorRects(1, &appContext->getScissorRect());
+	commandList->RSSetViewports(1, &screenViewport);
+	commandList->RSSetScissorRects(1, &scissorRect);
 
 	// Indicate a state transition on the resource usage.
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(currentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	// Clear the back buffer and depth buffer.
-	commandList->ClearRenderTargetView(appContext->currentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-	commandList->ClearDepthStencilView(appContext->depthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+	commandList->ClearRenderTargetView(currentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+	commandList->ClearDepthStencilView(depthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Specify the buffers we are going to render to.
-	commandList->OMSetRenderTargets(1, &appContext->currentBackBufferView(), true, &appContext->depthStencilView());
+	commandList->OMSetRenderTargets(1, &currentBackBufferView(), true, &depthStencilView());
 
 	//ID3D12DescriptorHeap* descriptorHeaps[] = { frameResourceController->getCbvHeap() };
 	//commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
@@ -127,7 +144,7 @@ void Renderer::draw(const GameTimer& gameTimer)
 	viewController->update();
 
 	// Indicate a state transition on the resource usage.
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(appContext->currentBackBuffer(),
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(currentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 
@@ -142,15 +159,15 @@ void Renderer::draw(const GameTimer& gameTimer)
 
 
 
-	appContext->swapChainMethod();
+	swapChainMethod();
 
 	//// Advance the fence value to mark commands up to this fence point.
-	frameResourceController->getCurrentFrameResource()->Fence = ++appContext->currentFence;
+	frameResourceController->getCurrentFrameResource()->Fence = ++gpuService->currentFence;
 
 	//// Add an instruction to the command queue to set a new fence point. 
 	//// Because we are on the GPU timeline, the new fence point won't be 
 	//// set until the GPU finishes processing all the commands prior to this Signal().
-	commandQueue->Signal(appContext->getFence(), appContext->currentFence);
+	commandQueue->Signal(gpuService->getFence(), gpuService->currentFence);
 }
 
 void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
@@ -181,4 +198,129 @@ void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::ve
 	}
 }
 
+ID3D12Resource* Renderer::currentBackBuffer()const
+{
+	return swapChainBuffer[currBackBuffer].Get();
+}
 
+D3D12_CPU_DESCRIPTOR_HANDLE Renderer::currentBackBufferView()const
+{
+	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
+		rtvHeap->GetCPUDescriptorHandleForHeapStart(),
+		currBackBuffer,
+		rtvDescriptorSize);
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Renderer::depthStencilView()const
+{
+	return dsvHeap->GetCPUDescriptorHandleForHeapStart();
+}
+
+void Renderer::onResize(int clientWidth, int clientHeight)
+{
+	this->clientWidth = clientWidth;
+	this->clientHeight = clientHeight;
+
+	assert(device);
+	assert(swapChain);
+	assert(commandAllocator);
+
+	// Flush before changing any resources.
+	gpuService->flushCommandQueue();
+
+	ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
+
+	// Release the previous resources we will be recreating.
+	for (int i = 0; i < swapChainBufferCount; ++i)
+	{
+		swapChainBuffer[i].Reset();
+	}
+	depthStencilBuffer.Reset();
+
+	// Resize the swap chain.
+	ThrowIfFailed(swapChain->ResizeBuffers(
+		swapChainBufferCount,
+		clientWidth, clientHeight,
+		backBufferFormat,
+		DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
+
+	currBackBuffer = 0;
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(rtvHeap->GetCPUDescriptorHandleForHeapStart());
+	for (UINT i = 0; i < swapChainBufferCount; i++)
+	{
+		ThrowIfFailed(swapChain->GetBuffer(i, IID_PPV_ARGS(&swapChainBuffer[i])));
+		device->CreateRenderTargetView(swapChainBuffer[i].Get(), nullptr, rtvHeapHandle);
+		rtvHeapHandle.Offset(1, rtvDescriptorSize);
+	}
+
+	// Create the depth/stencil buffer and view.
+	D3D12_RESOURCE_DESC depthStencilDesc;
+	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	depthStencilDesc.Alignment = 0;
+	depthStencilDesc.Width = clientWidth;
+	depthStencilDesc.Height = clientHeight;
+	depthStencilDesc.DepthOrArraySize = 1;
+	depthStencilDesc.MipLevels = 1;
+
+	// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from 
+	// the depth buffer.  Therefore, because we need to create two views to the same resource:
+	//   1. SRV format: DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+	//   2. DSV Format: DXGI_FORMAT_D24_UNORM_S8_UINT
+	// we need to create the depth buffer resource with a typeless format.  
+	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+
+	depthStencilDesc.SampleDesc.Count = msaa4xState ? 4 : 1;
+	depthStencilDesc.SampleDesc.Quality = msaa4xState ? (msaa4xQuality - 1) : 0;
+	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+	D3D12_CLEAR_VALUE optClear;
+	optClear.Format = depthStencilFormat;
+	optClear.DepthStencil.Depth = 1.0f;
+	optClear.DepthStencil.Stencil = 0;
+	ThrowIfFailed(device->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&depthStencilDesc,
+		D3D12_RESOURCE_STATE_COMMON,
+		&optClear,
+		IID_PPV_ARGS(depthStencilBuffer.GetAddressOf())));
+
+	// Create descriptor to mip level 0 of entire resource using the format of the resource.
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Format = depthStencilFormat;
+	dsvDesc.Texture2D.MipSlice = 0;
+	device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsvDesc, depthStencilView());
+
+	// Transition the resource from its initial state to be used as a depth buffer.
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(depthStencilBuffer.Get(),
+		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+
+	// Execute the resize commands.
+	ThrowIfFailed(commandList->Close());
+	ID3D12CommandList* cmdsLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	// Wait until resize is complete.
+	gpuService->flushCommandQueue();
+
+	// Update the viewport transform to cover the client area.
+	screenViewport.TopLeftX = 0;
+	screenViewport.TopLeftY = 0;
+	screenViewport.Width = static_cast<float>(clientWidth);
+	screenViewport.Height = static_cast<float>(clientHeight);
+	screenViewport.MinDepth = 0.0f;
+	screenViewport.MaxDepth = 1.0f;
+
+	scissorRect = { 0, 0, clientWidth, clientHeight };
+}
+
+void Renderer::swapChainMethod()
+{
+	// swap the back and front buffers
+	ThrowIfFailed(swapChain->Present(0, 0));
+	currBackBuffer = (currBackBuffer + 1) % Renderer::swapChainBufferCount;
+}

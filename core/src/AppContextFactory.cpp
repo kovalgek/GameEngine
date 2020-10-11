@@ -17,41 +17,46 @@
 #include "d3dUtil.h"
 #include "ViewController.h"
 #include "AppContext.h"
+#include "RendererFactory.h"
+#include "GPUServiceFactory.h"
+#include "GPUService.h"
+
+using Microsoft::WRL::ComPtr;
 
 std::unique_ptr<AppContext> AppContextFactory::appContext(HWND mainWindowHandle)
 {
-	auto application = std::make_unique<Application>(mainWindowHandle);
+	ComPtr<IDXGIFactory4> dxgiFactory;
+	AppContextFactory::createDXGIFactory(dxgiFactory.GetAddressOf());
+
+	auto gpuService = GPUServiceFactory::getGPUService(dxgiFactory.Get());
 
 	// Reset the command list to prep for initialization commands.
-	ThrowIfFailed(application->getCommandList()->Reset(application->getCommandAllocator(), nullptr));
+	ThrowIfFailed(gpuService->getCommandList()->Reset(gpuService->getCommandAllocator(), nullptr));
 
-	std::unique_ptr<AppContext> appContext = halfBakedAppContext(mainWindowHandle, std::move(application));
+	std::unique_ptr<AppContext> appContext = halfBakedAppContext(mainWindowHandle, std::move(gpuService));
 
 	// Execute the initialization commands.
-	ThrowIfFailed(appContext->getApplication()->getCommandList()->Close());
-	ID3D12CommandList* cmdsLists[] = { appContext->getApplication()->getCommandList() };
-	appContext->getApplication()->getCommandQueue()->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	ThrowIfFailed(appContext->getGPUService()->getCommandList()->Close());
+	ID3D12CommandList* cmdsLists[] = { appContext->getGPUService()->getCommandList() };
+	appContext->getGPUService()->getCommandQueue()->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// Wait until initialization is complete.
-	appContext->getApplication()->flushCommandQueue();
+	appContext->getGPUService()->flushCommandQueue();
 
 	return appContext;
 }
 
-std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWindowHandle, std::unique_ptr<Application> application)
+void AppContextFactory::createDXGIFactory(IDXGIFactory4** dxgiFactory)
 {
-	auto pipleneStateData = std::make_unique <PipleneStateData>(
-		application->getDevice(),
-		application->getBackBufferFormat(),
-		application->getDepthStencilFormat(),
-		application->getMsaa4xState(),
-		application->getMsaa4xQuality()
-		);
+	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(dxgiFactory)));
+}
 
-	auto geometryStorage = std::make_unique <GeometryStorage>(
-		application->getDevice(),
-		application->getCommandList()
-		);
+std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWindowHandle, std::unique_ptr<GPUService> gpuService)
+{
+	auto geometryStorage = std::make_unique<GeometryStorage>(
+		gpuService->getDevice(),
+		gpuService->getCommandList()
+	);
 
 	auto geometryStorageRaw = geometryStorage.get();
 
@@ -65,17 +70,17 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 	auto materials = materialsDataProvider->getMaterials();
 	auto renderItems = objectsDataProvider->renderItems();
 
-	auto frameResourceController = std::make_unique<FrameResourceController>(application->getDevice(), 1, (UINT)renderItems.size(), (UINT)materials.size(), waves->VertexCount());
+	auto frameResourceController = std::make_unique<FrameResourceController>(gpuService->getDevice(), 1, (UINT)renderItems.size(), (UINT)materials.size(), waves->VertexCount());
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
 
-	auto texturesProvider = std::make_unique<TexturesProvider>(application->getDevice(), application->getCommandList());
-	auto srvHeapProvider = std::make_unique<SrvHeapProvider>(application->getDevice(), std::move(texturesProvider));
+	auto texturesProvider = std::make_unique<TexturesProvider>(gpuService->getDevice(), gpuService->getCommandList());
+	auto srvHeapProvider = std::make_unique<SrvHeapProvider>(gpuService->getDevice(), std::move(texturesProvider));
 
 	auto viewController = std::make_unique<ViewController>(
 		mainWindowHandle,
-		application->getDevice(),
-		application->getCommandList(),
+		gpuService->getDevice(),
+		gpuService->getCommandList(),
 		srvHeapProvider.get(),
 		mainPassDataProvider.get(),
 		objectsDataProvider.get(),
@@ -83,9 +88,9 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		geometryStorageRaw
 		);
 
-	auto renderer = std::make_unique <Renderer>(
-		application.get(),
-		std::move(pipleneStateData),
+	auto renderer = RendererFactory::getRenderer(
+		mainWindowHandle,
+		gpuService.get(),
 		frameResourceController.get(),
 		objectsDataProvider.get(),
 		std::move(srvHeapProvider),
@@ -93,14 +98,14 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
 		std::move(frameResourceController),
-		application->getFence(),
+		gpuService->getFence(),
 		mainPassDataProvider.get(),
 		objectsDataProvider.get(),
 		materialsDataProvider.get(),
 		waves);
 
 	return std::make_unique<AppContext>(
-		std::move(application),
+		std::move(gpuService),
 		std::move(renderer),
 		std::move(mainPassDataProvider),
 		std::move(objectsDataProvider),

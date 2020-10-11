@@ -26,7 +26,7 @@ void AppFacade::update(const GameTimer& gameTimer)
 
 void AppFacade::onResize(int clientWidth, int clientHeight)
 {
-	appContext->getApplication()->onResize(clientWidth, clientHeight);
+	appContext->getRenderer()->onResize(clientWidth, clientHeight);
 	appContext->getViewController()->onWindowResize(clientWidth, clientHeight);
 }
 
