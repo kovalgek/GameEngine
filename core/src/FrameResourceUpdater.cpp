@@ -13,19 +13,20 @@
 #include "Waves.h"
 #include <DirectXColors.h>
 #include "Vertex.h"
+#include "GPUService.h"
 
 using namespace DirectX;
 
 FrameResourceUpdater::FrameResourceUpdater(
 	std::unique_ptr<FrameResourceController> frameResourceController,
-	ID3D12Fence* fence,
+	GPUService& gpuService,
 	MainPassDataProvider *mainPassDataProvider,
 	ObjectsDataProvider *objectsDataProvider,
 	MaterialsDataProvider* materialsDataProvider,
 	Waves *waves) :
 
 	frameResourceController { std::move(frameResourceController) },
-	fence { fence },
+	gpuService{ gpuService },
 	mainPassDataProvider { mainPassDataProvider },
 	objectsDataProvider { objectsDataProvider },
 	materialsDataProvider { materialsDataProvider },
@@ -52,13 +53,7 @@ void FrameResourceUpdater::waitForFrameResourceAvailable(FrameResource *frameRes
 {
 	// Has the GPU finished processing the commands of the current frame resource?
 	// If not, wait until the GPU has completed commands up to this fence point.
-	if (frameResource->Fence != 0 && fence->GetCompletedValue() < frameResource->Fence)
-	{
-		HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
-		ThrowIfFailed(fence->SetEventOnCompletion(frameResource->Fence, eventHandle));
-		WaitForSingleObject(eventHandle, INFINITE);
-		CloseHandle(eventHandle);
-	}
+	gpuService.waitForGPUFence(frameResource->Fence);
 }
 
 void FrameResourceUpdater::updateMainPassConstantBufferForFrameResource(FrameResource* frameResource, const GameTimer& gameTimer)

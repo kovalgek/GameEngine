@@ -29,6 +29,8 @@ public:
 	ID3D12Fence* getFence() const { return fence.Get(); }
 
 	void flushCommandQueue();
+	UINT64 setNewFenceOnGPUTimeline();
+	void waitForGPUFence(UINT64 currentFence);
 	UINT64 currentFence = 0;
 
 private:

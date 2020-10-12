@@ -98,7 +98,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
 		std::move(frameResourceController),
-		gpuService->getFence(),
+		*gpuService,
 		mainPassDataProvider.get(),
 		objectsDataProvider.get(),
 		materialsDataProvider.get(),

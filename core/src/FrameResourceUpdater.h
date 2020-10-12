@@ -8,7 +8,7 @@ class MainPassDataProvider;
 class ObjectsDataProvider;
 class MaterialsDataProvider;
 class GameTimer;
-struct ID3D12Fence;
+class GPUService;
 class Waves;
 struct Material;
 struct FrameResource;
@@ -26,7 +26,7 @@ class FrameResourceUpdater
 public:
 	FrameResourceUpdater(
 		std::unique_ptr<FrameResourceController> frameResourceController,
-		ID3D12Fence* fence,
+		GPUService& gpuService,
 		MainPassDataProvider* mainPassDataProvider,
 		ObjectsDataProvider* objectsDataProvider,
 		MaterialsDataProvider *materialsDataProvider,
@@ -38,7 +38,7 @@ public:
 
 private:
 	std::unique_ptr<FrameResourceController> frameResourceController;
-	ID3D12Fence* fence;
+	GPUService& gpuService;
 	MainPassDataProvider *mainPassDataProvider;
 	ObjectsDataProvider *objectsDataProvider;
 	MaterialsDataProvider* materialsDataProvider;

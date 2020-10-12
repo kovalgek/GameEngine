@@ -115,16 +115,10 @@ void Renderer::draw(const GameTimer& gameTimer)
 	// Specify the buffers we are going to render to.
 	commandList->OMSetRenderTargets(1, &currentBackBufferView(), true, &depthStencilView());
 
-	//ID3D12DescriptorHeap* descriptorHeaps[] = { frameResourceController->getCbvHeap() };
-	//commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
-
-
 	ID3D12DescriptorHeap* descriptorHeaps[] = { srvHeapProvider->getSrvDescriptorHeap()};
 	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	commandList->SetGraphicsRootSignature(pipleneStateData->getRootSignature());
-
 
 	auto passCB = frameResourceController->getCurrentFrameResource()->PassCB->Resource();
 	commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
@@ -147,9 +141,6 @@ void Renderer::draw(const GameTimer& gameTimer)
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(currentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-
-
-
 	// Done recording commands.
 	ThrowIfFailed(commandList->Close());
 
@@ -157,17 +148,10 @@ void Renderer::draw(const GameTimer& gameTimer)
 	ID3D12CommandList* cmdsLists[] = { commandList };
 	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-
-
 	swapChainMethod();
 
 	//// Advance the fence value to mark commands up to this fence point.
-	frameResourceController->getCurrentFrameResource()->Fence = ++gpuService->currentFence;
-
-	//// Add an instruction to the command queue to set a new fence point. 
-	//// Because we are on the GPU timeline, the new fence point won't be 
-	//// set until the GPU finishes processing all the commands prior to this Signal().
-	commandQueue->Signal(gpuService->getFence(), gpuService->currentFence);
+	frameResourceController->getCurrentFrameResource()->Fence = gpuService->setNewFenceOnGPUTimeline();
 }
 
 void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)

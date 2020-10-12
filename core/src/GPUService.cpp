@@ -23,6 +23,12 @@ GPUService::~GPUService() = default;
 
 void GPUService::flushCommandQueue()
 {
+	setNewFenceOnGPUTimeline();
+	waitForGPUFence(currentFence);
+}
+
+UINT64 GPUService::setNewFenceOnGPUTimeline()
+{
 	// Advance the fence value to mark commands up to this fence point.
 	currentFence++;
 
@@ -31,8 +37,13 @@ void GPUService::flushCommandQueue()
 	// processing all the commands prior to this Signal().
 	ThrowIfFailed(commandQueue->Signal(fence.Get(), currentFence));
 
+	return currentFence;
+}
+
+void GPUService::waitForGPUFence(UINT64 currentFence)
+{
 	// Wait until the GPU has completed commands up to this fence point.
-	if (fence->GetCompletedValue() < currentFence)
+	if (currentFence != 0 && fence->GetCompletedValue() < currentFence)
 	{
 		HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
 
