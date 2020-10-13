@@ -15,7 +15,7 @@ std::unique_ptr<Waves> DynamicVerticesProvider::waves()
 	return waves;
 }
 
-std::vector <DynamicVertices*> DynamicVerticesProvider::getDynamicVerticesList()
+std::vector <DynamicVertices*> DynamicVerticesProvider::getDynamicVerticesList() const
 {
 	std::vector<DynamicVertices*> dynamicVerticesList;
 	for (auto& dynamicVertices : dynamicVerticesMap)
@@ -25,9 +25,9 @@ std::vector <DynamicVertices*> DynamicVerticesProvider::getDynamicVerticesList()
 	return dynamicVerticesList;
 }
 
-DynamicVertices* DynamicVerticesProvider::getDynamicVerticesForName(std::string name)
+DynamicVertices* DynamicVerticesProvider::getDynamicVerticesForName(std::string name) const
 {
-	return dynamicVerticesMap[name].get();
+	return dynamicVerticesMap.find(name)->second.get();
 }
 
 void DynamicVerticesProvider::update(const GameTimer& gameTimer)

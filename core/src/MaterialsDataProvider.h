@@ -10,10 +10,11 @@ class MaterialsDataProvider
 public:
 	MaterialsDataProvider();
 	~MaterialsDataProvider();
-	std::vector <Material*> getMaterials();
-	std::vector <std::string> getMaterialNames();
 
-	Material *getMaterialForName(std::string name);
+	std::vector <Material*> getMaterials() const;
+	std::vector <std::string> getMaterialNames() const;
+	Material *getMaterialForName(std::string name) const;
+
 private:
 	void buildMaterials();
 

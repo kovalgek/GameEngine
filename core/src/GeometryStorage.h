@@ -27,12 +27,10 @@ struct Vertex2
 #pragma once
 class GeometryStorage
 {
-
-
 public:
 	GeometryStorage(
-		ID3D12Device *const device,
-		ID3D12GraphicsCommandList * const commandList
+		ID3D12Device *device,
+		ID3D12GraphicsCommandList *commandList
 	);
 	~GeometryStorage();
 
@@ -43,8 +41,8 @@ public:
 
 
 private:
-	ID3D12Device *const device;
-	ID3D12GraphicsCommandList *const commandList;
+	ID3D12Device *device;
+	ID3D12GraphicsCommandList *commandList;
 
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> geometries;
 	std::unique_ptr<Waves> waves;

@@ -27,7 +27,7 @@ class Renderer
 {
 public:
 	Renderer(
-		GPUService *gpuService,
+		GPUService& gpuService,
 
 		D3D_DRIVER_TYPE d3dDriverType,
 		DXGI_FORMAT backBufferFormat,
@@ -46,10 +46,10 @@ public:
 
 
 		std::unique_ptr<PipleneStateData> pipleneStateData,
-		FrameResourceController *frameResourceController,
-		ObjectsDataProvider *objectsDataProvider,
+		FrameResourceController& frameResourceController,
+		ObjectsDataProvider& objectsDataProvider,
 		std::unique_ptr<SrvHeapProvider> srvHeapProvider,
-		ViewController * viewController
+		ViewController& viewController
 	);
 
 	~Renderer();
@@ -68,14 +68,14 @@ public:
 
 private:
 
-	GPUService* gpuService;
+	GPUService& gpuService;
 
 
 	std::unique_ptr<PipleneStateData> pipleneStateData;
-	FrameResourceController *frameResourceController;
-	ObjectsDataProvider *objectsDataProvider;
+	FrameResourceController& frameResourceController;
+	ObjectsDataProvider& objectsDataProvider;
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider;
-	ViewController * viewController;
+	ViewController& viewController;
 
 
 	void onKeyboardInput(const GameTimer& gameTimer);

@@ -120,12 +120,12 @@ std::unique_ptr<Material> MaterialsDataProvider::shadowMatMaterial()
 	return shadowMat;
 }
 
-Material* MaterialsDataProvider::getMaterialForName(std::string name)
+Material* MaterialsDataProvider::getMaterialForName(std::string name) const
 {
-	return materials[name].get();
+	return  materials.find(name)->second.get();
 }
 
-std::vector<Material*> MaterialsDataProvider::getMaterials()
+std::vector<Material*> MaterialsDataProvider::getMaterials() const
 {
 	std::vector<Material*> result;
 	for (auto& material : materials)
@@ -135,7 +135,7 @@ std::vector<Material*> MaterialsDataProvider::getMaterials()
 	return result;
 }
 
-std::vector <std::string> MaterialsDataProvider::getMaterialNames()
+std::vector <std::string> MaterialsDataProvider::getMaterialNames() const
 {
 	std::vector<std::string> result;
 	for (auto& material : materials)

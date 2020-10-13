@@ -34,8 +34,8 @@ class ObjectsDataProvider
 public:
 	ObjectsDataProvider(
 		std::unique_ptr <GeometryStorage> geometryStorage, 
-		MaterialsDataProvider* materialsDataProvider,
-		DynamicVerticesProvider* dynamicVerticesProvider
+		const MaterialsDataProvider &materialsDataProvider,
+		const DynamicVerticesProvider &dynamicVerticesProvider
 	);
 	~ObjectsDataProvider();
 
@@ -43,6 +43,7 @@ public:
 	std::vector<RenderItem*> renderItemsForLayer(RenderLayer layer);
 	std::vector<RenderItem*> getRenderItemsWithDynamicVertexBuffer() { return renderItemsWithDynamicVertexBuffer; }
 
+	GeometryStorage* getGeometryStorage() const { return geometryStorage.get(); }
 	
 	void createPrimitive(
 		std::string meshName,
@@ -57,8 +58,8 @@ public:
 
 private:
 	std::unique_ptr <GeometryStorage> geometryStorage;
-	MaterialsDataProvider* materialsDataProvider;
-	DynamicVerticesProvider* dynamicVerticesProvider;
+	const MaterialsDataProvider& materialsDataProvider;
+	const DynamicVerticesProvider& dynamicVerticesProvider;
 
 	std::vector<std::shared_ptr<RenderItem>> allRitems;
 	std::vector<RenderItem*> ritemLayer[(int)RenderLayer::Count]; // Render items divided by PSO.

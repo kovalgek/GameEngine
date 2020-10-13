@@ -12,18 +12,18 @@ using Microsoft::WRL::ComPtr;
 
 std::unique_ptr<Renderer> RendererFactory::getRenderer(
 	HWND mainWindowHandle,
-	GPUService* gpuService,
-	FrameResourceController* frameResourceController,
-	ObjectsDataProvider* objectsDataProvider,
+	GPUService& gpuService,
+	FrameResourceController& frameResourceController,
+	ObjectsDataProvider& objectsDataProvider,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
-	ViewController* viewController
+	ViewController& viewController
 )
 {
 	ComPtr<IDXGIFactory4> dxgiFactory;
 	RendererFactory::createDXGIFactory(dxgiFactory.GetAddressOf());
 
 	ComPtr<ID3D12Fence> fence;
-	RendererFactory::createFence(gpuService->getDevice(), fence.GetAddressOf());
+	RendererFactory::createFence(gpuService.getDevice(), fence.GetAddressOf());
 
 	D3D_DRIVER_TYPE d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
 	DXGI_FORMAT backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -34,7 +34,7 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 
 
 	RendererFactory::setUp4xMSAAQuality(
-		gpuService->getDevice(),
+		gpuService.getDevice(),
 		backBufferFormat,
 		msaa4xQuality
 	);
@@ -44,7 +44,7 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 	ComPtr<IDXGISwapChain> swapChain;
 	RendererFactory::createSwapChain(
 		dxgiFactory.Get(),
-		gpuService->getCommandQueue(),
+		gpuService.getCommandQueue(),
 		backBufferFormat,
 		msaa4xState,
 		msaa4xQuality,
@@ -56,7 +56,7 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 	ComPtr<ID3D12DescriptorHeap> rtvHeap;
 	ComPtr<ID3D12DescriptorHeap> dsvHeap;
 	RendererFactory::createRtvAndDsvDescriptorHeaps(
-		gpuService->getDevice(),
+		gpuService.getDevice(),
 		swapChainBufferCount,
 		rtvHeap.GetAddressOf(),
 		dsvHeap.GetAddressOf()
@@ -66,14 +66,14 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 	UINT dsvDescriptorSize = 0;
 	UINT cbvSrvUavDescriptorSize = 0;
 	RendererFactory::setUpDescriptorSizes(
-		gpuService->getDevice(),
+		gpuService.getDevice(),
 		rtvDescriptorSize,
 		dsvDescriptorSize,
 		cbvSrvUavDescriptorSize
 	);
 
 	auto pipleneStateData = std::make_unique<PipleneStateData>(
-		gpuService->getDevice(),
+		gpuService.getDevice(),
 		backBufferFormat,
 		depthStencilFormat,
 		msaa4xState,

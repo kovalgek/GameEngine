@@ -11,8 +11,8 @@ using namespace DirectX::PackedVector;
 
 ObjectsDataProvider::ObjectsDataProvider(
 	std::unique_ptr <GeometryStorage> geometryStorage,
-	MaterialsDataProvider* materialsDataProvider,
-	DynamicVerticesProvider* dynamicVerticesProvider
+	const MaterialsDataProvider& materialsDataProvider,
+	const DynamicVerticesProvider& dynamicVerticesProvider
 ) :
 	geometryStorage { std::move(geometryStorage) },
 	materialsDataProvider { materialsDataProvider },
@@ -40,7 +40,7 @@ void ObjectsDataProvider::createPrimitive(
 	XMStoreFloat4x4(&item->TexTransform, XMMatrixScaling(textureTransform[0], textureTransform[1], textureTransform[2]));
 
 	item->ObjCBIndex = itemIndex++;
-	item->Mat = materialsDataProvider->getMaterialForName(material);
+	item->Mat = materialsDataProvider.getMaterialForName(material);
 	item->Geo = this->geometryStorage->getGeometry(meshName);
 	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	item->IndexCount = item->Geo->DrawArgs[subMeshName].IndexCount;
@@ -58,7 +58,7 @@ void ObjectsDataProvider::createPrimitive(PrimitiveModel primitiveModel)
 	XMStoreFloat4x4(&item->TexTransform, XMMatrixScaling(primitiveModel.texture[0], primitiveModel.texture[1], primitiveModel.texture[2]));
 
 	item->ObjCBIndex = itemIndex++;
-	item->Mat = materialsDataProvider->getMaterialForName(primitiveModel.material);
+	item->Mat = materialsDataProvider.getMaterialForName(primitiveModel.material);
 	item->Geo = this->geometryStorage->getGeometry(primitiveModel.mesh);
 	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	item->IndexCount = item->Geo->DrawArgs[primitiveModel.submesh].IndexCount;
@@ -150,9 +150,9 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 	wavesRitem->World = MathHelper::Identity4x4();
 	XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
 	wavesRitem->ObjCBIndex = 0;
-	wavesRitem->Mat = materialsDataProvider->getMaterialForName("water");
+	wavesRitem->Mat = materialsDataProvider.getMaterialForName("water");
 	wavesRitem->Geo = this->geometryStorage->getGeometry("waterGeo");
-	wavesRitem->dynamicVertices = dynamicVerticesProvider->getDynamicVerticesForName("waves");
+	wavesRitem->dynamicVertices = dynamicVerticesProvider.getDynamicVerticesForName("waves");
 	wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
 	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
@@ -166,7 +166,7 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 	gridRitem->World = MathHelper::Identity4x4();
 	XMStoreFloat4x4(&gridRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
 	gridRitem->ObjCBIndex = 1;
-	gridRitem->Mat = materialsDataProvider->getMaterialForName("grass");
+	gridRitem->Mat = materialsDataProvider.getMaterialForName("grass");
 	gridRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 	gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["hills"].IndexCount;
@@ -178,7 +178,7 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 	auto boxRitem = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
 	boxRitem->ObjCBIndex = 2;
-	boxRitem->Mat = materialsDataProvider->getMaterialForName("wirefence");
+	boxRitem->Mat = materialsDataProvider.getMaterialForName("wirefence");
 	boxRitem->Geo = this->geometryStorage->getGeometry("shapeGeo");
 	boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
@@ -191,7 +191,7 @@ void ObjectsDataProvider::buildRenderItemsForLandAndWaves()
 	skullRitem->World = MathHelper::Identity4x4();
 	skullRitem->TexTransform = MathHelper::Identity4x4();
 	skullRitem->ObjCBIndex = 0;
-	skullRitem->Mat = materialsDataProvider->getMaterialForName("skullMat");
+	skullRitem->Mat = materialsDataProvider.getMaterialForName("skullMat");
 	skullRitem->Geo = this->geometryStorage->getGeometry("skullGeo");
 	skullRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["skull"].IndexCount;
@@ -212,7 +212,7 @@ void ObjectsDataProvider::buildStencilDemoRenderItems()
 	floorRitem->World = MathHelper::Identity4x4();
 	floorRitem->TexTransform = MathHelper::Identity4x4();
 	floorRitem->ObjCBIndex = 0;
-	floorRitem->Mat = materialsDataProvider->getMaterialForName("checkertile");
+	floorRitem->Mat = materialsDataProvider.getMaterialForName("checkertile");
 	floorRitem->Geo = this->geometryStorage->getGeometry("roomGeo");
 	floorRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	floorRitem->IndexCount = floorRitem->Geo->DrawArgs["floor"].IndexCount;
@@ -224,7 +224,7 @@ void ObjectsDataProvider::buildStencilDemoRenderItems()
 	wallsRitem->World = MathHelper::Identity4x4();
 	wallsRitem->TexTransform = MathHelper::Identity4x4();
 	wallsRitem->ObjCBIndex = 1;
-	wallsRitem->Mat = materialsDataProvider->getMaterialForName("bricks");
+	wallsRitem->Mat = materialsDataProvider.getMaterialForName("bricks");
 	wallsRitem->Geo = this->geometryStorage->getGeometry("roomGeo");
 	wallsRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	wallsRitem->IndexCount = wallsRitem->Geo->DrawArgs["wall"].IndexCount;
@@ -236,7 +236,7 @@ void ObjectsDataProvider::buildStencilDemoRenderItems()
 	skullRitem->World = MathHelper::Identity4x4();
 	skullRitem->TexTransform = MathHelper::Identity4x4();
 	skullRitem->ObjCBIndex = 2;
-	skullRitem->Mat = materialsDataProvider->getMaterialForName("skullMat");
+	skullRitem->Mat = materialsDataProvider.getMaterialForName("skullMat");
 	skullRitem->Geo = this->geometryStorage->getGeometry("skullGeo");
 	skullRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["skull"].IndexCount;
@@ -256,7 +256,7 @@ void ObjectsDataProvider::buildStencilDemoRenderItems()
 	auto shadowedSkullRitem = std::make_unique<RenderItem>();
 	*shadowedSkullRitem = *skullRitem;
 	shadowedSkullRitem->ObjCBIndex = 4;
-	shadowedSkullRitem->Mat = materialsDataProvider->getMaterialForName("shadowMat");
+	shadowedSkullRitem->Mat = materialsDataProvider.getMaterialForName("shadowMat");
 	//mShadowedSkullRitem = shadowedSkullRitem.get();
 	ritemLayer[(int)RenderLayer::Shadow].push_back(shadowedSkullRitem.get());
 
@@ -264,7 +264,7 @@ void ObjectsDataProvider::buildStencilDemoRenderItems()
 	mirrorRitem->World = MathHelper::Identity4x4();
 	mirrorRitem->TexTransform = MathHelper::Identity4x4();
 	mirrorRitem->ObjCBIndex = 5;
-	mirrorRitem->Mat = materialsDataProvider->getMaterialForName("icemirror");
+	mirrorRitem->Mat = materialsDataProvider.getMaterialForName("icemirror");
 	mirrorRitem->Geo = this->geometryStorage->getGeometry("roomGeo");
 	mirrorRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	mirrorRitem->IndexCount = mirrorRitem->Geo->DrawArgs["mirror"].IndexCount;

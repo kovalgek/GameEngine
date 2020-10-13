@@ -15,8 +15,8 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 GeometryStorage::GeometryStorage(
-	ID3D12Device* const device,
-	ID3D12GraphicsCommandList* const commandList
+	ID3D12Device *device,
+	ID3D12GraphicsCommandList *commandList
 ) :
 	device { device },
 	commandList { commandList }

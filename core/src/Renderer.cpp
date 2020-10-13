@@ -25,7 +25,7 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 Renderer::Renderer(
-	GPUService* gpuService,
+	GPUService& gpuService,
 
 	D3D_DRIVER_TYPE d3dDriverType,
 	DXGI_FORMAT backBufferFormat,
@@ -43,17 +43,17 @@ Renderer::Renderer(
 
 
 	std::unique_ptr<PipleneStateData> pipleneStateData,
-	FrameResourceController* frameResourceController,
-	ObjectsDataProvider* objectsDataProvider,
+	FrameResourceController& frameResourceController,
+	ObjectsDataProvider& objectsDataProvider,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
-	ViewController * viewController
+	ViewController& viewController
 ) :
 	gpuService{ gpuService },
-	device { gpuService->getDevice() },
-	commandQueue{ gpuService->getCommandQueue() },
-	commandAllocator{ gpuService->getCommandAllocator() },
-	commandList{ gpuService->getCommandList() },
-	fence { gpuService->getFence() },
+	device { gpuService.getDevice() },
+	commandQueue{ gpuService.getCommandQueue() },
+	commandAllocator{ gpuService.getCommandAllocator() },
+	commandList{ gpuService.getCommandList() },
+	fence { gpuService.getFence() },
 
 	d3dDriverType{ d3dDriverType },
 	backBufferFormat{ backBufferFormat },
@@ -90,7 +90,7 @@ bool show_demo_window = true;
 
 void Renderer::draw(const GameTimer& gameTimer)
 {
-	auto cmdListAlloc = frameResourceController->getCurrentFrameResource()->CmdListAlloc;
+	auto cmdListAlloc = frameResourceController.getCurrentFrameResource()->CmdListAlloc;
 
 	// Reuse the memory associated with command recording.
 	// We can only reset when the associated command lists have finished execution on the GPU.
@@ -120,22 +120,22 @@ void Renderer::draw(const GameTimer& gameTimer)
 
 	commandList->SetGraphicsRootSignature(pipleneStateData->getRootSignature());
 
-	auto passCB = frameResourceController->getCurrentFrameResource()->PassCB->Resource();
+	auto passCB = frameResourceController.getCurrentFrameResource()->PassCB->Resource();
 	commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
 
-	auto allRitems = objectsDataProvider->renderItemsForLayer(RenderLayer::Opaque);
+	auto allRitems = objectsDataProvider.renderItemsForLayer(RenderLayer::Opaque);
 	drawRenderItems(commandList, allRitems);
 
 	commandList->SetPipelineState(pipleneStateData->getPSO("alphaTested"));
-	auto alphaTestedRenderItems = objectsDataProvider->renderItemsForLayer(RenderLayer::AlphaTested);
+	auto alphaTestedRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::AlphaTested);
 	drawRenderItems(commandList, alphaTestedRenderItems);
 
 	commandList->SetPipelineState(pipleneStateData->getPSO("transparent"));
-	auto transparentRenderItems = objectsDataProvider->renderItemsForLayer(RenderLayer::Transparent);
+	auto transparentRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::Transparent);
 	drawRenderItems(commandList, transparentRenderItems);
 
-	viewController->present();
-	viewController->update();
+	viewController.present();
+	viewController.update();
 
 	// Indicate a state transition on the resource usage.
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(currentBackBuffer(),
@@ -151,7 +151,7 @@ void Renderer::draw(const GameTimer& gameTimer)
 	swapChainMethod();
 
 	//// Advance the fence value to mark commands up to this fence point.
-	frameResourceController->getCurrentFrameResource()->Fence = gpuService->setNewFenceOnGPUTimeline();
+	frameResourceController.getCurrentFrameResource()->Fence = gpuService.setNewFenceOnGPUTimeline();
 }
 
 void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
@@ -159,8 +159,8 @@ void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::ve
 	UINT objCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
 	UINT matCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(MaterialConstants));
 
-	auto objectCB = frameResourceController->getCurrentFrameResource()->ObjectCB->Resource();
-	auto matCB = frameResourceController->getCurrentFrameResource()->MaterialCB->Resource();
+	auto objectCB = frameResourceController.getCurrentFrameResource()->ObjectCB->Resource();
+	auto matCB = frameResourceController.getCurrentFrameResource()->MaterialCB->Resource();
 
 	for (size_t i = 0; i < ritems.size(); ++i)
 	{
@@ -210,7 +210,7 @@ void Renderer::onResize(int clientWidth, int clientHeight)
 	assert(commandAllocator);
 
 	// Flush before changing any resources.
-	gpuService->flushCommandQueue();
+	gpuService.flushCommandQueue();
 
 	ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
 
@@ -289,7 +289,7 @@ void Renderer::onResize(int clientWidth, int clientHeight)
 	commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// Wait until resize is complete.
-	gpuService->flushCommandQueue();
+	gpuService.flushCommandQueue();
 
 	// Update the viewport transform to cover the client area.
 	screenViewport.TopLeftX = 0;

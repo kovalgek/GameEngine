@@ -58,50 +58,64 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		gpuService->getCommandList()
 	);
 
-	auto geometryStorageRaw = geometryStorage.get();
-
 	auto waves = geometryStorage->getWaves();
 
 	auto materialsDataProvider = std::make_unique<MaterialsDataProvider>();
 	auto dynamicVerticesProvider = std::make_unique<DynamicVerticesProvider>();
 
-	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(std::move(geometryStorage), materialsDataProvider.get(), dynamicVerticesProvider.get());
+	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(
+		std::move(geometryStorage),
+		*materialsDataProvider,
+		*dynamicVerticesProvider
+	);
 
 	auto materials = materialsDataProvider->getMaterials();
 	auto renderItems = objectsDataProvider->renderItems();
 
-	auto frameResourceController = std::make_unique<FrameResourceController>(gpuService->getDevice(), 1, (UINT)renderItems.size(), (UINT)materials.size(), waves->VertexCount());
+	auto frameResourceController = std::make_unique<FrameResourceController>(
+		gpuService->getDevice(),
+		1,
+		(UINT)renderItems.size(),
+		(UINT)materials.size(),
+		waves->VertexCount()
+	);
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
 
-	auto texturesProvider = std::make_unique<TexturesProvider>(gpuService->getDevice(), gpuService->getCommandList());
-	auto srvHeapProvider = std::make_unique<SrvHeapProvider>(gpuService->getDevice(), std::move(texturesProvider));
+	auto texturesProvider = std::make_unique<TexturesProvider>(
+		gpuService->getDevice(),
+		gpuService->getCommandList()
+	);
+	auto srvHeapProvider = std::make_unique<SrvHeapProvider>(
+		gpuService->getDevice(),
+		std::move(texturesProvider)
+	);
 
 	auto viewController = std::make_unique<ViewController>(
 		mainWindowHandle,
 		gpuService->getDevice(),
 		gpuService->getCommandList(),
-		srvHeapProvider.get(),
-		mainPassDataProvider.get(),
-		objectsDataProvider.get(),
-		materialsDataProvider.get(),
-		geometryStorageRaw
+		*srvHeapProvider,
+		*mainPassDataProvider,
+		*objectsDataProvider,
+		*materialsDataProvider,
+		*objectsDataProvider->getGeometryStorage()
 		);
 
 	auto renderer = RendererFactory::getRenderer(
 		mainWindowHandle,
-		gpuService.get(),
-		frameResourceController.get(),
-		objectsDataProvider.get(),
+		*gpuService,
+		*frameResourceController,
+		*objectsDataProvider,
 		std::move(srvHeapProvider),
-		viewController.get());
+		*viewController);
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
 		std::move(frameResourceController),
 		*gpuService,
-		mainPassDataProvider.get(),
-		objectsDataProvider.get(),
-		materialsDataProvider.get(),
+		*mainPassDataProvider,
+		*objectsDataProvider,
+		*materialsDataProvider,
 		waves);
 
 	return std::make_unique<AppContext>(

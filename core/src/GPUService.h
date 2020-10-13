@@ -22,6 +22,9 @@ public:
 	// Factory for directx objects
 	ID3D12Device* getDevice() const { return device.Get(); }
 
+	const ID3D12Device &getDeviceRef() const { return *device.Get(); }
+
+
 	// Execute commands
 	ID3D12GraphicsCommandList* getCommandList() const { return commandList.Get(); }
 	ID3D12CommandAllocator* getCommandAllocator() const { return commandAllocator.Get(); }

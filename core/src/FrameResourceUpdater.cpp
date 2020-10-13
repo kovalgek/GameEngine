@@ -20,9 +20,9 @@ using namespace DirectX;
 FrameResourceUpdater::FrameResourceUpdater(
 	std::unique_ptr<FrameResourceController> frameResourceController,
 	GPUService& gpuService,
-	MainPassDataProvider *mainPassDataProvider,
-	ObjectsDataProvider *objectsDataProvider,
-	MaterialsDataProvider* materialsDataProvider,
+	MainPassDataProvider& mainPassDataProvider,
+	ObjectsDataProvider& objectsDataProvider,
+	const MaterialsDataProvider& materialsDataProvider,
 	Waves *waves) :
 
 	frameResourceController { std::move(frameResourceController) },
@@ -59,7 +59,7 @@ void FrameResourceUpdater::waitForFrameResourceAvailable(FrameResource *frameRes
 void FrameResourceUpdater::updateMainPassConstantBufferForFrameResource(FrameResource* frameResource, const GameTimer& gameTimer)
 {
 	auto mainPassConstantBuffer = frameResource->PassCB.get();
-	auto mainPassData = mainPassDataProvider->getMainPassData();
+	auto mainPassData = mainPassDataProvider.getMainPassData();
 	updateMainPassConstantBuffer(mainPassConstantBuffer, mainPassData, gameTimer);
 }
 
@@ -112,7 +112,7 @@ PassConstants FrameResourceUpdater::passConstantsFromMainPassData(MainPassData m
 void FrameResourceUpdater::updateObjectConstantBufferForFrameResource(FrameResource *frameResource)
 {
 	auto objectConstantBuffer = frameResource->ObjectCB.get();
-	auto renderItems = objectsDataProvider->renderItems();
+	auto renderItems = objectsDataProvider.renderItems();
 	updateObjectConstantBuffer(objectConstantBuffer, renderItems);
 }
 
@@ -150,7 +150,7 @@ ObjectConstants FrameResourceUpdater::objectConstantsFromRenderItem(RenderItem* 
 void FrameResourceUpdater::updateMaterialConstantBufferForFrameResource(FrameResource* frameResource)
 {
 	auto materialConstantBuffer = frameResource->MaterialCB.get();
-	auto materials = materialsDataProvider->getMaterials();
+	auto materials = materialsDataProvider.getMaterials();
 	updateMaterialConstantBuffer(materialConstantBuffer, materials);
 }
 
@@ -188,7 +188,7 @@ MaterialConstants FrameResourceUpdater::materialConstantsFromMaterial(Material* 
 void FrameResourceUpdater::updateVertexUploadBufferForFrameResource(FrameResource* frameResource)
 {
 	auto vertexBuffer = frameResourceController->getCurrentFrameResource()->WavesVB.get();
-	auto renderItems = objectsDataProvider->getRenderItemsWithDynamicVertexBuffer();
+	auto renderItems = objectsDataProvider.getRenderItemsWithDynamicVertexBuffer();
 	updateVertexUploadBuffer(vertexBuffer, renderItems);
 }
 

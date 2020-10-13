@@ -20,11 +20,11 @@ ViewController::ViewController(
 	HWND                      mainWindowHandle,
 	ID3D12Device              *device,
 	ID3D12GraphicsCommandList *commandList,
-	SrvHeapProvider           *srvHeapProvider,
-	MainPassModelsListener    *mainPassModelsListener,
-	ObjectsDataProvider       *objectsDataProvider,
-	MaterialsDataProvider     *materialsDataProvider,
-	GeometryStorage           *geometryStorage) :
+	SrvHeapProvider&          srvHeapProvider,
+	MainPassModelsListener    &mainPassModelsListener,
+	ObjectsDataProvider&      objectsDataProvider,
+	MaterialsDataProvider&    materialsDataProvider,
+	GeometryStorage&          geometryStorage) :
 
 	device { device },
 	commandList { commandList },
@@ -44,9 +44,9 @@ ViewController::ViewController(
 	ImGui_ImplWin32_Init(mainWindowHandle);
 	ImGui_ImplDX12_Init(device, 3,
 		DXGI_FORMAT_R8G8B8A8_UNORM,
-		srvHeapProvider->getSrvDescriptorHeap(),
-		srvHeapProvider->getSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
-		srvHeapProvider->getSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
+		srvHeapProvider.getSrvDescriptorHeap(),
+		srvHeapProvider.getSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
+		srvHeapProvider.getSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
 	ImGui::StyleColorsDark();
 
 }
@@ -58,7 +58,7 @@ void ViewController::onWindowResize(int clientWidth, int clientHeight)
 	ClientSizeModel clientSizeModel;
 	clientSizeModel.clientWidth = clientWidth;
 	clientSizeModel.clientHeight = clientHeight;
-	mainPassModelsListener->onClientSizeUpdated(clientSizeModel);
+	mainPassModelsListener.onClientSizeUpdated(clientSizeModel);
 }
 
 void ViewController::onMouseDown(int x, int y)
@@ -129,7 +129,7 @@ void ViewController::initPrimitiveViewModel(PrimitiveViewModel& primitiveViewMod
 	primitiveViewModel.texture[1] = 1.0f;
 	primitiveViewModel.texture[2] = 1.0f;
 
-	meshes = geometryStorage->getGeometryNames();
+	meshes = geometryStorage.getGeometryNames();
 	if (meshes.size() != 0)
 	{
 		auto firstMesh = meshes.begin();
@@ -142,7 +142,7 @@ void ViewController::initPrimitiveViewModel(PrimitiveViewModel& primitiveViewMod
 		}
 	}
 
-	materials = materialsDataProvider->getMaterialNames();
+	materials = materialsDataProvider.getMaterialNames();
 	if (materials.size() != 0)
 	{
 		primitiveViewModel.currentMaterial = materials[0];
@@ -167,13 +167,13 @@ void ViewController::present()
 void ViewController::update()
 {
 	CameraModel model = cameraModel(cameraViewModel);
-	mainPassModelsListener->onCameraModelUpdated(model);
+	mainPassModelsListener.onCameraModelUpdated(model);
 
 	LightModel updatedLightModel = lightModel(lightsViewModel);
-	mainPassModelsListener->onLightModelUpdated(updatedLightModel);
+	mainPassModelsListener.onLightModelUpdated(updatedLightModel);
 
 	FogModel updatedFogModel = fogModel(fogViewModel);
-	mainPassModelsListener->onFogModelUpdated(updatedFogModel);
+	mainPassModelsListener.onFogModelUpdated(updatedFogModel);
 }
 
 void ViewController::createCameraView()
@@ -217,7 +217,7 @@ void ViewController::createPrimitiveFactoryView()
 	if (ImGui::Button("Create primitive"))
 	{
 		auto model = primitiveModel(primitiveViewModel);
-		objectsDataProvider->createPrimitive(model);
+		objectsDataProvider.createPrimitive(model);
 	}
 
 	ImGui::End();

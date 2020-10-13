@@ -11,9 +11,12 @@ class DynamicVerticesProvider
 public:
 	DynamicVerticesProvider();
 	~DynamicVerticesProvider();
-	std::vector <DynamicVertices*> getDynamicVerticesList();
-	DynamicVertices* getDynamicVerticesForName(std::string name);
+
+	std::vector <DynamicVertices*> getDynamicVerticesList() const;
+	DynamicVertices* getDynamicVerticesForName(std::string name) const;
+	
 	void update(const GameTimer& gameTimer);
+
 private:
 	std::unique_ptr<Waves> waves();
 	std::unordered_map<std::string, std::unique_ptr<DynamicVertices>> dynamicVerticesMap;

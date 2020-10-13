@@ -27,9 +27,9 @@ public:
 	FrameResourceUpdater(
 		std::unique_ptr<FrameResourceController> frameResourceController,
 		GPUService& gpuService,
-		MainPassDataProvider* mainPassDataProvider,
-		ObjectsDataProvider* objectsDataProvider,
-		MaterialsDataProvider *materialsDataProvider,
+		MainPassDataProvider& mainPassDataProvider,
+		ObjectsDataProvider& objectsDataProvider,
+		const MaterialsDataProvider& materialsDataProvider,
 		Waves* waves
 	);
 	~FrameResourceUpdater();
@@ -39,9 +39,9 @@ public:
 private:
 	std::unique_ptr<FrameResourceController> frameResourceController;
 	GPUService& gpuService;
-	MainPassDataProvider *mainPassDataProvider;
-	ObjectsDataProvider *objectsDataProvider;
-	MaterialsDataProvider* materialsDataProvider;
+	MainPassDataProvider& mainPassDataProvider;
+	ObjectsDataProvider& objectsDataProvider;
+	const MaterialsDataProvider& materialsDataProvider;
 	Waves* waves;
 
 	void waitForFrameResourceAvailable(FrameResource* frameResource);

@@ -3,7 +3,13 @@
 #include "UploadBuffer.h"
 #include <d3d12.h>
 
-FrameResourceController::FrameResourceController(ID3D12Device* device, UINT passCount, UINT objectCount, UINT materialCount, UINT waveVertCount) :
+FrameResourceController::FrameResourceController(
+	ID3D12Device* device,
+	UINT passCount,
+	UINT objectCount,
+	UINT materialCount,
+	UINT waveVertCount
+) :
 	device { device },
 	passCount { passCount },
 	objectCount { objectCount }
@@ -12,11 +18,6 @@ FrameResourceController::FrameResourceController(ID3D12Device* device, UINT pass
 	{
 		frameResources.push_back(std::make_unique<FrameResource>(device, passCount, objectCount, materialCount, waveVertCount));
 	}
-
-	//cbvSrvUavDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-	//createDescriptorHeaps();
-	//createConstantBufferViews();
 }
 
 FrameResourceController::~FrameResourceController()

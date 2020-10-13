@@ -47,7 +47,7 @@ void SrvHeapProvider::createViews()
 	}
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE SrvHeapProvider::getHandleForIndex(UINT index)
+D3D12_GPU_DESCRIPTOR_HANDLE SrvHeapProvider::getHandleForIndex(UINT index) const
 {
 	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 	tex.Offset(index + 1, cbvSrvDescriptorSize);

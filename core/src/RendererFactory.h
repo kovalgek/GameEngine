@@ -25,11 +25,11 @@ class RendererFactory
 public:
 	static std::unique_ptr<Renderer> getRenderer(
 		HWND mainWindowHandle,
-		GPUService* gpuService,
-		FrameResourceController* frameResourceController,
-		ObjectsDataProvider* objectsDataProvider,
+		GPUService &gpuService,
+		FrameResourceController& frameResourceController,
+		ObjectsDataProvider& objectsDataProvider,
 		std::unique_ptr <SrvHeapProvider> srvHeapProvider,
-		ViewController* viewController
+		ViewController& viewController
 	);
 private:
 	static void RendererFactory::createDXGIFactory(IDXGIFactory4** dxgiFactory);

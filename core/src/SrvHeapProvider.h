@@ -19,8 +19,8 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
 
-	D3D12_GPU_DESCRIPTOR_HANDLE getHandleForIndex(UINT index);
-	ID3D12DescriptorHeap* getSrvDescriptorHeap() { return srvDescriptorHeap.Get(); }
+	D3D12_GPU_DESCRIPTOR_HANDLE getHandleForIndex(UINT index) const;
+	ID3D12DescriptorHeap* getSrvDescriptorHeap() const { return srvDescriptorHeap.Get(); }
 
 private:
 	// Create the SRV heap.

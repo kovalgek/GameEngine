@@ -26,11 +26,11 @@ public:
 		HWND                      mainWindowHandle,
 		ID3D12Device              *device,
 		ID3D12GraphicsCommandList *commandList,
-		SrvHeapProvider           *srvHeapProvider,	
-		MainPassModelsListener	  *mainPassModelsListener,
-		ObjectsDataProvider       *objectsDataProvider,		
-		MaterialsDataProvider     *materialsDataProvider,
-		GeometryStorage           *geometryStorage);
+		SrvHeapProvider&          srvHeapProvider,
+		MainPassModelsListener&	  mainPassModelsListener,
+		ObjectsDataProvider&      objectsDataProvider,		
+		MaterialsDataProvider&    materialsDataProvider,
+		GeometryStorage&          geometryStorage);
 	~ViewController();
 
 	void present();
@@ -43,10 +43,10 @@ public:
 private:
 	ID3D12Device              *device;
 	ID3D12GraphicsCommandList *commandList;
-	MainPassModelsListener* mainPassModelsListener;
-	ObjectsDataProvider   *objectsDataProvider;
-	MaterialsDataProvider *materialsDataProvider;
-	GeometryStorage       *geometryStorage;
+	MainPassModelsListener &mainPassModelsListener;
+	ObjectsDataProvider   &objectsDataProvider;
+	MaterialsDataProvider &materialsDataProvider;
+	GeometryStorage       &geometryStorage;
 
 	std::unordered_map<std::string, std::vector<std::string>> meshes;
 	std::vector<std::string> materials;
