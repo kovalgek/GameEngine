@@ -46,6 +46,9 @@
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorage.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageFactory.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ViewController.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
@@ -163,6 +166,9 @@
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorage.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageFactory.h">
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ViewModels.h">

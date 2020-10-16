@@ -4,6 +4,8 @@
 
 #include "GeometryGenerator.h"
 #include <algorithm>
+#include <fstream>
+#include <windows.h>
 
 using namespace DirectX;
 
@@ -548,6 +550,38 @@ void GeometryGenerator::BuildCylinderBottomCap(float bottomRadius, float topRadi
 	}
 }
 
+GeometryGenerator::MeshData GeometryGenerator::CreateHills(float width, float depth, uint32 m, uint32 n)
+{
+	MeshData meshData = CreateGrid(width, depth, m, n);
+
+	for (uint32 i = 0; i < meshData.Vertices.size(); ++i)
+	{
+		meshData.Vertices[i].Position.y = getHillsHeight(meshData.Vertices[i].Position.x, meshData.Vertices[i].Position.z);
+		meshData.Vertices[i].Normal = getHillsNormal(meshData.Vertices[i].Position.x, meshData.Vertices[i].Position.z);
+	}
+
+	return meshData;
+}
+
+float GeometryGenerator::getHillsHeight(float x, float z)const
+{
+	return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z));
+}
+
+XMFLOAT3 GeometryGenerator::getHillsNormal(float x, float z)const
+{
+	// n = (-df/dx, 1, -df/dz)
+	XMFLOAT3 n(
+		-0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z),
+		1.0f,
+		-0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z));
+
+	XMVECTOR unitNormal = XMVector3Normalize(XMLoadFloat3(&n));
+	XMStoreFloat3(&n, unitNormal);
+
+	return n;
+}
+
 GeometryGenerator::MeshData GeometryGenerator::CreateGrid(float width, float depth, uint32 m, uint32 n)
 {
     MeshData meshData;
@@ -656,73 +690,52 @@ GeometryGenerator::MeshData GeometryGenerator::CreateQuad(float x, float y, floa
     return meshData;
 }
 
-//GeometryGenerator::MeshData GeometryGenerator::CreateRoom()
-//{
-//	MeshData meshData;
-//
-//	 Create and specify geometry.  For this sample we draw a floor
-// and a wall with a mirror on it.  We put the floor, wall, and
-// mirror geometry in one vertex buffer.
-//
-//   |--------------|
-//   |              |
-//   |----|----|----|
-//   |Wall|Mirr|Wall|
-//   |    | or |    |
-//   /--------------/
-//  /   Floor      /
-// /--------------/
-//
-//	std::array<Vertex, 20> vertices =
-//	{
-//		 Floor: Observe we tile texture coordinates.
-//		Vertex(-3.5f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 4.0f), // 0 
-//		Vertex(-3.5f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f),
-//		Vertex(7.5f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f, 4.0f, 0.0f),
-//		Vertex(7.5f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f, 4.0f, 4.0f),
-//
-//		 Wall: Observe we tile texture coordinates, and that we
-//		 leave a gap in the middle for the mirror.
-//		Vertex(-3.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 2.0f), // 4
-//		Vertex(-3.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
-//		Vertex(-2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.5f, 0.0f),
-//		Vertex(-2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.5f, 2.0f),
-//
-//		Vertex(2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 2.0f), // 8 
-//		Vertex(2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
-//		Vertex(7.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 0.0f),
-//		Vertex(7.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 2.0f),
-//
-//		Vertex(-3.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f), // 12
-//		Vertex(-3.5f, 6.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
-//		Vertex(7.5f, 6.0f, 0.0f, 0.0f, 0.0f, -1.0f, 6.0f, 0.0f),
-//		Vertex(7.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 6.0f, 1.0f),
-//
-//		 Mirror
-//		Vertex(-2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f), // 16
-//		Vertex(-2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
-//		Vertex(2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f),
-//		Vertex(2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f)
-//	};
-//
-//	std::array<std::int16_t, 30> indices =
-//	{
-//		 Floor
-//		0, 1, 2,
-//		0, 2, 3,
-//
-//		 Walls
-//		4, 5, 6,
-//		4, 6, 7,
-//
-//		8, 9, 10,
-//		8, 10, 11,
-//
-//		12, 13, 14,
-//		12, 14, 15,
-//
-//		 Mirror
-//		16, 17, 18,
-//		16, 18, 19
-//	};
-//}
+GeometryGenerator::MeshData GeometryGenerator::createModel(std::string name)
+{
+	MeshData meshData;
+
+	std::ifstream fin(name);
+
+	if (!fin)
+	{
+		MessageBox(0, L"Models not found.", 0, 0);
+		return meshData;
+	}
+
+	UINT vcount = 0;
+	UINT tcount = 0;
+	std::string ignore;
+
+	fin >> ignore >> vcount;
+	fin >> ignore >> tcount;
+	fin >> ignore >> ignore >> ignore >> ignore;
+
+	//std::vector<Vertex> vertices(vcount);
+	for (UINT i = 0; i < vcount; ++i)
+	{
+		float posX, posY, posZ;
+		fin >> posX >> posY >> posZ;
+
+		float normalX, normalY, normalZ;
+		fin >> normalX >> normalY >> normalZ;
+
+		Vertex x(posX, posY, posZ, normalX, normalY, -normalZ, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+		meshData.Vertices.push_back(x);
+	}
+
+	fin >> ignore;
+	fin >> ignore;
+	fin >> ignore;
+
+	std::vector<uint32> indices(3 * tcount);
+	for (UINT i = 0; i < tcount; ++i)
+	{
+		fin >> indices[i * 3 + 0] >> indices[i * 3 + 1] >> indices[i * 3 + 2];
+	}
+
+	meshData.Indices32 = indices;
+
+	fin.close();
+
+	return meshData;
+}

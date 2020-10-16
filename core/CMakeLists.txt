@@ -62,10 +62,12 @@ source_group( ${SOURCE_FILES_DIR}/FrameResources FILES ${FRAME_RESOURCE_FILES} )
 #geometry
 set( GEOMETRY_FILES
 	src/Vertex.h
-	src/GeometryGenerator.h
-	src/GeometryStorage.h
+	src/GeometryGenerator.h	
 	src/GeometryGenerator.cpp
+	src/GeometryStorage.h
 	src/GeometryStorage.cpp
+	src/GeometryStorageFactory.h
+	src/GeometryStorageFactory.cpp
 )
 source_group( ${SOURCE_FILES_DIR}/Geometry FILES ${GEOMETRY_FILES} )
 

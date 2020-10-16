@@ -18,7 +18,7 @@ ObjectsDataProvider::ObjectsDataProvider(
 	materialsDataProvider { materialsDataProvider },
 	dynamicVerticesProvider { dynamicVerticesProvider }
 {
-	buildStencilDemoRenderItems();
+	//buildStencilDemoRenderItems();
 	//buildRenderItemsForLandAndWaves();
 
 	//createPrimitive("hills", "grass", { 0.0f, 0.0f, 0.0f, }, { 1.0f, 1.0f, 1.0f, }, { 5.0f, 5.0f, 1.0f, });
@@ -280,7 +280,6 @@ void ObjectsDataProvider::buildStencilDemoRenderItems()
 	allRitems.push_back(std::move(shadowedSkullRitem));
 	allRitems.push_back(std::move(mirrorRitem));
 }
-
 
 std::vector<RenderItem*> ObjectsDataProvider::renderItems()
 {

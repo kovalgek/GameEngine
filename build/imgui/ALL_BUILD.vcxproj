@@ -106,6 +106,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\imgui\CMakeLists.txt">
+      <StdOutEncoding>UTF-8</StdOutEncoding>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/kovalgek/Documents/Sources/C++/GameEngine/imgui/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/kovalgek/Documents/Sources/C++/GameEngine -BC:/Users/kovalgek/Documents/Sources/C++/GameEngine/build --check-stamp-file C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/imgui/CMakeFiles/generate.stamp

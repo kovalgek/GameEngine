@@ -23,6 +23,9 @@ class GeometryGenerator
 {
 public:
 
+	GeometryGenerator() = default;
+	~GeometryGenerator() = default;
+
     using uint16 = std::uint16_t;
     using uint32 = std::uint32_t;
 
@@ -108,12 +111,17 @@ public:
 	///</summary>
     MeshData CreateGrid(float width, float depth, uint32 m, uint32 n);
 
+	MeshData CreateHills(float width, float depth, uint32 m, uint32 n);
+
+	float getHillsHeight(float x, float z)const;	
+	DirectX::XMFLOAT3 getHillsNormal(float x, float z)const;
+
 	///<summary>
 	/// Creates a quad aligned with the screen.  This is useful for postprocessing and screen effects.
 	///</summary>
     MeshData CreateQuad(float x, float y, float w, float h, float depth);
 
-	//MeshData CreateRoom();
+	MeshData createModel(std::string name);
 
 private:
 	void Subdivide(MeshData& meshData);

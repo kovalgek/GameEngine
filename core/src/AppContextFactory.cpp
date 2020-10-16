@@ -10,6 +10,7 @@
 #include "MaterialsDataProvider.h"
 #include "DynamicVerticesProvider.h"
 #include "GeometryStorage.h"
+#include "GeometryStorageFactory.h"
 #include "AppFacade.h"
 #include "Waves.h"
 #include "SrvHeapProvider.h"
@@ -53,10 +54,15 @@ void AppContextFactory::createDXGIFactory(IDXGIFactory4** dxgiFactory)
 
 std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWindowHandle, std::unique_ptr<GPUService> gpuService)
 {
-	auto geometryStorage = std::make_unique<GeometryStorage>(
+	auto geometryGenerator = std::make_unique<GeometryGenerator>();
+
+	auto geometryStorageFactory = std::make_unique<GeometryStorageFactory>(
 		gpuService->getDevice(),
-		gpuService->getCommandList()
+		gpuService->getCommandList(),
+		std::move(geometryGenerator)
 	);
+
+	auto geometryStorage = geometryStorageFactory->getGeometryStorage();
 
 	auto waves = geometryStorage->getWaves();
 

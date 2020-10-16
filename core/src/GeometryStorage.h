@@ -39,6 +39,7 @@ public:
 
 	std::unordered_map<std::string, std::vector<std::string>> getGeometryNames();
 
+	void createMeshGeometry(std::string name, std::vector<GeometryGenerator::MeshData> meshes);
 
 private:
 	ID3D12Device *device;
