@@ -425,6 +425,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorage.cpp" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageFactory.h" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageFactory.cpp" />
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\OBJFileLoader.cpp" />
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\OBJFileLoader.h" />
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MeshData.h" />
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MeshVertex.h" />
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\WaveFrontReader.h" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ViewModels.h" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ViewController.h" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ViewController.cpp" />

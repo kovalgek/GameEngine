@@ -11,6 +11,10 @@
 #include <fstream>
 #include <array>
 
+#include "MeshData.h"
+#include "MeshVertex.h"
+#include "Vertex.h"
+
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
@@ -26,7 +30,7 @@ GeometryStorage::GeometryStorage(
 
 GeometryStorage::~GeometryStorage() = default;
 
-void GeometryStorage::createMeshGeometry(std::string name, std::vector<GeometryGenerator::MeshData> meshes)
+void GeometryStorage::createMeshGeometry(std::string name, std::vector<MeshData> meshes)
 {
 	UINT currentVertexOffset = 0;
 	UINT currentIndexOffset = 0;
@@ -39,7 +43,7 @@ void GeometryStorage::createMeshGeometry(std::string name, std::vector<GeometryG
 	auto geo = std::make_unique<MeshGeometry>();
 	geo->Name = name;
 
-	for (GeometryGenerator::MeshData mesh : meshes)
+	for (MeshData mesh : meshes)
 	{
 		SubmeshGeometry submeshGeometry = addSubmesh(mesh, currentVertexOffset, currentIndexOffset);
 		currentVertexOffset += (UINT)mesh.Vertices.size();
@@ -85,13 +89,39 @@ void GeometryStorage::createMeshGeometry(std::string name, std::vector<GeometryG
 	geometries[geo->Name] = std::move(geo);
 }
 
-SubmeshGeometry GeometryStorage::addSubmesh(GeometryGenerator::MeshData item, UINT itemVertexOffset, UINT itemIndexOffset)
+SubmeshGeometry GeometryStorage::addSubmesh(MeshData item, UINT itemVertexOffset, UINT itemIndexOffset)
 {
 	SubmeshGeometry boxSubmesh;
 	boxSubmesh.IndexCount = (UINT)item.Indices32.size();
 	boxSubmesh.StartIndexLocation = itemIndexOffset;
 	boxSubmesh.BaseVertexLocation = itemVertexOffset;
 	return boxSubmesh;
+}
+
+MeshGeometry *GeometryStorage::getGeometry(const std::string name)
+{
+	return geometries[name].get();
+}
+
+std::unordered_map<std::string, std::vector<std::string>> GeometryStorage::getGeometryNames()
+{
+	std::unordered_map<std::string, std::vector<std::string>> names;
+
+	for (auto& x : geometries)
+	{
+		std::string geomertyName = x.first;
+		auto &meshGeomerty = x.second;
+		auto drawArgs = meshGeomerty->DrawArgs;
+		std::vector<std::string> args;
+
+		for (auto& drawArg : drawArgs)
+		{
+			args.push_back(drawArg.first);
+		}
+
+		names[geomertyName] = args;
+	}
+	return names;
 }
 
 void GeometryStorage::buildWavesGeometryBuffers()
@@ -150,31 +180,4 @@ void GeometryStorage::buildWavesGeometryBuffers()
 	geo->DrawArgs["grid"] = submesh;
 
 	geometries["waterGeo"] = std::move(geo);
-}
-
-
-MeshGeometry *GeometryStorage::getGeometry(const std::string name)
-{
-	return geometries[name].get();
-}
-
-std::unordered_map<std::string, std::vector<std::string>> GeometryStorage::getGeometryNames()
-{
-	std::unordered_map<std::string, std::vector<std::string>> names;
-
-	for (auto& x : geometries)
-	{
-		std::string geomertyName = x.first;
-		auto &meshGeomerty = x.second;
-		auto drawArgs = meshGeomerty->DrawArgs;
-		std::vector<std::string> args;
-
-		for (auto& drawArg : drawArgs)
-		{
-			args.push_back(drawArg.first);
-		}
-
-		names[geomertyName] = args;
-	}
-	return names;
 }

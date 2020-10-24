@@ -68,6 +68,11 @@ set( GEOMETRY_FILES
 	src/GeometryStorage.cpp
 	src/GeometryStorageFactory.h
 	src/GeometryStorageFactory.cpp
+	src/OBJFileLoader.cpp
+	src/OBJFileLoader.h
+	src/MeshData.h
+	src/MeshVertex.h
+	src/WaveFrontReader.h
 )
 source_group( ${SOURCE_FILES_DIR}/Geometry FILES ${GEOMETRY_FILES} )
 

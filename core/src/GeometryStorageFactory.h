@@ -28,7 +28,8 @@ private:
 	ID3D12GraphicsCommandList* commandList;
 	std::unique_ptr<GeometryGenerator> geoGen;
 
-	std::vector<GeometryGenerator::MeshData> shapeGeoMeshes();
-	std::vector<GeometryGenerator::MeshData> modelMeshes();
+	std::vector<MeshData> shapeGeoMeshes();
+	std::vector<MeshData> modelMeshes();
+	std::vector<MeshData> objModelMeshes();
 };
 

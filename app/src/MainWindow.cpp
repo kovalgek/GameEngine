@@ -2,21 +2,14 @@
 #include <wchar.h>
 #include <stdio.h>
 #include <string>
-
-
-
 #include <WindowsX.h>
-//#include "Application.h"
-//#include "Renderer.h"
 #include "GameTimer.h"
 #include "AppFacade.h"
-//#include "d3dUtil.h"
 #include "imgui.h"
-
 
 #define MAX_LOADSTRING 100
 
-std::wstring mMainWndCaption = L"d3d App";
+std::wstring mMainWndCaption = L"Parelhoen Engine";
 
 HINSTANCE applicationInstanceHandle = nullptr;
 HWND mainWindowHandle = nullptr;

@@ -34,12 +34,12 @@ public:
 	);
 	~GeometryStorage();
 
-	MeshGeometry *getGeometry(const std::string name);
 	Waves* getWaves() { return waves.get(); }
 
 	std::unordered_map<std::string, std::vector<std::string>> getGeometryNames();
 
-	void createMeshGeometry(std::string name, std::vector<GeometryGenerator::MeshData> meshes);
+	void createMeshGeometry(std::string name, std::vector<MeshData> meshes);
+	MeshGeometry* getGeometry(const std::string name);
 
 private:
 	ID3D12Device *device;
@@ -48,14 +48,7 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> geometries;
 	std::unique_ptr<Waves> waves;
 
-	void buildGeometry(std::vector<GeometryGenerator::MeshData> meshes);
-	SubmeshGeometry addSubmesh(GeometryGenerator::MeshData item, UINT itemVertexOffset, UINT itemIndexOffset);
+	SubmeshGeometry addSubmesh(MeshData item, UINT itemVertexOffset, UINT itemIndexOffset);
 	void buildWavesGeometryBuffers();
-
-	float getHillsHeight(float x, float z)const;
-	DirectX::XMFLOAT3 getHillsNormal(float x, float z)const;
-
-	void buildSkullGeometry();
-	void buildRoomGeometry();
 };
 
