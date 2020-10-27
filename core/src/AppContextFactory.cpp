@@ -7,9 +7,12 @@
 #include "MainPassDataProvider.h"
 #include "FrameResourceUpdater.h"
 #include "ObjectsDataProvider.h"
+#include "ObjectsDataProviderConfigurator.h"
 #include "MaterialsDataProvider.h"
+#include "MaterialsDataProviderConfigurator.h"
 #include "DynamicVerticesProvider.h"
 #include "GeometryStorage.h"
+#include "GeometryStorageConfigurator.h"
 #include "GeometryStorageFactory.h"
 #include "AppFacade.h"
 #include "Waves.h"
@@ -21,6 +24,8 @@
 #include "RendererFactory.h"
 #include "GPUServiceFactory.h"
 #include "GPUService.h"
+#include "RenderItemTemplatesProvider.h"
+#include "RenderItemTemplatesProviderConfigurator.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -54,19 +59,30 @@ void AppContextFactory::createDXGIFactory(IDXGIFactory4** dxgiFactory)
 
 std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWindowHandle, std::unique_ptr<GPUService> gpuService)
 {
+	auto renderItemTemplatesProvider = std::make_unique<RenderItemTemplatesProvider>();
+	auto renderItemTemplatesProviderConfigurator = std::make_unique<RenderItemTemplatesProviderConfigurator>();
+	renderItemTemplatesProviderConfigurator->configure(*renderItemTemplatesProvider);
+
 	auto geometryGenerator = std::make_unique<GeometryGenerator>();
 
-	auto geometryStorageFactory = std::make_unique<GeometryStorageFactory>(
-		gpuService->getDevice(),
-		gpuService->getCommandList(),
+	auto geometryStorageConfigurator = std::make_unique<GeometryStorageConfigurator>(
 		std::move(geometryGenerator)
 	);
 
-	auto geometryStorage = geometryStorageFactory->getGeometryStorage();
+	auto geometryStorage = std::make_unique<GeometryStorage>(
+		gpuService->getDevice(),
+		gpuService->getCommandList()
+	);
+
+	geometryStorageConfigurator->configure(*geometryStorage);
 
 	auto waves = geometryStorage->getWaves();
 
 	auto materialsDataProvider = std::make_unique<MaterialsDataProvider>();
+
+	auto materialsDataProviderConfigurator = std::make_unique<MaterialsDataProviderConfigurator>();
+	materialsDataProviderConfigurator->configure(*materialsDataProvider);
+
 	auto dynamicVerticesProvider = std::make_unique<DynamicVerticesProvider>();
 
 	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(
@@ -74,6 +90,9 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*materialsDataProvider,
 		*dynamicVerticesProvider
 	);
+
+	auto objectsDataProviderConfigurator = std::make_unique<ObjectsDataProviderConfigurator>(*renderItemTemplatesProvider);
+	objectsDataProviderConfigurator->configure(*objectsDataProvider);
 
 	auto materials = materialsDataProvider->getMaterials();
 	auto renderItems = objectsDataProvider->renderItems();
@@ -106,7 +125,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*objectsDataProvider,
 		*materialsDataProvider,
 		*objectsDataProvider->getGeometryStorage()
-		);
+	);
 
 	auto renderer = RendererFactory::getRenderer(
 		mainWindowHandle,
@@ -114,7 +133,8 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*frameResourceController,
 		*objectsDataProvider,
 		std::move(srvHeapProvider),
-		*viewController);
+		*viewController
+	);
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
 		std::move(frameResourceController),
@@ -122,7 +142,8 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*mainPassDataProvider,
 		*objectsDataProvider,
 		*materialsDataProvider,
-		waves);
+		waves
+	);
 
 	return std::make_unique<AppContext>(
 		std::move(gpuService),
@@ -132,5 +153,9 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		std::move(materialsDataProvider),
 		std::move(dynamicVerticesProvider),
 		std::move(frameResourceUpdater),
-		std::move(viewController));
+		std::move(viewController),
+		std::move(geometryStorageConfigurator),
+		std::move(materialsDataProviderConfigurator),
+		std::move(renderItemTemplatesProvider)
+	);
 }

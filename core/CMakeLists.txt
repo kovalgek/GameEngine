@@ -27,11 +27,20 @@ set( DATA_PROVIDER_FILES
 	src/Material.h
 	src/MaterialsDataProvider.h
 	src/MaterialsDataProvider.cpp
+	src/MaterialsDataProviderConfigurator.cpp
+	src/MaterialsDataProviderConfigurator.h
 	src/RenderItem.h
 	src/ObjectsDataProvider.h
 	src/ObjectsDataProvider.cpp
+	src/ObjectsDataProviderConfigurator.cpp
+	src/ObjectsDataProviderConfigurator.h
 	src/MainPassModelsListener.h
 	src/MainPassModels.h
+	src/RenderItemTemplate.h
+	src/RenderItemTemplatesProvider.cpp
+	src/RenderItemTemplatesProvider.h
+	src/RenderItemTemplatesProviderConfigurator.cpp
+	src/RenderItemTemplatesProviderConfigurator.h
 )
 source_group( ${SOURCE_FILES_DIR}/DataProviders FILES ${DATA_PROVIDER_FILES} )
 
@@ -66,6 +75,8 @@ set( GEOMETRY_FILES
 	src/GeometryGenerator.cpp
 	src/GeometryStorage.h
 	src/GeometryStorage.cpp
+	src/GeometryStorageConfigurator.cpp
+	src/GeometryStorageConfigurator.h
 	src/GeometryStorageFactory.h
 	src/GeometryStorageFactory.cpp
 	src/OBJFileLoader.cpp

@@ -6,6 +6,7 @@ struct RenderItem;
 class GeometryStorage;
 class MaterialsDataProvider;
 class DynamicVerticesProvider;
+struct RenderItemTemplate;
 
 enum class RenderLayer : int
 {
@@ -22,7 +23,7 @@ struct PrimitiveModel
 {
 	std::string mesh;
 	std::string submesh;
-	std::string  material;
+	std::string material;
 	std::vector<float> position;
 	std::vector<float> scaling;
 	std::vector<float> texture;
@@ -56,6 +57,13 @@ public:
 
 	void createPrimitive(PrimitiveModel primitiveModel);
 
+	void createRenderItem(
+		RenderItemTemplate renderItemTemplate,
+		std::vector<float> position,
+		std::vector<float> scaling,
+		std::vector<float> textureTransform
+	);
+
 private:
 	std::unique_ptr <GeometryStorage> geometryStorage;
 	const MaterialsDataProvider& materialsDataProvider;
@@ -67,8 +75,6 @@ private:
 
 	int itemIndex = 0;
 
-	void buildRenderItemsForShapes();
-	void buildRenderItemsForLandAndWaves();
-	void buildStencilDemoRenderItems();
+
 };
 

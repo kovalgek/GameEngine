@@ -98,9 +98,9 @@ SubmeshGeometry GeometryStorage::addSubmesh(MeshData item, UINT itemVertexOffset
 	return boxSubmesh;
 }
 
-MeshGeometry *GeometryStorage::getGeometry(const std::string name)
+MeshGeometry *GeometryStorage::getGeometry(const std::string name) const
 {
-	return geometries[name].get();
+	return geometries.find(name)->second.get();
 }
 
 std::unordered_map<std::string, std::vector<std::string>> GeometryStorage::getGeometryNames()

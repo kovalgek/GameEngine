@@ -22,7 +22,19 @@
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MaterialsDataProvider.cpp">
       <Filter>Source Files\DataProviders</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MaterialsDataProviderConfigurator.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ObjectsDataProvider.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ObjectsDataProviderConfigurator.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\RenderItemTemplatesProvider.cpp">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\RenderItemTemplatesProviderConfigurator.cpp">
       <Filter>Source Files\DataProviders</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\DynamicVerticesProvider.cpp">
@@ -44,6 +56,9 @@
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorage.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageConfigurator.cpp">
       <Filter>Source Files\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageFactory.cpp">
@@ -123,16 +138,31 @@
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MaterialsDataProvider.h">
       <Filter>Source Files\DataProviders</Filter>
     </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MaterialsDataProviderConfigurator.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\RenderItem.h">
       <Filter>Source Files\DataProviders</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ObjectsDataProvider.h">
       <Filter>Source Files\DataProviders</Filter>
     </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ObjectsDataProviderConfigurator.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MainPassModelsListener.h">
       <Filter>Source Files\DataProviders</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MainPassModels.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\RenderItemTemplate.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\RenderItemTemplatesProvider.h">
+      <Filter>Source Files\DataProviders</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\RenderItemTemplatesProviderConfigurator.h">
       <Filter>Source Files\DataProviders</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\DynamicVertices.h">
@@ -169,6 +199,9 @@
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorage.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageConfigurator.h">
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageFactory.h">

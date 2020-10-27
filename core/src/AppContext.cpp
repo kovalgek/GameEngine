@@ -8,6 +8,9 @@
 #include "DynamicVerticesProvider.h"
 #include "FrameResourceUpdater.h"
 #include "ViewController.h"
+#include "GeometryStorageConfigurator.h"
+#include "MaterialsDataProviderConfigurator.h"
+#include "RenderItemTemplatesProvider.h"
 
 AppContext::AppContext(
 	std::unique_ptr<GPUService> gpuService,
@@ -17,7 +20,10 @@ AppContext::AppContext(
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
 	std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider,
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
-	std::unique_ptr<ViewController> viewController
+	std::unique_ptr<ViewController> viewController,
+	std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator,
+	std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator,
+	std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider
 ) :
 	gpuService{ std::move(gpuService) },
 	renderer{ std::move(renderer) },
@@ -26,7 +32,10 @@ AppContext::AppContext(
 	materialsDataProvider{ std::move(materialsDataProvider) },
 	frameResourceUpdater{ std::move(frameResourceUpdater) },
 	dynamicVerticesProvider{ std::move(dynamicVerticesProvider) },
-	viewController{ std::move(viewController) }
+	viewController{ std::move(viewController) },
+	geometryStorageConfigurator{ std::move(geometryStorageConfigurator) },
+	materialsDataProviderConfigurator{ std::move(materialsDataProviderConfigurator) },
+	renderItemTemplatesProvider{ std::move(renderItemTemplatesProvider) }
 {
 
 }
