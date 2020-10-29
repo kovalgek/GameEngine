@@ -77,8 +77,6 @@ set( GEOMETRY_FILES
 	src/GeometryStorage.cpp
 	src/GeometryStorageConfigurator.cpp
 	src/GeometryStorageConfigurator.h
-	src/GeometryStorageFactory.h
-	src/GeometryStorageFactory.cpp
 	src/OBJFileLoader.cpp
 	src/OBJFileLoader.h
 	src/MeshData.h

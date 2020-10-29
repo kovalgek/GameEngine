@@ -11,6 +11,7 @@ class ViewController;
 class GeometryStorageConfigurator;
 class MaterialsDataProviderConfigurator;
 class RenderItemTemplatesProvider;
+class OBJFileLoader;
 
 #pragma once
 class AppContext
@@ -27,7 +28,8 @@ public:
 		std::unique_ptr<ViewController> viewController,
 		std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator,
 		std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator,
-		std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider);
+		std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider,
+		std::unique_ptr<OBJFileLoader> objFileLoader);
 	~AppContext();
 
 	GPUService* getGPUService() { return gpuService.get(); }
@@ -41,6 +43,7 @@ public:
 	GeometryStorageConfigurator* getGeometryStorageConfigurator() { return geometryStorageConfigurator.get(); }
 	MaterialsDataProviderConfigurator* getMaterialsDataProviderConfigurator() { return materialsDataProviderConfigurator.get(); }
 	RenderItemTemplatesProvider* getRenderItemTemplatesProvider() { return renderItemTemplatesProvider.get(); }
+	OBJFileLoader* getOBJFileLoader() { return objFileLoader.get(); }
 
 private:
 	std::unique_ptr<GPUService> gpuService;
@@ -54,4 +57,5 @@ private:
 	std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator;
 	std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator;
 	std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider;
+	std::unique_ptr<OBJFileLoader> objFileLoader;
 };

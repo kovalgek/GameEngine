@@ -13,7 +13,6 @@
 #include "DynamicVerticesProvider.h"
 #include "GeometryStorage.h"
 #include "GeometryStorageConfigurator.h"
-#include "GeometryStorageFactory.h"
 #include "AppFacade.h"
 #include "Waves.h"
 #include "SrvHeapProvider.h"
@@ -26,6 +25,7 @@
 #include "GPUService.h"
 #include "RenderItemTemplatesProvider.h"
 #include "RenderItemTemplatesProviderConfigurator.h"
+#include "OBJFileLoader.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -82,6 +82,12 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 
 	auto materialsDataProviderConfigurator = std::make_unique<MaterialsDataProviderConfigurator>();
 	materialsDataProviderConfigurator->configure(*materialsDataProvider);
+
+	auto objFileLoader = std::make_unique<OBJFileLoader>(
+		*geometryStorage,
+		*materialsDataProvider,
+		*renderItemTemplatesProvider
+	);
 
 	auto dynamicVerticesProvider = std::make_unique<DynamicVerticesProvider>();
 
@@ -156,6 +162,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		std::move(viewController),
 		std::move(geometryStorageConfigurator),
 		std::move(materialsDataProviderConfigurator),
-		std::move(renderItemTemplatesProvider)
+		std::move(renderItemTemplatesProvider),
+		std::move(objFileLoader)
 	);
 }

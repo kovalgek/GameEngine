@@ -434,8 +434,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorage.cpp" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageConfigurator.cpp" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageConfigurator.h" />
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageFactory.h" />
-    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageFactory.cpp" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\OBJFileLoader.cpp" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\OBJFileLoader.h" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MeshData.h" />
