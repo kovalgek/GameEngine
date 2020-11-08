@@ -79,7 +79,10 @@
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\d3dUtil.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PipleneStateData.cpp">
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PSOProvider.cpp">
+      <Filter>Source Files\ShaderHelpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PSOProviderConfigurator.cpp">
       <Filter>Source Files\ShaderHelpers</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\SrvHeapProvider.cpp">
@@ -234,7 +237,10 @@
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\d3dx12.h">
       <Filter>Source Files\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PipleneStateData.h">
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PSOProvider.h">
+      <Filter>Source Files\ShaderHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PSOProviderConfigurator.h">
       <Filter>Source Files\ShaderHelpers</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\SrvHeapProvider.h">

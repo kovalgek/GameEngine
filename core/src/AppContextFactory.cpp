@@ -2,7 +2,6 @@
 
 #include "Application.h"
 #include "Renderer.h"
-#include "PipleneStateData.h"
 #include "FrameResourceController.h"
 #include "MainPassDataProvider.h"
 #include "FrameResourceUpdater.h"

@@ -8,9 +8,9 @@ class GPUService;
 class GameTimer;
 class FrameResourceController;
 class ObjectsDataProvider;
-class PipleneStateData;
 class SrvHeapProvider;
 class ViewController;
+class PSOProvider;
 struct RenderItem;
 struct FrameResource;
 struct ID3D12Device;
@@ -44,8 +44,9 @@ public:
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap,
 
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,
 
-		std::unique_ptr<PipleneStateData> pipleneStateData,
+		std::unique_ptr<PSOProvider> psoProvider,
 		FrameResourceController& frameResourceController,
 		ObjectsDataProvider& objectsDataProvider,
 		std::unique_ptr<SrvHeapProvider> srvHeapProvider,
@@ -71,12 +72,11 @@ private:
 	GPUService& gpuService;
 
 
-	std::unique_ptr<PipleneStateData> pipleneStateData;
+	std::unique_ptr<PSOProvider> psoProvider;
 	FrameResourceController& frameResourceController;
 	ObjectsDataProvider& objectsDataProvider;
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider;
 	ViewController& viewController;
-
 
 	void onKeyboardInput(const GameTimer& gameTimer);
 	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
@@ -101,6 +101,8 @@ private:
 	UINT rtvDescriptorSize = 0;
 	UINT dsvDescriptorSize = 0;
 	UINT cbvSrvUavDescriptorSize = 0;
+
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
 	ID3D12Resource* currentBackBuffer()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView()const;

@@ -4,9 +4,12 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "SrvHeapProvider.h"
-#include "PipleneStateData.h"
+#include "PSOProvider.h"
+#include "PSOProviderConfigurator.h"
 #include "d3dUtil.h"
 #include "GPUService.h"
+#include "d3dx12.h"
+#include "TextureStaticSamplers.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -72,13 +75,20 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 		cbvSrvUavDescriptorSize
 	);
 
-	auto pipleneStateData = std::make_unique<PipleneStateData>(
+	ComPtr<ID3D12RootSignature> rootSignature;
+	RendererFactory::createRootSignature(gpuService.getDevice(), rootSignature.GetAddressOf());
+
+	auto psoProvider = std::make_unique<PSOProvider>();
+	auto psoProviderConfigurator = std::make_unique<PSOProviderConfigurator>(
 		gpuService.getDevice(),
+		rootSignature.Get(),
 		backBufferFormat,
 		depthStencilFormat,
 		msaa4xState,
 		msaa4xQuality
 	);
+
+	psoProviderConfigurator->configure(*psoProvider);
 
 	return std::make_unique<Renderer>(
 		gpuService,
@@ -93,7 +103,8 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 		swapChain,
 		rtvHeap,
 		dsvHeap,
-		std::move(pipleneStateData),
+		rootSignature,
+		std::move(psoProvider),
 		frameResourceController,
 		objectsDataProvider,
 		std::move(srvHeapProvider),
@@ -251,4 +262,43 @@ void RendererFactory::createRtvAndDsvDescriptorHeaps(
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	dsvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(dsvHeap)));
+}
+
+void RendererFactory::createRootSignature(ID3D12Device* device, ID3D12RootSignature** rootSignature)
+{
+	CD3DX12_DESCRIPTOR_RANGE texTable;
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
+	CD3DX12_ROOT_PARAMETER slotRootParameter[4];
+
+	// Create root CBV.
+	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
+	slotRootParameter[1].InitAsConstantBufferView(0);
+	slotRootParameter[2].InitAsConstantBufferView(1);
+	slotRootParameter[3].InitAsConstantBufferView(2);
+
+	auto staticSamplers = TextureStaticSamplers::getStaticSamplers();
+
+	// A root signature is an array of root parameters.
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(4, slotRootParameter,
+		(UINT)staticSamplers.size(), staticSamplers.data(),
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+	// create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
+	ComPtr<ID3DBlob> serializedRootSig = nullptr;
+	ComPtr<ID3DBlob> errorBlob = nullptr;
+	HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+		serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
+
+	if (errorBlob != nullptr)
+	{
+		::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+	}
+	ThrowIfFailed(hr);
+
+	ThrowIfFailed(device->CreateRootSignature(
+		0,
+		serializedRootSig->GetBufferPointer(),
+		serializedRootSig->GetBufferSize(),
+		IID_PPV_ARGS(rootSignature)));
 }

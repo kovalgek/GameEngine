@@ -18,6 +18,7 @@ struct ID3D12GraphicsCommandList;
 struct ID3D12Fence;
 enum DXGI_FORMAT;
 struct ID3D12DescriptorHeap;
+struct ID3D12RootSignature;
 
 #pragma once
 class RendererFactory
@@ -67,5 +68,7 @@ private:
 		UINT& dsvDescriptorSize,
 		UINT& cbvSrvUavDescriptorSize
 	);
+
+	static void createRootSignature(ID3D12Device* device, ID3D12RootSignature** rootSignature);
 };
 

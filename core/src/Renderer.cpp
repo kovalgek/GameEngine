@@ -5,13 +5,13 @@
 #include "UploadBuffer.h"
 #include "GameTimer.h"
 #include "FrameResourceController.h"
-#include "PipleneStateData.h"
 #include "ObjectsDataProvider.h"
 #include "RenderItem.h"
 #include "Material.h"
 #include "FrameResource.h"
 #include "SrvHeapProvider.h"
 #include "ViewController.h"
+#include "PSOProvider.h"
 
 #include <DirectXColors.h>
 #include <DirectXPackedVector.h>
@@ -41,8 +41,9 @@ Renderer::Renderer(
 	ComPtr<ID3D12DescriptorHeap> rtvHeap,
 	ComPtr<ID3D12DescriptorHeap> dsvHeap,
 
+	ComPtr<ID3D12RootSignature> rootSignature,
 
-	std::unique_ptr<PipleneStateData> pipleneStateData,
+	std::unique_ptr<PSOProvider> psoProvider,
 	FrameResourceController& frameResourceController,
 	ObjectsDataProvider& objectsDataProvider,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
@@ -68,7 +69,9 @@ Renderer::Renderer(
 	rtvHeap { rtvHeap },
 	dsvHeap { dsvHeap },
 
-	pipleneStateData { std::move(pipleneStateData) },
+	rootSignature{ rootSignature },
+
+	psoProvider{ std::move(psoProvider) },
 	frameResourceController { frameResourceController },
 	objectsDataProvider { objectsDataProvider },
 	srvHeapProvider{ std::move(srvHeapProvider) },
@@ -98,7 +101,7 @@ void Renderer::draw(const GameTimer& gameTimer)
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	ThrowIfFailed(commandList->Reset(cmdListAlloc.Get(), pipleneStateData->getPSO("opaque")));
+	ThrowIfFailed(commandList->Reset(cmdListAlloc.Get(), psoProvider->getPipelineStateObject("opaque")));
 
 
 	commandList->RSSetViewports(1, &screenViewport);
@@ -118,7 +121,7 @@ void Renderer::draw(const GameTimer& gameTimer)
 	ID3D12DescriptorHeap* descriptorHeaps[] = { srvHeapProvider->getSrvDescriptorHeap()};
 	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-	commandList->SetGraphicsRootSignature(pipleneStateData->getRootSignature());
+	commandList->SetGraphicsRootSignature(rootSignature.Get());
 
 	auto passCB = frameResourceController.getCurrentFrameResource()->PassCB->Resource();
 	commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
@@ -126,11 +129,11 @@ void Renderer::draw(const GameTimer& gameTimer)
 	auto allRitems = objectsDataProvider.renderItemsForLayer(RenderLayer::Opaque);
 	drawRenderItems(commandList, allRitems);
 
-	commandList->SetPipelineState(pipleneStateData->getPSO("alphaTested"));
+	commandList->SetPipelineState(psoProvider->getPipelineStateObject("alphaTested"));
 	auto alphaTestedRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::AlphaTested);
 	drawRenderItems(commandList, alphaTestedRenderItems);
 
-	commandList->SetPipelineState(pipleneStateData->getPSO("transparent"));
+	commandList->SetPipelineState(psoProvider->getPipelineStateObject("transparent"));
 	auto transparentRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::Transparent);
 	drawRenderItems(commandList, transparentRenderItems);
 

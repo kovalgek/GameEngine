@@ -109,8 +109,10 @@ source_group( ${SOURCE_FILES_DIR}/Helpers FILES ${HELPERS_FILES} )
 
 #shader helpers
 set( SHADER_HELPERS_FILES
-	src/PipleneStateData.h
-	src/PipleneStateData.cpp
+	src/PSOProvider.cpp
+	src/PSOProvider.h
+	src/PSOProviderConfigurator.cpp
+	src/PSOProviderConfigurator.h
 )
 source_group( ${SOURCE_FILES_DIR}/ShaderHelpers FILES ${SHADER_HELPERS_FILES} )
 

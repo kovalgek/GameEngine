@@ -14,5 +14,5 @@ void RenderItemTemplatesProvider::addRenderItemTemplate(std::string name, std::u
 
 RenderItemTemplate* RenderItemTemplatesProvider::getRenderItemTemplate(std::string name) const
 {
-	return  renderItemTemplates.find(name)->second.get();
+	return renderItemTemplates.find(name)->second.get();
 }

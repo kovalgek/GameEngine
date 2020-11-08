@@ -451,8 +451,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\d3dUtil.h" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\d3dUtil.cpp" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\d3dx12.h" />
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PipleneStateData.h" />
-    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PipleneStateData.cpp" />
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PSOProvider.cpp" />
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PSOProvider.h" />
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PSOProviderConfigurator.cpp" />
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\PSOProviderConfigurator.h" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\SrvHeapProvider.h" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\SrvHeapProvider.cpp" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Texture.h" />
