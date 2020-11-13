@@ -17,20 +17,12 @@ ObjectsDataProviderConfigurator::ObjectsDataProviderConfigurator(const RenderIte
 
 void ObjectsDataProviderConfigurator::configure(ObjectsDataProvider& objectsDataProvider)
 {
-	buildRenderItemsForShapes(objectsDataProvider);
+	//buildRenderItemsForShapes(objectsDataProvider);
+	buildRenderItemsForLandAndWaves(objectsDataProvider);
 }
 
 void ObjectsDataProviderConfigurator::buildRenderItemsForShapes(ObjectsDataProvider& objectsDataProvider)
 {
-	//objectsDataProvider.createPrimitive(
-	//	"shapeGeo",
-	//	"box",
-	//	"water",
-	//	{ 0.0f,0.0f,0.0f },
-	//	{ 1.0f,1.0f,1.0f },
-	//	{ 0.0f,0.0f,0.0f }
-	//);
-
 	auto boxTemplate = renderItemTemplatesProvider.getRenderItemTemplate("BoxWithWaterMaterial");
 	objectsDataProvider.createRenderItem(
 		*boxTemplate, 
@@ -111,6 +103,37 @@ void ObjectsDataProviderConfigurator::buildRenderItemsForShapes(ObjectsDataProvi
 	//	allRitems.push_back(std::move(rightSphereRitem));
 	//}
 }
+
+void ObjectsDataProviderConfigurator::buildRenderItemsForLandAndWaves(ObjectsDataProvider& objectsDataProvider)
+{
+	auto boxTemplate = renderItemTemplatesProvider.getRenderItemTemplate("BoxWithWaterMaterial");
+	objectsDataProvider.createRenderItem(
+		*boxTemplate,
+		{ 0.0f,0.0f,0.0f },
+		{ 1.0f,1.0f,1.0f },
+		{ 1.0f,1.0f,1.0f },
+		false
+	);
+
+	auto hillsTemplate = renderItemTemplatesProvider.getRenderItemTemplate("Hills");
+	objectsDataProvider.createRenderItem(
+		*hillsTemplate,
+		{ 0.0f,0.0f,0.0f },
+		{ 1.0f,1.0f,1.0f },
+		{ 5.0f,5.0f,5.0f },
+		false
+	);
+
+	auto waterWithWavesTemplate = renderItemTemplatesProvider.getRenderItemTemplate("WaterWithWaves");
+	objectsDataProvider.createRenderItem(
+		*waterWithWavesTemplate,
+		{ 0.0f,0.0f,0.0f },
+		{ 1.0f,1.0f,1.0f },
+		{ 5.0f,5.0f,5.0f },
+		true
+	);
+}
+
 
 //void ObjectsDataProviderConfigurator::buildRenderItemsForLandAndWaves()
 //{

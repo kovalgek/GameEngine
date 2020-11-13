@@ -1,21 +1,16 @@
 #include "DynamicVerticesProvider.h"
 #include "DynamicVertices.h"
-#include "Waves.h"
+#include "Vertex.h"
 
-DynamicVerticesProvider::DynamicVerticesProvider()
-{
-	dynamicVerticesMap["waves"] = waves();
-}
-
+DynamicVerticesProvider::DynamicVerticesProvider() = default;
 DynamicVerticesProvider::~DynamicVerticesProvider() = default;
 
-std::unique_ptr<Waves> DynamicVerticesProvider::waves()
+void DynamicVerticesProvider::addDynamicVertices(std::string name, std::unique_ptr<DynamicVertices> dynamicVertices)
 {
-	auto waves = std::make_unique<Waves>(128, 128, 1.0f, 0.03f, 4.0f, 0.2f);
-	return waves;
+	dynamicVerticesMap[name] = std::move(dynamicVertices);
 }
 
-std::vector <DynamicVertices*> DynamicVerticesProvider::getDynamicVerticesList() const
+std::vector<DynamicVertices*> DynamicVerticesProvider::getDynamicVerticesList() const
 {
 	std::vector<DynamicVertices*> dynamicVerticesList;
 	for (auto& dynamicVertices : dynamicVerticesMap)
@@ -23,6 +18,17 @@ std::vector <DynamicVertices*> DynamicVerticesProvider::getDynamicVerticesList()
 		dynamicVerticesList.push_back(dynamicVertices.second.get());
 	}
 	return dynamicVerticesList;
+}
+
+std::vector<UINT> DynamicVerticesProvider::getVertexBufferSizes()
+{
+	std::vector<UINT> vertexBufferSizes;
+	for (auto& dynamicVertices : dynamicVerticesMap)
+	{
+		size_t size = dynamicVertices.second.get()->getVertices().size();
+		vertexBufferSizes.push_back((UINT)size);
+	}
+	return vertexBufferSizes;
 }
 
 DynamicVertices* DynamicVerticesProvider::getDynamicVerticesForName(std::string name) const

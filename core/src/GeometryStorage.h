@@ -9,7 +9,6 @@ struct MeshGeometry;
 struct SubmeshGeometry;
 struct ID3D12Device;
 struct ID3D12GraphicsCommandList;
-class Waves;
 
 struct Vertex2
 {
@@ -34,11 +33,12 @@ public:
 	);
 	~GeometryStorage();
 
-	Waves* getWaves() { return waves.get(); }
 
 	std::unordered_map<std::string, std::vector<std::string>> getGeometryNames();
 
 	void createMeshGeometry(std::string name, std::vector<MeshData> meshes);
+	void createMeshGeometry(std::string meshName, std::string submeshName, std::vector<std::uint16_t> indices, int vertexCount);
+
 	MeshGeometry* getGeometry(const std::string name) const;
 
 private:
@@ -46,9 +46,7 @@ private:
 	ID3D12GraphicsCommandList *commandList;
 
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> geometries;
-	std::unique_ptr<Waves> waves;
 
 	SubmeshGeometry addSubmesh(MeshData item, UINT itemVertexOffset, UINT itemIndexOffset);
-	void buildWavesGeometryBuffers();
 };
 

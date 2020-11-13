@@ -41,8 +41,8 @@ public:
 	~ObjectsDataProvider();
 
 	std::vector<RenderItem*> renderItems();
+	std::vector<RenderItem*> getRenderItemsWithDynamicVertexBuffer();
 	std::vector<RenderItem*> renderItemsForLayer(RenderLayer layer);
-	std::vector<RenderItem*> getRenderItemsWithDynamicVertexBuffer() { return renderItemsWithDynamicVertexBuffer; }
 
 	GeometryStorage* getGeometryStorage() const { return geometryStorage.get(); }
 	
@@ -61,7 +61,8 @@ public:
 		RenderItemTemplate renderItemTemplate,
 		std::vector<float> position,
 		std::vector<float> scaling,
-		std::vector<float> textureTransform
+		std::vector<float> textureTransform,
+		bool dynamicVertices = false
 	);
 
 private:

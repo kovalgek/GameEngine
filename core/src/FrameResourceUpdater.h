@@ -1,15 +1,17 @@
 #include "MainPassData.h"
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 struct RenderItem;
 class FrameResourceController;
 class MainPassDataProvider;
 class ObjectsDataProvider;
 class MaterialsDataProvider;
+class DynamicVerticesProvider;
+class DynamicVertices;
 class GameTimer;
 class GPUService;
-class Waves;
 struct Material;
 struct FrameResource;
 
@@ -30,7 +32,7 @@ public:
 		MainPassDataProvider& mainPassDataProvider,
 		ObjectsDataProvider& objectsDataProvider,
 		const MaterialsDataProvider& materialsDataProvider,
-		Waves* waves
+		DynamicVerticesProvider& dynamicVerticesProvider
 	);
 	~FrameResourceUpdater();
 
@@ -42,7 +44,7 @@ private:
 	MainPassDataProvider& mainPassDataProvider;
 	ObjectsDataProvider& objectsDataProvider;
 	const MaterialsDataProvider& materialsDataProvider;
-	Waves* waves;
+	DynamicVerticesProvider& dynamicVerticesProvider;
 
 	void waitForFrameResourceAvailable(FrameResource* frameResource);
 	
@@ -59,6 +61,9 @@ private:
 	PassConstants passConstantsFromMainPassData(MainPassData mainPassData, const GameTimer& gameTimer);
 
 	void updateVertexUploadBufferForFrameResource(FrameResource* frameResource);
-	void updateVertexUploadBuffer(UploadBuffer<Vertex>* vertexBuffer, std::vector<RenderItem*> renderItems);
+	void updateVertexUploadBuffer(
+		std::vector<UploadBuffer<Vertex>*> vertexBuffers,
+		std::vector<DynamicVertices*> dynamicVerticesList,
+		std::vector<RenderItem*> renderItems);
 };
 

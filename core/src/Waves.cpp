@@ -130,6 +130,33 @@ std::vector<Vertex> Waves::getVertices()
 	return vertices;
 }
 
+std::vector<std::uint16_t> Waves::getIndices()
+{
+	std::vector<std::uint16_t> indices(3 * TriangleCount()); // 3 indices per face
+	assert(VertexCount() < 0x0000ffff);
+
+	// Iterate over each quad.
+	int m = RowCount();
+	int n = ColumnCount();
+	int k = 0;
+	for (int i = 0; i < m - 1; ++i)
+	{
+		for (int j = 0; j < n - 1; ++j)
+		{
+			indices[k] = i * n + j;
+			indices[k + 1] = i * n + j + 1;
+			indices[k + 2] = (i + 1) * n + j;
+
+			indices[k + 3] = (i + 1) * n + j;
+			indices[k + 4] = i * n + j + 1;
+			indices[k + 5] = (i + 1) * n + j + 1;
+
+			k += 6; // next quad
+		}
+	}
+	return indices;
+}
+
 void Waves::Update(float dt)
 {
 	static float t = 0;

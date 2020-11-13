@@ -3,6 +3,7 @@
 #include "GeometryGenerator.h"
 //class GeometryGenerator;
 class GeometryStorage;
+class DynamicVerticesProvider;
 struct MeshData;
 
 #pragma once
@@ -13,6 +14,7 @@ public:
 	~GeometryStorageConfigurator() = default;
 
 	void configure(GeometryStorage& geometryStorage);
+	void configure(GeometryStorage& geometryStorage, DynamicVerticesProvider &dynamicVerticesProvider);
 private:
 	std::vector<MeshData> primitiveShapeMeshes();
 	std::vector<MeshData> customModelMeshes();

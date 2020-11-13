@@ -71,7 +71,8 @@ void ObjectsDataProvider::createRenderItem(
 	RenderItemTemplate renderItemTemplate,
 	std::vector<float> position,
 	std::vector<float> scaling,
-	std::vector<float> textureTransform)
+	std::vector<float> textureTransform,
+	bool dynamicVertices)
 {
 	auto item = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&item->World, XMMatrixScaling(scaling[0], scaling[1], scaling[2]) * XMMatrixTranslation(position[0], position[1], position[2]));
@@ -85,6 +86,11 @@ void ObjectsDataProvider::createRenderItem(
 	item->IndexCount = item->Geo->DrawArgs[renderItemTemplate.submesh].IndexCount;
 	item->StartIndexLocation = item->Geo->DrawArgs[renderItemTemplate.submesh].StartIndexLocation;
 	item->BaseVertexLocation = item->Geo->DrawArgs[renderItemTemplate.submesh].BaseVertexLocation;
+
+	if (dynamicVertices)
+	{
+		item->dynamicVertices = dynamicVerticesProvider.getDynamicVerticesForName("waves");
+	}
 
 	ritemLayer[(int)RenderLayer::Opaque].push_back(item.get());
 	allRitems.push_back(std::move(item));
@@ -103,4 +109,18 @@ std::vector<RenderItem*> ObjectsDataProvider::renderItems()
 std::vector<RenderItem*> ObjectsDataProvider::renderItemsForLayer(RenderLayer layer)
 {
 	return ritemLayer[(int)layer];
+}
+
+std::vector<RenderItem*> ObjectsDataProvider::getRenderItemsWithDynamicVertexBuffer()
+{
+	std::vector<RenderItem*> itemsWithDynamicVertexBuffer;
+
+	for (auto& e : allRitems)
+	{
+		if (e.get()->dynamicVertices)
+		{
+			itemsWithDynamicVertexBuffer.push_back(e.get());
+		}
+	}
+	return itemsWithDynamicVertexBuffer;
 }

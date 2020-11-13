@@ -10,10 +10,11 @@
 #include "RenderItem.h"
 #include "Material.h"
 #include "GameTimer.h"
-#include "Waves.h"
 #include <DirectXColors.h>
 #include "Vertex.h"
 #include "GPUService.h"
+#include "DynamicVertices.h"
+#include "DynamicVerticesProvider.h"
 
 using namespace DirectX;
 
@@ -23,14 +24,14 @@ FrameResourceUpdater::FrameResourceUpdater(
 	MainPassDataProvider& mainPassDataProvider,
 	ObjectsDataProvider& objectsDataProvider,
 	const MaterialsDataProvider& materialsDataProvider,
-	Waves *waves) :
+	DynamicVerticesProvider& dynamicVerticesProvider) :
 
 	frameResourceController { std::move(frameResourceController) },
 	gpuService{ gpuService },
 	mainPassDataProvider { mainPassDataProvider },
 	objectsDataProvider { objectsDataProvider },
 	materialsDataProvider { materialsDataProvider },
-	waves { waves }
+	dynamicVerticesProvider { dynamicVerticesProvider }
 {
 }
 
@@ -187,23 +188,35 @@ MaterialConstants FrameResourceUpdater::materialConstantsFromMaterial(Material* 
 
 void FrameResourceUpdater::updateVertexUploadBufferForFrameResource(FrameResource* frameResource)
 {
-	auto vertexBuffer = frameResourceController->getCurrentFrameResource()->WavesVB.get();
+	auto vertexBuffers = frameResourceController->getCurrentFrameResource()->getVertexBuffers();
 	auto renderItems = objectsDataProvider.getRenderItemsWithDynamicVertexBuffer();
-	updateVertexUploadBuffer(vertexBuffer, renderItems);
+	auto dynamicVerticesList = dynamicVerticesProvider.getDynamicVerticesList();
+	updateVertexUploadBuffer(vertexBuffers, dynamicVerticesList, renderItems);
 }
 
-void FrameResourceUpdater::updateVertexUploadBuffer(UploadBuffer<Vertex>* vertexBuffer, std::vector<RenderItem*> renderItems)
+void FrameResourceUpdater::updateVertexUploadBuffer(
+	std::vector<UploadBuffer<Vertex>*> vertexBuffers,	
+	std::vector<DynamicVertices*> dynamicVerticesList,
+	std::vector<RenderItem*> renderItems
+)
 {
+	for(size_t i = 0; i < dynamicVerticesList.size(); ++i)	
+	{
+		DynamicVertices* dynamicVertices = dynamicVerticesList[i];		
+		std::vector<Vertex> verticies = dynamicVertices->getVertices();
+
+		UploadBuffer<Vertex>* vertexBuffer = vertexBuffers[i];
+		dynamicVertices->vertexBuffer = vertexBuffer;
+
+		for (size_t j = 0; j < verticies.size(); ++j)
+		{
+			vertexBuffer->CopyData(j, verticies[j]);
+		}
+	}
+
 	for (auto& renderItem : renderItems)
 	{
 		auto dynamicVertices = renderItem->dynamicVertices;
-		std::vector<Vertex> verticies = dynamicVertices->getVertices();
-
-		for (int i = 0; i < verticies.size(); ++i)
-		{
-			vertexBuffer->CopyData(i, verticies[i]);
-		}
-
-		renderItem->Geo->VertexBufferGPU = vertexBuffer->Resource();
+		renderItem->Geo->VertexBufferGPU = dynamicVertices->vertexBuffer->Resource();
 	}
 }

@@ -2,7 +2,6 @@
 #include "Vertex.h"
 #include "MathHelper.h"
 #include "d3dUtil.h"
-#include "Waves.h"
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <d3d12.h>
@@ -25,7 +24,6 @@ GeometryStorage::GeometryStorage(
 	device { device },
 	commandList { commandList }
 {
-	waves = std::make_unique<Waves>(128, 128, 1.0f, 0.03f, 4.0f, 0.2f);
 }
 
 GeometryStorage::~GeometryStorage() = default;
@@ -124,38 +122,13 @@ std::unordered_map<std::string, std::vector<std::string>> GeometryStorage::getGe
 	return names;
 }
 
-void GeometryStorage::buildWavesGeometryBuffers()
+void GeometryStorage::createMeshGeometry(std::string meshName, std::string submeshName, std::vector<std::uint16_t> indices, int vertexCount)
 {
-	waves = std::make_unique<Waves>(128, 128, 1.0f, 0.03f, 4.0f, 0.2f);
-
-	std::vector<std::uint16_t> indices(3 * waves->TriangleCount()); // 3 indices per face
-	assert(waves->VertexCount() < 0x0000ffff);
-
-	// Iterate over each quad.
-	int m = waves->RowCount();
-	int n = waves->ColumnCount();
-	int k = 0;
-	for (int i = 0; i < m - 1; ++i)
-	{
-		for (int j = 0; j < n - 1; ++j)
-		{
-			indices[k] = i * n + j;
-			indices[k + 1] = i * n + j + 1;
-			indices[k + 2] = (i + 1) * n + j;
-
-			indices[k + 3] = (i + 1) * n + j;
-			indices[k + 4] = i * n + j + 1;
-			indices[k + 5] = (i + 1) * n + j + 1;
-
-			k += 6; // next quad
-		}
-	}
-
-	UINT vbByteSize = waves->VertexCount() * sizeof(Vertex);
+	UINT vbByteSize = vertexCount * sizeof(Vertex);
 	UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
 	auto geo = std::make_unique<MeshGeometry>();
-	geo->Name = "waterGeo";
+	geo->Name = meshName;
 
 	// Set dynamically.
 	geo->VertexBufferCPU = nullptr;
@@ -177,7 +150,7 @@ void GeometryStorage::buildWavesGeometryBuffers()
 	submesh.StartIndexLocation = 0;
 	submesh.BaseVertexLocation = 0;
 
-	geo->DrawArgs["grid"] = submesh;
+	geo->DrawArgs[submeshName] = submesh;
 
-	geometries["waterGeo"] = std::move(geo);
+	geometries[meshName] = std::move(geo);
 }

@@ -3,6 +3,10 @@
 #include "GeometryStorage.h"
 #include "MeshData.h"
 
+#include "Waves.h"
+#include "DynamicVerticesProvider.h"
+#include "DynamicVertices.h"
+
 GeometryStorageConfigurator::GeometryStorageConfigurator(std::unique_ptr<GeometryGenerator> geometryGenerator) : geometryGenerator { std::move(geometryGenerator) }
 {
 
@@ -12,6 +16,13 @@ void GeometryStorageConfigurator::configure(GeometryStorage& geometryStorage)
 {
 	geometryStorage.createMeshGeometry("shapeGeo", primitiveShapeMeshes());
 	geometryStorage.createMeshGeometry("models", customModelMeshes());
+}
+
+void GeometryStorageConfigurator::configure(GeometryStorage& geometryStorage, DynamicVerticesProvider& dynamicVerticesProvider)
+{
+	auto waves = std::make_unique<Waves>(128, 128, 1.0f, 0.03f, 4.0f, 0.2f);
+	geometryStorage.createMeshGeometry("dynamic", "waves", waves->getIndices(), waves->VertexCount());
+	dynamicVerticesProvider.addDynamicVertices("waves", std::move(waves));
 }
 
 std::vector<MeshData> GeometryStorageConfigurator::customModelMeshes()

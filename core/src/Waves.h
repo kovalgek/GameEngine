@@ -41,8 +41,9 @@ public:
 	void Disturb(int i, int j, float magnitude);
 
     void update(const GameTimer& gameTimer);
-    std::vector<Vertex> getVertices();
 
+    std::vector<Vertex> getVertices();
+    std::vector<std::uint16_t> getIndices();
 private:
     int mNumRows = 0;
     int mNumCols = 0;

@@ -8,7 +8,7 @@ FrameResourceController::FrameResourceController(
 	UINT passCount,
 	UINT objectCount,
 	UINT materialCount,
-	UINT waveVertCount
+	std::vector<UINT> vertexBufferSizes
 ) :
 	device { device },
 	passCount { passCount },
@@ -16,7 +16,7 @@ FrameResourceController::FrameResourceController(
 {
 	for (int i = 0; i < kFrameResourcesCount; ++i)
 	{
-		frameResources.push_back(std::make_unique<FrameResource>(device, passCount, objectCount, materialCount, waveVertCount));
+		frameResources.push_back(std::make_unique<FrameResource>(device, passCount, objectCount, materialCount, vertexBufferSizes));
 	}
 }
 

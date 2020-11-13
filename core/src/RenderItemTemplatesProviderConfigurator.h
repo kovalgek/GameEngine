@@ -13,5 +13,7 @@ public:
 	void configure(RenderItemTemplatesProvider &renderItemTemplatesProvider);
 private:
 	std::unique_ptr<RenderItemTemplate> boxWithWaterMaterial();
+	std::unique_ptr<RenderItemTemplate> hills();
+	std::unique_ptr<RenderItemTemplate> waterWithWaves();
 };
 

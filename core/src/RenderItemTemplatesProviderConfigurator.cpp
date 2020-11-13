@@ -8,6 +8,8 @@
 void RenderItemTemplatesProviderConfigurator::configure(RenderItemTemplatesProvider& renderItemTemplatesProvider)
 {
 	renderItemTemplatesProvider.addRenderItemTemplate("BoxWithWaterMaterial", boxWithWaterMaterial());
+	renderItemTemplatesProvider.addRenderItemTemplate("Hills", hills());
+	renderItemTemplatesProvider.addRenderItemTemplate("WaterWithWaves", waterWithWaves());
 }
 
 std::unique_ptr<RenderItemTemplate> RenderItemTemplatesProviderConfigurator::boxWithWaterMaterial()
@@ -16,7 +18,29 @@ std::unique_ptr<RenderItemTemplate> RenderItemTemplatesProviderConfigurator::box
 
 	item->mesh = "shapeGeo";
 	item->submesh = "box";
+	item->material = "wirefence";
+
+	return item;
+}
+
+std::unique_ptr<RenderItemTemplate> RenderItemTemplatesProviderConfigurator::hills()
+{
+	auto item = std::make_unique<RenderItemTemplate>();
+
+	item->mesh = "shapeGeo";
+	item->submesh = "hills";
 	item->material = "grass";
+
+	return item;
+}
+
+std::unique_ptr<RenderItemTemplate> RenderItemTemplatesProviderConfigurator::waterWithWaves()
+{
+	auto item = std::make_unique<RenderItemTemplate>();
+
+	item->mesh = "dynamic";
+	item->submesh = "waves";
+	item->material = "water";
 
 	return item;
 }

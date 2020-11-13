@@ -18,7 +18,7 @@ public:
 		UINT passCount,
 		UINT objectCount,
 		UINT materialCount,
-		UINT waveVertCount
+		std::vector<UINT> vertexBufferSizes
 	);
 	~FrameResourceController();
 	void changeFrameResource();

@@ -13,7 +13,6 @@
 #include "GeometryStorage.h"
 #include "GeometryStorageConfigurator.h"
 #include "AppFacade.h"
-#include "Waves.h"
 #include "SrvHeapProvider.h"
 #include "TexturesProvider.h"
 #include "d3dUtil.h"
@@ -74,9 +73,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 	);
 
 	geometryStorageConfigurator->configure(*geometryStorage);
-
-	auto waves = geometryStorage->getWaves();
-
+	
 	auto materialsDataProvider = std::make_unique<MaterialsDataProvider>();
 
 	auto materialsDataProviderConfigurator = std::make_unique<MaterialsDataProviderConfigurator>();
@@ -89,6 +86,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 	);
 
 	auto dynamicVerticesProvider = std::make_unique<DynamicVerticesProvider>();
+	geometryStorageConfigurator->configure(*geometryStorage, *dynamicVerticesProvider);
 
 	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(
 		std::move(geometryStorage),
@@ -107,7 +105,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		1,
 		(UINT)renderItems.size(),
 		(UINT)materials.size(),
-		waves->VertexCount()
+		dynamicVerticesProvider->getVertexBufferSizes()
 	);
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
@@ -147,7 +145,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*mainPassDataProvider,
 		*objectsDataProvider,
 		*materialsDataProvider,
-		waves
+		*dynamicVerticesProvider
 	);
 
 	return std::make_unique<AppContext>(

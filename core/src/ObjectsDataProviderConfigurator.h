@@ -14,6 +14,8 @@ public:
 	void configure(ObjectsDataProvider &objectsDataProvider);
 private:
 	void buildRenderItemsForShapes(ObjectsDataProvider& objectsDataProvider);
+	void buildRenderItemsForLandAndWaves(ObjectsDataProvider& objectsDataProvider);
+
 	const RenderItemTemplatesProvider& renderItemTemplatesProvider;
 };
 
