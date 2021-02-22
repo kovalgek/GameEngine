@@ -103,7 +103,6 @@ void Renderer::draw(const GameTimer& gameTimer)
 	// Reusing the command list reuses memory.
 	ThrowIfFailed(commandList->Reset(cmdListAlloc.Get(), psoProvider->getPipelineStateObject("opaque")));
 
-
 	commandList->RSSetViewports(1, &screenViewport);
 	commandList->RSSetScissorRects(1, &scissorRect);
 
@@ -129,6 +128,24 @@ void Renderer::draw(const GameTimer& gameTimer)
 	auto allRitems = objectsDataProvider.renderItemsForLayer(RenderLayer::Opaque);
 	drawRenderItems(commandList, allRitems);
 
+	// Mark the visible mirror pixels in the stencil buffer with the value 1
+	commandList->OMSetStencilRef(1);
+	commandList->SetPipelineState(psoProvider->getPipelineStateObject("markStencilMirrors"));
+	auto mirrorsRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::Mirrors);
+	drawRenderItems(commandList, mirrorsRenderItems);
+
+	// Draw the reflection into the mirror only (only for pixels where the stencil buffer is 1).
+	// Note that we must supply a different per-pass constant buffer--one with the lights reflected.
+	UINT passCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(PassConstants));
+	commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress() + 1 * passCBByteSize);
+	commandList->SetPipelineState(psoProvider->getPipelineStateObject("drawStencilReflections"));
+	auto reflectedRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::Reflected);
+	drawRenderItems(commandList, reflectedRenderItems);
+
+	// Restore main pass constants and stencil ref.
+	commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
+	commandList->OMSetStencilRef(0);
+
 	commandList->SetPipelineState(psoProvider->getPipelineStateObject("alphaTested"));
 	auto alphaTestedRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::AlphaTested);
 	drawRenderItems(commandList, alphaTestedRenderItems);
@@ -136,6 +153,11 @@ void Renderer::draw(const GameTimer& gameTimer)
 	commandList->SetPipelineState(psoProvider->getPipelineStateObject("transparent"));
 	auto transparentRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::Transparent);
 	drawRenderItems(commandList, transparentRenderItems);
+
+	// Draw shadows
+	commandList->SetPipelineState(psoProvider->getPipelineStateObject("shadow"));
+	auto shadowRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::Shadow);
+	drawRenderItems(commandList, shadowRenderItems);
 
 	viewController.present();
 	viewController.update();

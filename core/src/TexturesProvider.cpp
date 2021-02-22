@@ -20,6 +20,7 @@ void TexturesProvider::loadTextures()
 	textures.push_back(waterTexture());
 	textures.push_back(fenceTexture());
 	textures.push_back(white1x1Texture());
+	textures.push_back(iceTexture());
 }
 
 std::vector<ID3D12Resource*> TexturesProvider::getTextureResources()
@@ -68,7 +69,7 @@ std::unique_ptr<Texture> TexturesProvider::fenceTexture()
 {
 	auto fenceTex = std::make_unique<Texture>();
 	fenceTex->Name = "fenceTex";
-	fenceTex->Filename = L"../core/resources/textures/WoodCrate01.dds";
+	fenceTex->Filename = L"../core/resources/textures/WireFence.dds";
 	ThrowIfFailed(CreateDDSTextureFromFile12(
 		device,
 		commandList,
@@ -84,6 +85,21 @@ std::unique_ptr<Texture> TexturesProvider::white1x1Texture()
 	auto white1x1Tex = std::make_unique<Texture>();
 	white1x1Tex->Name = "white1x1Tex";
 	white1x1Tex->Filename = L"../core/resources/textures/white1x1.dds";
+	ThrowIfFailed(CreateDDSTextureFromFile12(
+		device,
+		commandList,
+		white1x1Tex->Filename.c_str(),
+		white1x1Tex->Resource,
+		white1x1Tex->UploadHeap)
+	);
+	return white1x1Tex;
+}
+
+std::unique_ptr<Texture> TexturesProvider::iceTexture()
+{
+	auto white1x1Tex = std::make_unique<Texture>();
+	white1x1Tex->Name = "iceTex";
+	white1x1Tex->Filename = L"../core/resources/textures/ice.dds";
 	ThrowIfFailed(CreateDDSTextureFromFile12(
 		device,
 		commandList,

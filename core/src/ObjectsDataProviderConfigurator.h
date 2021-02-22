@@ -15,6 +15,7 @@ public:
 private:
 	void buildRenderItemsForShapes(ObjectsDataProvider& objectsDataProvider);
 	void buildRenderItemsForLandAndWaves(ObjectsDataProvider& objectsDataProvider);
+	void buildRenderItemsForStencil(ObjectsDataProvider& objectsDataProvider);
 
 	const RenderItemTemplatesProvider& renderItemTemplatesProvider;
 };

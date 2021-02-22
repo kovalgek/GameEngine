@@ -94,7 +94,7 @@ std::unique_ptr<Material> MaterialsDataProviderConfigurator::icemirrorMaterial()
 	auto icemirror = std::make_unique<Material>();
 	icemirror->Name = "icemirror";
 	icemirror->MatCBIndex = 6;
-	icemirror->DiffuseSrvHeapIndex = 2;
+	icemirror->DiffuseSrvHeapIndex = 4;
 	icemirror->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.3f);
 	icemirror->FresnelR0 = XMFLOAT3(0.1f, 0.1f, 0.1f);
 	icemirror->Roughness = 0.5f;

@@ -37,7 +37,7 @@ cbuffer cbPerObject : register(b0)
 	float4x4 gTexTransform;
 };
 
-// Constant data that varies per pass.
+// Constant data that varies per material.
 cbuffer cbPass : register(b1)
 {
     float4x4 gView;
@@ -56,8 +56,6 @@ cbuffer cbPass : register(b1)
     float gDeltaTime;
     float4 gAmbientLight;
 
-	// Allow application to change fog parameters once per frame.
-	// For example, we may only use fog for certain times of day.
 	float4 gFogColor;
 	float gFogStart;
 	float gFogRange;
@@ -122,7 +120,7 @@ float4 PS(VertexOut pin) : SV_Target
 	// Discard pixel if texture alpha < 0.1.  We do this test as soon 
 	// as possible in the shader so that we can potentially exit the
 	// shader early, thereby skipping the rest of the shader code.
-//	clip(diffuseAlbedo.a - 0.1f);
+	clip(diffuseAlbedo.a - 0.1f);
 #endif
 
     // Interpolating normal can unnormalize it, so renormalize it.

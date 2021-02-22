@@ -48,6 +48,12 @@ private:
 	void createOpaquePSO(ID3D12PipelineState** pipelineState);
 	void createTransparentPSO(ID3D12PipelineState** pipelineState);
 	void createAlphaTestedPSO(ID3D12PipelineState** pipelineState);
+
+	void createStencilMirrorsPSO(ID3D12PipelineState** pipelineState);
+	void createStencilReflectionsPSO(ID3D12PipelineState** pipelineState);
+	void createShadowObjectsPSO(ID3D12PipelineState** pipelineState);
+
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePsoDesc();
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC transparentPSODesc();
 };
 

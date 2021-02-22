@@ -59,6 +59,7 @@ private:
 	void updateMainPassConstantBufferForFrameResource(FrameResource* frameResource, const GameTimer& gameTimer);
 	void updateMainPassConstantBuffer(UploadBuffer<PassConstants>* mainPassConstantBuffer, MainPassData mainPassData, const GameTimer& gameTimer);
 	PassConstants passConstantsFromMainPassData(MainPassData mainPassData, const GameTimer& gameTimer);
+	PassConstants updateReflectedPassCB(PassConstants mainPassCB, const GameTimer& gt);
 
 	void updateVertexUploadBufferForFrameResource(FrameResource* frameResource);
 	void updateVertexUploadBuffer(

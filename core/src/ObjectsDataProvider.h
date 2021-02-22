@@ -62,7 +62,8 @@ public:
 		std::vector<float> position,
 		std::vector<float> scaling,
 		std::vector<float> textureTransform,
-		bool dynamicVertices = false
+		bool dynamicVertices = false,
+		RenderLayer renderLayer = RenderLayer::Opaque
 	);
 
 private:

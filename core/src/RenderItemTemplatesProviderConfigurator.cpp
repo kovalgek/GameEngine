@@ -10,6 +10,8 @@ void RenderItemTemplatesProviderConfigurator::configure(RenderItemTemplatesProvi
 	renderItemTemplatesProvider.addRenderItemTemplate("BoxWithWaterMaterial", boxWithWaterMaterial());
 	renderItemTemplatesProvider.addRenderItemTemplate("Hills", hills());
 	renderItemTemplatesProvider.addRenderItemTemplate("WaterWithWaves", waterWithWaves());
+	renderItemTemplatesProvider.addRenderItemTemplate("Mirror", mirror());
+	renderItemTemplatesProvider.addRenderItemTemplate("Skull", skull());
 }
 
 std::unique_ptr<RenderItemTemplate> RenderItemTemplatesProviderConfigurator::boxWithWaterMaterial()
@@ -41,6 +43,28 @@ std::unique_ptr<RenderItemTemplate> RenderItemTemplatesProviderConfigurator::wat
 	item->mesh = "dynamic";
 	item->submesh = "waves";
 	item->material = "water";
+
+	return item;
+}
+
+std::unique_ptr<RenderItemTemplate> RenderItemTemplatesProviderConfigurator::mirror()
+{
+	auto item = std::make_unique<RenderItemTemplate>();
+
+	item->mesh = "shapeGeo";
+	item->submesh = "grid";
+	item->material = "icemirror";
+
+	return item;
+}
+
+std::unique_ptr<RenderItemTemplate> RenderItemTemplatesProviderConfigurator::skull()
+{
+	auto item = std::make_unique<RenderItemTemplate>();
+
+	item->mesh = "models";
+	item->submesh = "skull";
+	item->material = "skullMat";
 
 	return item;
 }

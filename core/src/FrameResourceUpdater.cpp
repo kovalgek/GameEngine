@@ -68,6 +68,10 @@ void FrameResourceUpdater::updateMainPassConstantBuffer(UploadBuffer<PassConstan
 {
 	PassConstants passConstants = passConstantsFromMainPassData(mainPassData, gameTimer);
 	mainPassConstantBuffer->CopyData(0, passConstants);
+
+	// Reflected pass stored in index 1
+	PassConstants reflectedPassCB = updateReflectedPassCB(passConstants, gameTimer);
+	mainPassConstantBuffer->CopyData(1, reflectedPassCB);
 }
 
 PassConstants FrameResourceUpdater::passConstantsFromMainPassData(MainPassData mainPassData, const GameTimer& gameTimer)
@@ -108,6 +112,24 @@ PassConstants FrameResourceUpdater::passConstantsFromMainPassData(MainPassData m
 	mainPassCB.gFogRange = mainPassData.fogRange;
 
 	return mainPassCB;
+}
+
+PassConstants FrameResourceUpdater::updateReflectedPassCB(PassConstants mainPassCB, const GameTimer& gt)
+{
+	PassConstants reflectedPassCB = mainPassCB;
+
+	XMVECTOR mirrorPlane = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f); // xy plane
+	XMMATRIX R = XMMatrixReflect(mirrorPlane);
+
+	// Reflect the lighting.
+	for (int i = 0; i < 3; ++i)
+	{
+		XMVECTOR lightDir = XMLoadFloat3(&mainPassCB.Lights[i].Direction);
+		XMVECTOR reflectedLightDir = XMVector3TransformNormal(lightDir, R);
+		XMStoreFloat3(&reflectedPassCB.Lights[i].Direction, reflectedLightDir);
+	}
+
+	return reflectedPassCB;
 }
 
 void FrameResourceUpdater::updateObjectConstantBufferForFrameResource(FrameResource *frameResource)

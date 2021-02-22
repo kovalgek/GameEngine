@@ -72,7 +72,8 @@ void ObjectsDataProvider::createRenderItem(
 	std::vector<float> position,
 	std::vector<float> scaling,
 	std::vector<float> textureTransform,
-	bool dynamicVertices)
+	bool dynamicVertices,
+	RenderLayer renderLayer)
 {
 	auto item = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&item->World, XMMatrixScaling(scaling[0], scaling[1], scaling[2]) * XMMatrixTranslation(position[0], position[1], position[2]));
@@ -92,7 +93,7 @@ void ObjectsDataProvider::createRenderItem(
 		item->dynamicVertices = dynamicVerticesProvider.getDynamicVerticesForName("waves");
 	}
 
-	ritemLayer[(int)RenderLayer::Opaque].push_back(item.get());
+	ritemLayer[(int)renderLayer].push_back(item.get());
 	allRitems.push_back(std::move(item));
 }
 

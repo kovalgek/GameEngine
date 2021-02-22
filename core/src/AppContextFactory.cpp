@@ -102,7 +102,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 
 	auto frameResourceController = std::make_unique<FrameResourceController>(
 		gpuService->getDevice(),
-		1,
+		2,
 		(UINT)renderItems.size(),
 		(UINT)materials.size(),
 		dynamicVerticesProvider->getVertexBufferSizes()

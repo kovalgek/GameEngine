@@ -40,6 +40,18 @@ void PSOProviderConfigurator::configure(PSOProvider& psoProvider)
 	ComPtr<ID3D12PipelineState> alphaTestedPipelineState;
 	createAlphaTestedPSO(alphaTestedPipelineState.GetAddressOf());
 	psoProvider.addPipelineStateObject("alphaTested", alphaTestedPipelineState);
+
+	ComPtr<ID3D12PipelineState> stencilMirrorsPipelineState;
+	createStencilMirrorsPSO(stencilMirrorsPipelineState.GetAddressOf());
+	psoProvider.addPipelineStateObject("markStencilMirrors", stencilMirrorsPipelineState);
+
+	ComPtr<ID3D12PipelineState> stencilReflectionsPipelineState;
+	createStencilReflectionsPSO(stencilReflectionsPipelineState.GetAddressOf());
+	psoProvider.addPipelineStateObject("drawStencilReflections", stencilReflectionsPipelineState);
+
+	ComPtr<ID3D12PipelineState> shadowObjectsPipelineState;
+	createShadowObjectsPSO(shadowObjectsPipelineState.GetAddressOf());
+	psoProvider.addPipelineStateObject("shadow", shadowObjectsPipelineState);
 }
 
 ComPtr<ID3DBlob> PSOProviderConfigurator::standardVertexShader()
@@ -61,7 +73,7 @@ ComPtr<ID3DBlob> PSOProviderConfigurator::alphaTestedPixelShader()
 {
 	const D3D_SHADER_MACRO alphaTestDefines[] =
 	{
-		"FOG", "0",
+		"FOG", "1",
 		"ALPHA_TEST", "1",
 		NULL, NULL
 	};
@@ -75,6 +87,18 @@ std::vector<D3D12_INPUT_ELEMENT_DESC> PSOProviderConfigurator::createInputLayout
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 	};
+}
+
+void PSOProviderConfigurator::createOpaquePSO(ID3D12PipelineState** pipelineState)
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePso = opaquePsoDesc();
+	ThrowIfFailed(device->CreateGraphicsPipelineState(&opaquePso, IID_PPV_ARGS(pipelineState)));
+}
+
+void PSOProviderConfigurator::createTransparentPSO(ID3D12PipelineState** pipelineState)
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC transparentPsoDesc = transparentPSODesc();
+	ThrowIfFailed(device->CreateGraphicsPipelineState(&transparentPsoDesc, IID_PPV_ARGS(pipelineState)));
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC PSOProviderConfigurator::opaquePsoDesc()
@@ -108,42 +132,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC PSOProviderConfigurator::opaquePsoDesc()
 	return opaquePsoDesc;
 }
 
-void PSOProviderConfigurator::createOpaquePSO(ID3D12PipelineState** pipelineState)
+D3D12_GRAPHICS_PIPELINE_STATE_DESC PSOProviderConfigurator::transparentPSODesc()
 {
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePsoDesc;
-
-	ZeroMemory(&opaquePsoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	opaquePsoDesc.InputLayout = { inputLayout.data(), (UINT)inputLayout.size() };
-	opaquePsoDesc.pRootSignature = rootSignature;
-	opaquePsoDesc.VS =
-	{
-		reinterpret_cast<BYTE*>(shaders["standardVS"]->GetBufferPointer()),
-		shaders["standardVS"]->GetBufferSize()
-	};
-	opaquePsoDesc.PS =
-	{
-		reinterpret_cast<BYTE*>(shaders["opaquePS"]->GetBufferPointer()),
-		shaders["opaquePS"]->GetBufferSize()
-	};
-	opaquePsoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	opaquePsoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	opaquePsoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	opaquePsoDesc.SampleMask = UINT_MAX;
-	opaquePsoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	opaquePsoDesc.NumRenderTargets = 1;
-	opaquePsoDesc.RTVFormats[0] = backBufferFormat;
-	opaquePsoDesc.SampleDesc.Count = msaa4xState ? 4 : 1;
-	opaquePsoDesc.SampleDesc.Quality = msaa4xState ? (msaa4xQuality - 1) : 0;
-	opaquePsoDesc.DSVFormat = depthStencilFormat;
-	ThrowIfFailed(device->CreateGraphicsPipelineState(&opaquePsoDesc, IID_PPV_ARGS(pipelineState)));
-}
-
-void PSOProviderConfigurator::createTransparentPSO(ID3D12PipelineState** pipelineState)
-{
-	//
-	// PSO for transparent objects
-	//
-
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC transparentPsoDesc = opaquePsoDesc();
 
 	D3D12_RENDER_TARGET_BLEND_DESC transparencyBlendDesc;
@@ -159,15 +149,12 @@ void PSOProviderConfigurator::createTransparentPSO(ID3D12PipelineState** pipelin
 	transparencyBlendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
 	transparentPsoDesc.BlendState.RenderTarget[0] = transparencyBlendDesc;
-	ThrowIfFailed(device->CreateGraphicsPipelineState(&transparentPsoDesc, IID_PPV_ARGS(pipelineState)));
+
+	return transparentPsoDesc;
 }
 
 void PSOProviderConfigurator::createAlphaTestedPSO(ID3D12PipelineState** pipelineState)
 {
-	//
-	// PSO for alpha tested objects
-	//
-
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC alphaTestedPsoDesc = opaquePsoDesc();
 	alphaTestedPsoDesc.PS =
 	{
@@ -176,4 +163,89 @@ void PSOProviderConfigurator::createAlphaTestedPSO(ID3D12PipelineState** pipelin
 	};
 	alphaTestedPsoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 	ThrowIfFailed(device->CreateGraphicsPipelineState(&alphaTestedPsoDesc, IID_PPV_ARGS(pipelineState)));
+}
+
+void PSOProviderConfigurator::createStencilMirrorsPSO(ID3D12PipelineState** pipelineState)
+{
+	CD3DX12_BLEND_DESC mirrorBlendState(D3D12_DEFAULT);
+	mirrorBlendState.RenderTarget[0].RenderTargetWriteMask = 0;
+
+	D3D12_DEPTH_STENCIL_DESC mirrorDSS;
+	mirrorDSS.DepthEnable = true;
+	mirrorDSS.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	mirrorDSS.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	mirrorDSS.StencilEnable = true;
+	mirrorDSS.StencilReadMask = 0xff;
+	mirrorDSS.StencilWriteMask = 0xff;
+
+	mirrorDSS.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	mirrorDSS.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	mirrorDSS.FrontFace.StencilPassOp = D3D12_STENCIL_OP_REPLACE;
+	mirrorDSS.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
+	// We are not rendering backfacing polygons, so these settings do not matter.
+	mirrorDSS.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	mirrorDSS.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	mirrorDSS.BackFace.StencilPassOp = D3D12_STENCIL_OP_REPLACE;
+	mirrorDSS.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC markMirrorsPsoDesc = opaquePsoDesc();
+	markMirrorsPsoDesc.BlendState = mirrorBlendState;
+	markMirrorsPsoDesc.DepthStencilState = mirrorDSS;
+	ThrowIfFailed(device->CreateGraphicsPipelineState(&markMirrorsPsoDesc, IID_PPV_ARGS(pipelineState)));
+}
+
+void PSOProviderConfigurator::createStencilReflectionsPSO(ID3D12PipelineState** pipelineState)
+{
+	D3D12_DEPTH_STENCIL_DESC reflectionsDSS;
+	reflectionsDSS.DepthEnable = true;
+	reflectionsDSS.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	reflectionsDSS.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	reflectionsDSS.StencilEnable = true;
+	reflectionsDSS.StencilReadMask = 0xff;
+	reflectionsDSS.StencilWriteMask = 0xff;
+
+	reflectionsDSS.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	reflectionsDSS.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	reflectionsDSS.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	reflectionsDSS.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
+
+	// We are not rendering backfacing polygons, so these settings do not matter.
+	reflectionsDSS.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	reflectionsDSS.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	reflectionsDSS.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	reflectionsDSS.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC drawReflectionsPsoDesc = opaquePsoDesc();
+	drawReflectionsPsoDesc.DepthStencilState = reflectionsDSS;
+	drawReflectionsPsoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+	drawReflectionsPsoDesc.RasterizerState.FrontCounterClockwise = true;
+	ThrowIfFailed(device->CreateGraphicsPipelineState(&drawReflectionsPsoDesc, IID_PPV_ARGS(pipelineState)));
+}
+
+void PSOProviderConfigurator::createShadowObjectsPSO(ID3D12PipelineState** pipelineState)
+{
+	// We are going to draw shadows with transparency, so base it off the transparency description.
+	D3D12_DEPTH_STENCIL_DESC shadowDSS;
+	shadowDSS.DepthEnable = true;
+	shadowDSS.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	shadowDSS.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	shadowDSS.StencilEnable = true;
+	shadowDSS.StencilReadMask = 0xff;
+	shadowDSS.StencilWriteMask = 0xff;
+
+	shadowDSS.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	shadowDSS.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	shadowDSS.FrontFace.StencilPassOp = D3D12_STENCIL_OP_INCR;
+	shadowDSS.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
+
+	// We are not rendering backfacing polygons, so these settings do not matter.
+	shadowDSS.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	shadowDSS.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	shadowDSS.BackFace.StencilPassOp = D3D12_STENCIL_OP_INCR;
+	shadowDSS.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC shadowPsoDesc = transparentPSODesc();
+	shadowPsoDesc.DepthStencilState = shadowDSS;
+	ThrowIfFailed(device->CreateGraphicsPipelineState(&shadowPsoDesc, IID_PPV_ARGS(pipelineState)));
 }

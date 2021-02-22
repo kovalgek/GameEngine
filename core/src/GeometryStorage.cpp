@@ -1,5 +1,4 @@
 #include "GeometryStorage.h"
-#include "Vertex.h"
 #include "MathHelper.h"
 #include "d3dUtil.h"
 #include <DirectXMath.h>
