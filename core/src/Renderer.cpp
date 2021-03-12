@@ -1,5 +1,4 @@
 #include "Renderer.h"
-#include "Application.h"
 #include "d3dx12.h"
 #include "d3dUtil.h"
 #include "UploadBuffer.h"
@@ -19,6 +18,8 @@
 #include <array>
 
 #include "GPUService.h"
+
+#include <dxgi1_4.h>
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;

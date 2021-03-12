@@ -5,7 +5,7 @@
 		"commands" : [],
 		"files" : 
 		[
-			"CMakeLists.txt"
+			"app/CMakeLists.txt"
 		],
 		"nodes" : 
 		[
@@ -17,25 +17,19 @@
 	"dependencies" : 
 	[
 		{
-			"id" : "CoreKit::@57760688d1f824db5d9c"
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
 		},
 		{
 			"id" : "AppKit::@5f5a17c01335469806cb"
-		},
-		{
-			"id" : "ImGui::@45ca6dacf63e9879b888"
-		},
-		{
-			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
 		}
 	],
-	"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+	"id" : "ALL_BUILD::@5f5a17c01335469806cb",
 	"isGeneratorProvided" : true,
 	"name" : "ALL_BUILD",
 	"paths" : 
 	{
-		"build" : ".",
-		"source" : "."
+		"build" : "app",
+		"source" : "app"
 	},
 	"sources" : [],
 	"type" : "UTILITY"

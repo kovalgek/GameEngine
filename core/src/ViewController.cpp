@@ -1,5 +1,4 @@
 #include "ViewController.h"
-#include "Application.h"
 #include "SrvHeapProvider.h"
 #include "MainPassDataProvider.h"
 #include "ObjectsDataProvider.h"
@@ -13,6 +12,8 @@
 #include "imgui_impl_dx12.h"
 
 #include <iostream>
+#include <dxgi1_4.h>
+#include <d3d12.h>
 
 using namespace DirectX;
 

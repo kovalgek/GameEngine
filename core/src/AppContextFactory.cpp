@@ -1,6 +1,5 @@
 #include "AppContextFactory.h"
 
-#include "Application.h"
 #include "Renderer.h"
 #include "FrameResourceController.h"
 #include "MainPassDataProvider.h"
@@ -24,6 +23,7 @@
 #include "RenderItemTemplatesProvider.h"
 #include "RenderItemTemplatesProviderConfigurator.h"
 #include "OBJFileLoader.h"
+#include <dxgi1_4.h>
 
 using Microsoft::WRL::ComPtr;
 

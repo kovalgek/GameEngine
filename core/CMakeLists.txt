@@ -6,8 +6,6 @@ set(SOURCE_FILES_DIR "Source Files")
 
 #core
 set( CORE_FILES
-	src/Application.h
-	src/Application.cpp
 	src/Renderer.h
 	src/Renderer.cpp
 	src/RendererFactory.cpp

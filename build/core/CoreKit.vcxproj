@@ -383,8 +383,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\include\core\GameTimer.h" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\include\core\AppFacade.h" />
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Application.h" />
-    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Application.cpp" />
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Renderer.h" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Renderer.cpp" />
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\RendererFactory.cpp" />

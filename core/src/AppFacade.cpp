@@ -1,7 +1,6 @@
 #include "AppFacade.h"
 #include "AppContextFactory.h"
 #include "AppContext.h"
-#include "Application.h"
 #include "Renderer.h"
 #include "GameTimer.h"
 #include "FrameResourceUpdater.h"

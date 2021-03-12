@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "app/Debug/AppKit.exe"
+			"path" : "app/MinSizeRel/AppKit.exe"
 		},
 		{
-			"path" : "app/Debug/AppKit.pdb"
+			"path" : "app/MinSizeRel/AppKit.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -58,7 +58,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd"
+					"fragment" : "/DWIN32 /D_WINDOWS /GR /EHsc /O1 /Ob1 /DNDEBUG -MD"
 				}
 			],
 			"defines" : 
@@ -97,11 +97,11 @@
 			"id" : "CoreKit::@57760688d1f824db5d9c"
 		},
 		{
-			"backtrace" : 2,
-			"id" : "ImGui::@45ca6dacf63e9879b888"
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
 		},
 		{
-			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+			"backtrace" : 2,
+			"id" : "ImGui::@45ca6dacf63e9879b888"
 		}
 	],
 	"id" : "AppKit::@5f5a17c01335469806cb",
@@ -110,21 +110,21 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "/DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd",
+				"fragment" : "/DWIN32 /D_WINDOWS /GR /EHsc /O1 /Ob1 /DNDEBUG -MD",
 				"role" : "flags"
 			},
 			{
-				"fragment" : "/machine:x64 /debug /INCREMENTAL /subsystem:windows",
+				"fragment" : "/machine:x64 /INCREMENTAL:NO /subsystem:windows",
 				"role" : "flags"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "..\\core\\Debug\\CoreKit.lib",
+				"fragment" : "..\\core\\MinSizeRel\\CoreKit.lib",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "..\\imgui\\Debug\\ImGui.lib",
+				"fragment" : "..\\imgui\\MinSizeRel\\ImGui.lib",
 				"role" : "libraries"
 			},
 			{
