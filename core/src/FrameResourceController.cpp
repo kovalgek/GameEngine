@@ -7,8 +7,7 @@ FrameResourceController::FrameResourceController(
 	ID3D12Device* device,
 	UINT passCount,
 	UINT objectCount,
-	UINT materialCount,
-	std::vector<UINT> vertexBufferSizes
+	UINT materialCount
 ) :
 	device { device },
 	passCount { passCount },
@@ -16,7 +15,7 @@ FrameResourceController::FrameResourceController(
 {
 	for (int i = 0; i < kFrameResourcesCount; ++i)
 	{
-		frameResources.push_back(std::make_unique<FrameResource>(device, passCount, objectCount, materialCount, vertexBufferSizes));
+		frameResources.push_back(std::make_unique<FrameResource>(device, passCount, objectCount, materialCount));
 	}
 }
 

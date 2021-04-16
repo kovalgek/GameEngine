@@ -47,7 +47,6 @@ void FrameResourceUpdater::update(const GameTimer& gameTimer)
 	updateObjectConstantBufferForFrameResource(currFrameResource);
 	updateMaterialConstantBufferForFrameResource(currFrameResource);
 	updateMainPassConstantBufferForFrameResource(currFrameResource, gameTimer);
-	updateVertexUploadBufferForFrameResource(currFrameResource);
 }
 
 void FrameResourceUpdater::waitForFrameResourceAvailable(FrameResource *frameResource)
@@ -206,39 +205,4 @@ MaterialConstants FrameResourceUpdater::materialConstantsFromMaterial(Material* 
 	XMStoreFloat4x4(&matConstants.MatTransform, XMMatrixTranspose(matTransform));
 
 	return matConstants;
-}
-
-void FrameResourceUpdater::updateVertexUploadBufferForFrameResource(FrameResource* frameResource)
-{
-	auto vertexBuffers = frameResourceController->getCurrentFrameResource()->getVertexBuffers();
-	auto renderItems = objectsDataProvider.getRenderItemsWithDynamicVertexBuffer();
-	auto dynamicVerticesList = dynamicVerticesProvider.getDynamicVerticesList();
-	updateVertexUploadBuffer(vertexBuffers, dynamicVerticesList, renderItems);
-}
-
-void FrameResourceUpdater::updateVertexUploadBuffer(
-	std::vector<UploadBuffer<Vertex>*> vertexBuffers,	
-	std::vector<DynamicVertices*> dynamicVerticesList,
-	std::vector<RenderItem*> renderItems
-)
-{
-	for(size_t i = 0; i < dynamicVerticesList.size(); ++i)	
-	{
-		DynamicVertices* dynamicVertices = dynamicVerticesList[i];		
-		std::vector<Vertex> verticies = dynamicVertices->getVertices();
-
-		UploadBuffer<Vertex>* vertexBuffer = vertexBuffers[i];
-		dynamicVertices->vertexBuffer = vertexBuffer;
-
-		for (size_t j = 0; j < verticies.size(); ++j)
-		{
-			vertexBuffer->CopyData(j, verticies[j]);
-		}
-	}
-
-	for (auto& renderItem : renderItems)
-	{
-		auto dynamicVertices = renderItem->dynamicVertices;
-		renderItem->Geo->VertexBufferGPU = dynamicVertices->vertexBuffer->Resource();
-	}
 }

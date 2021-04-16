@@ -104,8 +104,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		gpuService->getDevice(),
 		2,
 		(UINT)renderItems.size(),
-		(UINT)materials.size(),
-		dynamicVerticesProvider->getVertexBufferSizes()
+		(UINT)materials.size()
 	);
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();

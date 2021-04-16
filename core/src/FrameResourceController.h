@@ -17,8 +17,7 @@ public:
 		ID3D12Device* device,
 		UINT passCount,
 		UINT objectCount,
-		UINT materialCount,
-		std::vector<UINT> vertexBufferSizes
+		UINT materialCount
 	);
 	~FrameResourceController();
 	void changeFrameResource();

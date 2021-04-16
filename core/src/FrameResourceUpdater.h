@@ -60,11 +60,5 @@ private:
 	void updateMainPassConstantBuffer(UploadBuffer<PassConstants>* mainPassConstantBuffer, MainPassData mainPassData, const GameTimer& gameTimer);
 	PassConstants passConstantsFromMainPassData(MainPassData mainPassData, const GameTimer& gameTimer);
 	PassConstants updateReflectedPassCB(PassConstants mainPassCB, const GameTimer& gt);
-
-	void updateVertexUploadBufferForFrameResource(FrameResource* frameResource);
-	void updateVertexUploadBuffer(
-		std::vector<UploadBuffer<Vertex>*> vertexBuffers,
-		std::vector<DynamicVertices*> dynamicVerticesList,
-		std::vector<RenderItem*> renderItems);
 };
 
