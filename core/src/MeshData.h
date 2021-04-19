@@ -1,6 +1,5 @@
 #include <string>
 #include <vector>
-
 #include "MeshVertex.h"
 
 using uint16 = std::uint16_t;
@@ -9,6 +8,9 @@ using uint32 = std::uint32_t;
 #pragma once
 struct MeshData
 {
+	MeshData() = default;
+	~MeshData() = default;
+
 	std::string Name;
 
 	std::vector<MeshVertex> Vertices;

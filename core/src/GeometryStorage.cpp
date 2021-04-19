@@ -12,6 +12,7 @@
 #include "MeshData.h"
 #include "MeshVertex.h"
 #include "Vertex.h"
+#include "MeshGeometry.h"
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;

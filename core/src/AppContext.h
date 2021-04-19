@@ -1,3 +1,5 @@
+#pragma once
+
 #include <memory>
 
 class GPUService;
@@ -9,11 +11,12 @@ class DynamicVerticesProvider;
 class FrameResourceUpdater;
 class ViewController;
 class GeometryStorageConfigurator;
+class GeometryStorage;
+class GeometryGenerator;
 class MaterialsDataProviderConfigurator;
 class RenderItemTemplatesProvider;
 class OBJFileLoader;
 
-#pragma once
 class AppContext
 {
 public:
@@ -27,9 +30,12 @@ public:
 		std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
 		std::unique_ptr<ViewController> viewController,
 		std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator,
+		std::unique_ptr<GeometryStorage> geometryStorage,
+		std::unique_ptr<GeometryGenerator> geometryGenerator,
 		std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator,
 		std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider,
-		std::unique_ptr<OBJFileLoader> objFileLoader);
+		std::unique_ptr<OBJFileLoader> objFileLoader
+	);
 	~AppContext();
 
 	GPUService* getGPUService() { return gpuService.get(); }
@@ -55,6 +61,8 @@ private:
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater;
 	std::unique_ptr<ViewController> viewController;
 	std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator;
+	std::unique_ptr<GeometryStorage> geometryStorage;
+	std::unique_ptr<GeometryGenerator> geometryGenerator;
 	std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator;
 	std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider;
 	std::unique_ptr<OBJFileLoader> objFileLoader;

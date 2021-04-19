@@ -66,22 +66,28 @@ set( FRAME_RESOURCE_FILES
 )
 source_group( ${SOURCE_FILES_DIR}/FrameResources FILES ${FRAME_RESOURCE_FILES} )
 
-#geometry
-set( GEOMETRY_FILES
-	src/Vertex.h
+#geometry/generator
+set( GEOMETRY_GENERATOR_FILES
 	src/GeometryGenerator.h	
 	src/GeometryGenerator.cpp
+	src/MeshData.h
+	src/MeshVertex.h
+)
+source_group( ${SOURCE_FILES_DIR}/Geometry/Generator FILES ${GEOMETRY_GENERATOR_FILES} )
+
+#geometry/storage
+set( GEOMETRY_STORAGE_FILES
+	src/Vertex.h
 	src/GeometryStorage.h
 	src/GeometryStorage.cpp
 	src/GeometryStorageConfigurator.cpp
 	src/GeometryStorageConfigurator.h
 	src/OBJFileLoader.cpp
 	src/OBJFileLoader.h
-	src/MeshData.h
-	src/MeshVertex.h
 	src/WaveFrontReader.h
+	src/MeshGeometry.h
 )
-source_group( ${SOURCE_FILES_DIR}/Geometry FILES ${GEOMETRY_FILES} )
+source_group( ${SOURCE_FILES_DIR}/Geometry/Storage FILES ${GEOMETRY_STORAGE_FILES} )
 
 #GUI
 set( GUI_FILES
@@ -134,6 +140,7 @@ set( OTHER_FILES
 	src/AppContext.h
 	src/AppContext.cpp
 )
+source_group( ${SOURCE_FILES_DIR} FILES ${OTHER_FILES} )
 
 set( HEADER_FILES
 	include/core/GameTimer.h
@@ -148,7 +155,8 @@ add_library(CoreKit
 	${DATA_PROVIDER_FILES}
 	${DYNAMIC_VERTEX_FILES}
 	${FRAME_RESOURCE_FILES}
-	${GEOMETRY_FILES}
+	${GEOMETRY_STORAGE_FILES}
+	${GEOMETRY_GENERATOR_FILES}
 	${GUI_FILES}
 	${HELPERS_FILES}
 	${SHADER_HELPERS_FILES}

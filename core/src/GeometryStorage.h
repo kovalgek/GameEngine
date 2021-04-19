@@ -1,29 +1,22 @@
+#pragma once
+
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <windows.h>
 #include <DirectXMath.h>
-#include "GeometryGenerator.h"
+
+#include <string>
+#include <unordered_map>
+#include <wrl.h>
+
 
 struct MeshGeometry;
 struct SubmeshGeometry;
 struct ID3D12Device;
 struct ID3D12GraphicsCommandList;
+struct MeshData;
 
-struct Vertex2
-{
-	Vertex2() = default;
-	Vertex2(float x, float y, float z, float nx, float ny, float nz, float u, float v) :
-		Pos(x, y, z),
-		Normal(nx, ny, nz),
-		TexC(u, v) {}
-
-	DirectX::XMFLOAT3 Pos;
-	DirectX::XMFLOAT3 Normal;
-	DirectX::XMFLOAT2 TexC;
-};
-
-#pragma once
 class GeometryStorage
 {
 public:
@@ -33,13 +26,15 @@ public:
 	);
 	~GeometryStorage();
 
-
-	std::unordered_map<std::string, std::vector<std::string>> getGeometryNames();
-
+	// Creates MeshGeometry data that stores mesh data in GPU memory
 	void createMeshGeometry(std::string name, std::vector<MeshData> meshes);
+
+	// Uses for dynamic vertices data
 	void createMeshGeometry(std::string meshName, std::string submeshName, std::vector<std::uint16_t> indices, int vertexCount);
 
 	MeshGeometry* getGeometry(const std::string name) const;
+	std::unordered_map<std::string, std::vector<std::string>> getGeometryNames();
+
 
 private:
 	ID3D12Device *device;
@@ -49,4 +44,3 @@ private:
 
 	SubmeshGeometry addSubmesh(MeshData item, UINT itemVertexOffset, UINT itemIndexOffset);
 };
-

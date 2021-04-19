@@ -1,3 +1,5 @@
+#pragma once
+
 #include <unordered_map>
 #include <memory>
 #include <Windows.h>
@@ -5,7 +7,6 @@
 class DynamicVertices;
 class GameTimer;
 
-#pragma once
 class DynamicVerticesProvider
 {
 public:
@@ -17,7 +18,6 @@ public:
 	DynamicVertices* getDynamicVerticesForName(std::string name) const;
 	void addDynamicVertices(std::string name, std::unique_ptr<DynamicVertices> dynamicVertices);
 	void update(const GameTimer& gameTimer);
-
 
 private:
 	std::unordered_map<std::string, std::unique_ptr<DynamicVertices>> dynamicVerticesMap;

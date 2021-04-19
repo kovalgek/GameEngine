@@ -34,7 +34,7 @@ class ObjectsDataProvider
 {
 public:
 	ObjectsDataProvider(
-		std::unique_ptr <GeometryStorage> geometryStorage, 
+		const GeometryStorage &geometryStorage,
 		const MaterialsDataProvider &materialsDataProvider,
 		const DynamicVerticesProvider &dynamicVerticesProvider
 	);
@@ -44,7 +44,6 @@ public:
 	std::vector<RenderItem*> getRenderItemsWithDynamicVertexBuffer();
 	std::vector<RenderItem*> renderItemsForLayer(RenderLayer layer);
 
-	GeometryStorage* getGeometryStorage() const { return geometryStorage.get(); }
 	
 	void createPrimitive(
 		std::string meshName,
@@ -67,7 +66,7 @@ public:
 	);
 
 private:
-	std::unique_ptr <GeometryStorage> geometryStorage;
+	const GeometryStorage& geometryStorage;
 	const MaterialsDataProvider& materialsDataProvider;
 	const DynamicVerticesProvider& dynamicVerticesProvider;
 

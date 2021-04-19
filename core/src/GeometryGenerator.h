@@ -19,6 +19,9 @@
 #include <vector>
 #include <string>
 
+//#include "MeshData.h"
+//#include "MeshVertex.h"
+
 struct MeshData;
 struct MeshVertex;
 
@@ -28,10 +31,8 @@ using uint32 = std::uint32_t;
 class GeometryGenerator
 {
 public:
-
-	GeometryGenerator() = default;
-	~GeometryGenerator() = default;
-
+	GeometryGenerator();
+	~GeometryGenerator();
 
 	///<summary>
 	/// Creates a box centered at the origin with the given dimensions, where each

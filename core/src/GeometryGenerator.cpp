@@ -12,6 +12,9 @@
 
 using namespace DirectX;
 
+GeometryGenerator::GeometryGenerator() = default;
+GeometryGenerator::~GeometryGenerator() = default;
+
 MeshData GeometryGenerator::CreateBox(float width, float height, float depth, uint32 numSubdivisions)
 {
     MeshData meshData;

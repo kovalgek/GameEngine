@@ -9,6 +9,7 @@
 #include "FrameResourceUpdater.h"
 #include "ViewController.h"
 #include "GeometryStorageConfigurator.h"
+#include "GeometryGenerator.h"
 #include "MaterialsDataProviderConfigurator.h"
 #include "RenderItemTemplatesProvider.h"
 #include "OBJFileLoader.h"
@@ -23,6 +24,8 @@ AppContext::AppContext(
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
 	std::unique_ptr<ViewController> viewController,
 	std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator,
+	std::unique_ptr<GeometryStorage> geometryStorage,
+	std::unique_ptr<GeometryGenerator> geometryGenerator,
 	std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator,
 	std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider,
 	std::unique_ptr<OBJFileLoader> objFileLoader
@@ -36,6 +39,8 @@ AppContext::AppContext(
 	dynamicVerticesProvider{ std::move(dynamicVerticesProvider) },
 	viewController{ std::move(viewController) },
 	geometryStorageConfigurator{ std::move(geometryStorageConfigurator) },
+	geometryStorage { std::move(geometryStorage) },
+	geometryGenerator { std::move(geometryGenerator) },
 	materialsDataProviderConfigurator{ std::move(materialsDataProviderConfigurator) },
 	renderItemTemplatesProvider{ std::move(renderItemTemplatesProvider) },
 	objFileLoader { std::move(objFileLoader) }

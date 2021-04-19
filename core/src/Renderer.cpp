@@ -20,7 +20,7 @@
 #include "GPUService.h"
 
 #include <dxgi1_4.h>
-
+#include "MeshGeometry.h"
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DirectX::PackedVector;

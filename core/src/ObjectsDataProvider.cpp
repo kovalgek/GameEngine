@@ -6,16 +6,17 @@
 #include "MaterialsDataProvider.h"
 #include "DynamicVerticesProvider.h"
 #include "RenderItemTemplate.h"
+#include "MeshGeometry.h"
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 ObjectsDataProvider::ObjectsDataProvider(
-	std::unique_ptr <GeometryStorage> geometryStorage,
+	const GeometryStorage &geometryStorage,
 	const MaterialsDataProvider& materialsDataProvider,
 	const DynamicVerticesProvider& dynamicVerticesProvider
 ) :
-	geometryStorage { std::move(geometryStorage) },
+	geometryStorage { geometryStorage },
 	materialsDataProvider { materialsDataProvider },
 	dynamicVerticesProvider { dynamicVerticesProvider }
 {
@@ -39,7 +40,7 @@ void ObjectsDataProvider::createPrimitive(
 	item->ObjCBIndex = itemIndex++;
 
 	item->Mat = materialsDataProvider.getMaterialForName(material);
-	item->Geo = this->geometryStorage->getGeometry(meshName);
+	item->Geo = geometryStorage.getGeometry(meshName);
 	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	item->IndexCount = item->Geo->DrawArgs[subMeshName].IndexCount;
 	item->StartIndexLocation = item->Geo->DrawArgs[subMeshName].StartIndexLocation;
@@ -57,7 +58,7 @@ void ObjectsDataProvider::createPrimitive(PrimitiveModel primitiveModel)
 
 	item->ObjCBIndex = itemIndex++;
 	item->Mat = materialsDataProvider.getMaterialForName(primitiveModel.material);
-	item->Geo = this->geometryStorage->getGeometry(primitiveModel.mesh);
+	item->Geo = geometryStorage.getGeometry(primitiveModel.mesh);
 	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	item->IndexCount = item->Geo->DrawArgs[primitiveModel.submesh].IndexCount;
 	item->StartIndexLocation = item->Geo->DrawArgs[primitiveModel.submesh].StartIndexLocation;
@@ -82,7 +83,7 @@ void ObjectsDataProvider::createRenderItem(
 	item->ObjCBIndex = itemIndex++;
 
 	item->Mat = materialsDataProvider.getMaterialForName(renderItemTemplate.material);
-	item->Geo = this->geometryStorage->getGeometry(renderItemTemplate.mesh);
+	item->Geo = geometryStorage.getGeometry(renderItemTemplate.mesh);
 	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	item->IndexCount = item->Geo->DrawArgs[renderItemTemplate.submesh].IndexCount;
 	item->StartIndexLocation = item->Geo->DrawArgs[renderItemTemplate.submesh].StartIndexLocation;

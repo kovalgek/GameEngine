@@ -49,17 +49,17 @@
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\FrameResourceUpdater.cpp">
       <Filter>Source Files\FrameResources</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryGenerator.cpp">
-      <Filter>Source Files\Geometry</Filter>
-    </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorage.cpp">
-      <Filter>Source Files\Geometry</Filter>
+      <Filter>Source Files\Geometry\Storage</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageConfigurator.cpp">
-      <Filter>Source Files\Geometry</Filter>
+      <Filter>Source Files\Geometry\Storage</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\OBJFileLoader.cpp">
-      <Filter>Source Files\Geometry</Filter>
+      <Filter>Source Files\Geometry\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryGenerator.cpp">
+      <Filter>Source Files\Geometry\Generator</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ViewController.cpp">
       <Filter>Source Files\GUI</Filter>
@@ -187,28 +187,31 @@
       <Filter>Source Files\FrameResources</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\Vertex.h">
-      <Filter>Source Files\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryGenerator.h">
-      <Filter>Source Files\Geometry</Filter>
+      <Filter>Source Files\Geometry\Storage</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorage.h">
-      <Filter>Source Files\Geometry</Filter>
+      <Filter>Source Files\Geometry\Storage</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryStorageConfigurator.h">
-      <Filter>Source Files\Geometry</Filter>
+      <Filter>Source Files\Geometry\Storage</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\OBJFileLoader.h">
-      <Filter>Source Files\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MeshData.h">
-      <Filter>Source Files\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MeshVertex.h">
-      <Filter>Source Files\Geometry</Filter>
+      <Filter>Source Files\Geometry\Storage</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\WaveFrontReader.h">
-      <Filter>Source Files\Geometry</Filter>
+      <Filter>Source Files\Geometry\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MeshGeometry.h">
+      <Filter>Source Files\Geometry\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\GeometryGenerator.h">
+      <Filter>Source Files\Geometry\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MeshData.h">
+      <Filter>Source Files\Geometry\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\MeshVertex.h">
+      <Filter>Source Files\Geometry\Generator</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\ViewModels.h">
       <Filter>Source Files\GUI</Filter>
@@ -250,10 +253,10 @@
       <Filter>Source Files\Textures</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContextFactory.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\kovalgek\Documents\Sources\C++\GameEngine\core\src\AppContext.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +286,12 @@
     </Filter>
     <Filter Include="Source Files\Geometry">
       <UniqueIdentifier>{38C0CF27-A512-3658-9292-31901E0A3A39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Generator">
+      <UniqueIdentifier>{99E5CA4C-C40D-3FF2-992E-6DC14F2B4E78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Geometry\Storage">
+      <UniqueIdentifier>{1FABB472-7640-38CD-8C49-895B0B762946}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Helpers">
       <UniqueIdentifier>{397CF13C-3E1E-3D34-9CFD-F5A0FA4A7A68}</UniqueIdentifier>

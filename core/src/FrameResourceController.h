@@ -1,3 +1,5 @@
+#pragma once
+
 #include <memory>
 #include <vector>
 #include <wrl/client.h>
@@ -9,7 +11,7 @@ struct D3D12_GPU_DESCRIPTOR_HANDLE;
 
 const int kFrameResourcesCount = 3;
 
-#pragma once
+
 class FrameResourceController
 {
 public:

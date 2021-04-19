@@ -1,6 +1,5 @@
 #include "AppContextFactory.h"
 
-#include "Renderer.h"
 #include "FrameResourceController.h"
 #include "MainPassDataProvider.h"
 #include "FrameResourceUpdater.h"
@@ -18,12 +17,16 @@
 #include "ViewController.h"
 #include "AppContext.h"
 #include "RendererFactory.h"
-#include "GPUServiceFactory.h"
-#include "GPUService.h"
+
 #include "RenderItemTemplatesProvider.h"
 #include "RenderItemTemplatesProviderConfigurator.h"
 #include "OBJFileLoader.h"
 #include <dxgi1_4.h>
+
+#include "GPUServiceFactory.h"
+#include "GPUService.h"
+#include "GeometryGenerator.h"
+#include "Renderer.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -64,7 +67,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 	auto geometryGenerator = std::make_unique<GeometryGenerator>();
 
 	auto geometryStorageConfigurator = std::make_unique<GeometryStorageConfigurator>(
-		std::move(geometryGenerator)
+		*geometryGenerator
 	);
 
 	auto geometryStorage = std::make_unique<GeometryStorage>(
@@ -89,7 +92,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 	geometryStorageConfigurator->configure(*geometryStorage, *dynamicVerticesProvider);
 
 	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(
-		std::move(geometryStorage),
+		*geometryStorage,
 		*materialsDataProvider,
 		*dynamicVerticesProvider
 	);
@@ -126,7 +129,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*mainPassDataProvider,
 		*objectsDataProvider,
 		*materialsDataProvider,
-		*objectsDataProvider->getGeometryStorage()
+		*geometryStorage
 	);
 
 	auto renderer = RendererFactory::getRenderer(
@@ -157,6 +160,8 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		std::move(frameResourceUpdater),
 		std::move(viewController),
 		std::move(geometryStorageConfigurator),
+		std::move(geometryStorage),
+		std::move(geometryGenerator),
 		std::move(materialsDataProviderConfigurator),
 		std::move(renderItemTemplatesProvider),
 		std::move(objFileLoader)

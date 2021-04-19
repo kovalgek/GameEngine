@@ -2,6 +2,7 @@
 #include "d3dUtil.h"
 
 struct Material;
+struct MeshGeometry;
 class DynamicVertices;
 
 #pragma once
