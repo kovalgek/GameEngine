@@ -1,6 +1,6 @@
 #include "OBJFileLoader.h"
 #include "MeshData.h"
-
+#include "MeshVertex.h"
 #include "MaterialsDataProvider.h"
 #include "RenderItemTemplatesProvider.h"
 #include "WaveFrontReader.h"

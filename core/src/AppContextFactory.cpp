@@ -28,6 +28,8 @@
 #include "GeometryGenerator.h"
 #include "Renderer.h"
 
+#include "Scene.h"
+
 using Microsoft::WRL::ComPtr;
 
 std::unique_ptr<AppContext> AppContextFactory::appContext(HWND mainWindowHandle)
@@ -150,6 +152,9 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*dynamicVerticesProvider
 	);
 
+	auto scene = std::make_unique<Scene>(*geometryStorage, *materialsDataProvider);
+
+
 	return std::make_unique<AppContext>(
 		std::move(gpuService),
 		std::move(renderer),
@@ -164,6 +169,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		std::move(geometryGenerator),
 		std::move(materialsDataProviderConfigurator),
 		std::move(renderItemTemplatesProvider),
-		std::move(objFileLoader)
+		std::move(objFileLoader),
+		std::move(scene)
 	);
 }

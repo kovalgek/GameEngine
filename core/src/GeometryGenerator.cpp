@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <fstream>
 #include <windows.h>
-
 #include "MeshData.h"
 #include "MeshVertex.h"
 

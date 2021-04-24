@@ -39,6 +39,8 @@ set( DATA_PROVIDER_FILES
 	src/RenderItemTemplatesProvider.h
 	src/RenderItemTemplatesProviderConfigurator.cpp
 	src/RenderItemTemplatesProviderConfigurator.h
+	src/Scene.h
+	src/Scene.cpp
 )
 source_group( ${SOURCE_FILES_DIR}/DataProviders FILES ${DATA_PROVIDER_FILES} )
 

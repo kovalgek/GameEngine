@@ -1,8 +1,0 @@
-C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/CMakeFiles/ZERO_CHECK.dir
-C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/core/CMakeFiles/CoreKit.dir
-C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/core/CMakeFiles/ALL_BUILD.dir
-C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/app/CMakeFiles/AppKit.dir
-C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/app/CMakeFiles/ALL_BUILD.dir
-C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/imgui/CMakeFiles/ImGui.dir
-C:/Users/kovalgek/Documents/Sources/C++/GameEngine/build/imgui/CMakeFiles/ALL_BUILD.dir

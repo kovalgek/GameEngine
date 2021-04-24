@@ -16,6 +16,7 @@ class GeometryGenerator;
 class MaterialsDataProviderConfigurator;
 class RenderItemTemplatesProvider;
 class OBJFileLoader;
+class Scene;
 
 class AppContext
 {
@@ -34,7 +35,8 @@ public:
 		std::unique_ptr<GeometryGenerator> geometryGenerator,
 		std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator,
 		std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider,
-		std::unique_ptr<OBJFileLoader> objFileLoader
+		std::unique_ptr<OBJFileLoader> objFileLoader,
+		std::unique_ptr<Scene> scene		
 	);
 	~AppContext();
 
@@ -66,4 +68,5 @@ private:
 	std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator;
 	std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider;
 	std::unique_ptr<OBJFileLoader> objFileLoader;
+	std::unique_ptr<Scene> scene;
 };

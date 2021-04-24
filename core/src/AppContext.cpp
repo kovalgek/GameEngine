@@ -13,6 +13,7 @@
 #include "MaterialsDataProviderConfigurator.h"
 #include "RenderItemTemplatesProvider.h"
 #include "OBJFileLoader.h"
+#include "Scene.h"
 
 AppContext::AppContext(
 	std::unique_ptr<GPUService> gpuService,
@@ -28,7 +29,8 @@ AppContext::AppContext(
 	std::unique_ptr<GeometryGenerator> geometryGenerator,
 	std::unique_ptr<MaterialsDataProviderConfigurator> materialsDataProviderConfigurator,
 	std::unique_ptr<RenderItemTemplatesProvider> renderItemTemplatesProvider,
-	std::unique_ptr<OBJFileLoader> objFileLoader
+	std::unique_ptr<OBJFileLoader> objFileLoader,
+	std::unique_ptr<Scene> scene
 ) :
 	gpuService{ std::move(gpuService) },
 	renderer{ std::move(renderer) },
@@ -43,7 +45,8 @@ AppContext::AppContext(
 	geometryGenerator { std::move(geometryGenerator) },
 	materialsDataProviderConfigurator{ std::move(materialsDataProviderConfigurator) },
 	renderItemTemplatesProvider{ std::move(renderItemTemplatesProvider) },
-	objFileLoader { std::move(objFileLoader) }
+	objFileLoader { std::move(objFileLoader) },
+	scene{ std::move(scene) }
 {
 
 }

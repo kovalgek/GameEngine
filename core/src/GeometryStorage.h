@@ -28,6 +28,7 @@ public:
 
 	// Creates MeshGeometry data that stores mesh data in GPU memory
 	void createMeshGeometry(std::string name, std::vector<MeshData> meshes);
+	void createMeshGeometry2(std::string name, std::vector<MeshData> meshes);
 
 	// Uses for dynamic vertices data
 	void createMeshGeometry(std::string meshName, std::string submeshName, std::vector<std::uint16_t> indices, int vertexCount);

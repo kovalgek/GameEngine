@@ -1,11 +1,15 @@
+#pragma once
+
 #include <string>
 #include <vector>
-#include "MeshVertex.h"
+#include "MeshVertex.h" // vector doesn't allow forward declaration
 
 using uint16 = std::uint16_t;
 using uint32 = std::uint32_t;
 
-#pragma once
+/// <summary>
+///  Uses to store verticies and indices in geometry generator context
+/// </summary>
 struct MeshData
 {
 	MeshData() = default;

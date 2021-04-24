@@ -19,9 +19,6 @@
 #include <vector>
 #include <string>
 
-//#include "MeshData.h"
-//#include "MeshVertex.h"
-
 struct MeshData;
 struct MeshVertex;
 

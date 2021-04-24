@@ -1,6 +1,10 @@
+#pragma once
+
 #include <DirectXMath.h>
 
-#pragma once
+/// <summary>
+/// Uses for vertex in geometry generator context
+/// </summary>
 struct MeshVertex
 {
     MeshVertex() {}

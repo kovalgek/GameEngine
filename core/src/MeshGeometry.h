@@ -1,10 +1,11 @@
+#pragma once
+
 #include <string>
 #include <unordered_map>
 #include <wrl.h>
 #include <d3d12.h>
 #include <DirectXCollision.h>
 
-#pragma once
 // Defines a subrange of geometry in a MeshGeometry.  This is for when multiple
 // geometries are stored in one vertex and index buffer.  It provides the offsets
 // and data needed to draw a subset of geometry stores in the vertex and index 
