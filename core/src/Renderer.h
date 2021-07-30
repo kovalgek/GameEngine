@@ -7,11 +7,12 @@
 class GPUService;
 class GameTimer;
 class FrameResourceController;
-class ObjectsDataProvider;
+
+#include "Scene.h"
+
 class SrvHeapProvider;
 class ViewController;
 class PSOProvider;
-struct RenderItem;
 struct FrameResource;
 struct ID3D12Device;
 struct ID3D12CommandQueue;
@@ -48,9 +49,10 @@ public:
 
 		std::unique_ptr<PSOProvider> psoProvider,
 		FrameResourceController& frameResourceController,
-		ObjectsDataProvider& objectsDataProvider,
+
 		std::unique_ptr<SrvHeapProvider> srvHeapProvider,
-		ViewController& viewController
+		ViewController& viewController,
+		Scene &scene
 	);
 
 	~Renderer();
@@ -74,12 +76,12 @@ private:
 
 	std::unique_ptr<PSOProvider> psoProvider;
 	FrameResourceController& frameResourceController;
-	ObjectsDataProvider& objectsDataProvider;
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider;
 	ViewController& viewController;
+	Scene& scene;
 
 	void onKeyboardInput(const GameTimer& gameTimer);
-	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
+	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderView renderView);
 
 	bool isWireframe = false;
 

@@ -17,9 +17,9 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 	HWND mainWindowHandle,
 	GPUService& gpuService,
 	FrameResourceController& frameResourceController,
-	ObjectsDataProvider& objectsDataProvider,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
-	ViewController& viewController
+	ViewController& viewController,
+	Scene& scene
 )
 {
 	ComPtr<IDXGIFactory4> dxgiFactory;
@@ -106,9 +106,9 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 		rootSignature,
 		std::move(psoProvider),
 		frameResourceController,
-		objectsDataProvider,
 		std::move(srvHeapProvider),
-		viewController);
+		viewController,
+		scene);
 }
 
 void RendererFactory::createDXGIFactory(IDXGIFactory4 **dxgiFactory)

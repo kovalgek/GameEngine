@@ -3,10 +3,10 @@
 #include <vector>
 #include <unordered_map>
 
-struct RenderItem;
+
 class FrameResourceController;
 class MainPassDataProvider;
-class ObjectsDataProvider;
+class Scene;
 class MaterialsDataProvider;
 class DynamicVerticesProvider;
 class DynamicVertices;
@@ -21,6 +21,8 @@ struct MaterialConstants;
 struct PassConstants;
 struct Vertex;
 
+struct TransformComponent;
+
 #pragma once
 class FrameResourceUpdater
 {
@@ -30,7 +32,7 @@ public:
 		std::unique_ptr<FrameResourceController> frameResourceController,
 		GPUService& gpuService,
 		MainPassDataProvider& mainPassDataProvider,
-		ObjectsDataProvider& objectsDataProvider,
+		Scene& scene,
 		const MaterialsDataProvider& materialsDataProvider,
 		DynamicVerticesProvider& dynamicVerticesProvider
 	);
@@ -42,15 +44,15 @@ private:
 	std::unique_ptr<FrameResourceController> frameResourceController;
 	GPUService& gpuService;
 	MainPassDataProvider& mainPassDataProvider;
-	ObjectsDataProvider& objectsDataProvider;
+	Scene& scene;
 	const MaterialsDataProvider& materialsDataProvider;
 	DynamicVerticesProvider& dynamicVerticesProvider;
 
 	void waitForFrameResourceAvailable(FrameResource* frameResource);
 	
 	void updateObjectConstantBufferForFrameResource(FrameResource *frameResource);
-	void updateObjectConstantBuffer(UploadBuffer<ObjectConstants> *objectConstantBuffer, std::vector<RenderItem*> renderItems);
-	ObjectConstants objectConstantsFromRenderItem(RenderItem* renderItem);
+	void updateObjectConstantBuffer(UploadBuffer<ObjectConstants> *objectConstantBuffer);
+	ObjectConstants objectConstantsFromRenderItem(TransformComponent* renderItem);
 	
 	void updateMaterialConstantBufferForFrameResource(FrameResource* frameResource);
 	void updateMaterialConstantBuffer(UploadBuffer<MaterialConstants>* materialConstantBuffer, std::vector<Material*> materials);

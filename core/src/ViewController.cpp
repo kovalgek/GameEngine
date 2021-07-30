@@ -1,7 +1,6 @@
 #include "ViewController.h"
 #include "SrvHeapProvider.h"
 #include "MainPassDataProvider.h"
-#include "ObjectsDataProvider.h"
 #include "GeometryStorage.h"
 #include "MaterialsDataProvider.h"
 
@@ -15,6 +14,16 @@
 #include <dxgi1_4.h>
 #include <d3d12.h>
 
+
+#include "CameraView.h"
+#include "CameraViewModel.h"
+#include "LightView.h"
+#include "LightViewModel.h"
+#include "FogView.h"
+#include "FogViewModel.h"
+#include "PrimitiveViewModel.h"
+#include "PrimitiveView.h"
+
 using namespace DirectX;
 
 ViewController::ViewController(
@@ -23,19 +32,15 @@ ViewController::ViewController(
 	ID3D12GraphicsCommandList *commandList,
 	SrvHeapProvider&          srvHeapProvider,
 	MainPassModelsListener    &mainPassModelsListener,
-	ObjectsDataProvider&      objectsDataProvider,
 	MaterialsDataProvider&    materialsDataProvider,
 	GeometryStorage&          geometryStorage) :
 
 	device { device },
 	commandList { commandList },
 	mainPassModelsListener{ mainPassModelsListener },
-	objectsDataProvider { objectsDataProvider },
 	materialsDataProvider { materialsDataProvider },
 	geometryStorage { geometryStorage }
 {
-	initPrimitiveViewModel(primitiveViewModel);
-	initLightsViewModel(lightsViewModel);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -50,6 +55,22 @@ ViewController::ViewController(
 		srvHeapProvider.getSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
 	ImGui::StyleColorsDark();
 
+
+	cameraViewModel = std::make_unique<CameraViewModel>();
+	cameraView = std::make_unique<CameraView>(*cameraViewModel);
+	views.push_back(cameraView.get());
+
+	lightViewModel = std::make_unique<LightViewModel>();
+	lightView = std::make_unique<LightView>(*lightViewModel);
+	views.push_back(lightView.get());
+
+	fogViewModel = std::make_unique<FogViewModel>();
+	fogView = std::make_unique<FogView>(*fogViewModel);
+	views.push_back(fogView.get());
+
+	primitiveViewModel = std::make_unique<PrimitiveViewModel>(materialsDataProvider, geometryStorage);
+	primitiveView = std::make_unique<PrimitiveView>(*primitiveViewModel);
+	views.push_back(primitiveView.get());
 }
 
 ViewController::~ViewController() = default;
@@ -70,84 +91,34 @@ void ViewController::onMouseDown(int x, int y)
 
 void ViewController::onMouseMove(int btnState, int x, int y)
 {
-	if (btnState == 0)
-	{
-		// Make each pixel correspond to a quarter of a degree.
-		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - lastMousePosition.x));
-		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - lastMousePosition.y));
+	//if (btnState == 0)
+	//{
+	//	// Make each pixel correspond to a quarter of a degree.
+	//	float dx = XMConvertToRadians(0.25f * static_cast<float>(x - lastMousePosition.x));
+	//	float dy = XMConvertToRadians(0.25f * static_cast<float>(y - lastMousePosition.y));
 
-		// Update angles based on input to orbit camera around box.
-		cameraViewModel.theta += dx;
-		cameraViewModel.phi += dy;
+	//	// Update angles based on input to orbit camera around box.
+	//	cameraViewModel.theta += dx;
+	//	cameraViewModel.phi += dy;
 
-		// Restrict the angle mPhi.
-		cameraViewModel.phi = MathHelper::Clamp(cameraViewModel.phi, 0.1f, MathHelper::Pi - 0.1f);
-	}
-	else if (btnState == 1)
-	{
-		// Make each pixel correspond to 0.2 unit in the scene.
-		float dx = 0.2f * static_cast<float>(x - lastMousePosition.x);
-		float dy = 0.2f * static_cast<float>(y - lastMousePosition.y);
+	//	// Restrict the angle mPhi.
+	//	cameraViewModel.phi = MathHelper::Clamp(cameraViewModel.phi, 0.1f, MathHelper::Pi - 0.1f);
+	//}
+	//else if (btnState == 1)
+	//{
+	//	// Make each pixel correspond to 0.2 unit in the scene.
+	//	float dx = 0.2f * static_cast<float>(x - lastMousePosition.x);
+	//	float dy = 0.2f * static_cast<float>(y - lastMousePosition.y);
 
-		// Update the camera radius based on input.
-		cameraViewModel.radius += dx - dy;
+	//	// Update the camera radius based on input.
+	//	cameraViewModel.radius += dx - dy;
 
-		// Restrict the radius.
-		cameraViewModel.radius = MathHelper::Clamp(cameraViewModel.radius, 5.0f, 150.0f);
-	}
+	//	// Restrict the radius.
+	//	cameraViewModel.radius = MathHelper::Clamp(cameraViewModel.radius, 5.0f, 150.0f);
+	//}
 
-	lastMousePosition.x = x;
-	lastMousePosition.y = y;
-}
-
-void ViewController::initLightsViewModel(LightsViewModel& lightsViewModel)
-{
-	lightsViewModel.ambient[0] = 1;
-	lightsViewModel.ambient[1] = 1;
-	lightsViewModel.ambient[2] = 1;
-	lightsViewModel.ambient[3] = 1;
-
-	lightsViewModel.direction[0] = 0;
-	lightsViewModel.direction[1] = 0;
-	lightsViewModel.direction[2] = 0;
-
-	lightsViewModel.strength[0] = 0;
-	lightsViewModel.strength[1] = 0;
-	lightsViewModel.strength[2] = 0;
-}
-
-void ViewController::initPrimitiveViewModel(PrimitiveViewModel& primitiveViewModel)
-{
-	primitiveViewModel.position[0] = 0.0f;
-	primitiveViewModel.position[1] = 0.0f;
-	primitiveViewModel.position[2] = 0.0f;
-
-	primitiveViewModel.scaling[0] = 1.0f;
-	primitiveViewModel.scaling[1] = 1.0f;
-	primitiveViewModel.scaling[2] = 1.0f;
-
-	primitiveViewModel.texture[0] = 1.0f;
-	primitiveViewModel.texture[1] = 1.0f;
-	primitiveViewModel.texture[2] = 1.0f;
-
-	meshes = geometryStorage.getGeometryNames();
-	if (meshes.size() != 0)
-	{
-		auto firstMesh = meshes.begin();
-		primitiveViewModel.currentMesh = firstMesh->first;
-
-		auto submeshes = firstMesh->second;
-		if (submeshes.size() != 0)
-		{
-			primitiveViewModel.currentSubMesh = submeshes[0];
-		}
-	}
-
-	materials = materialsDataProvider.getMaterialNames();
-	if (materials.size() != 0)
-	{
-		primitiveViewModel.currentMaterial = materials[0];
-	}
+	//lastMousePosition.x = x;
+	//lastMousePosition.y = y;
 }
 
 void ViewController::present()
@@ -156,10 +127,9 @@ void ViewController::present()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	createCameraView();
-	createLightView();
-	createPrimitiveFactoryView();
-	createFogView();
+	for (auto view : views) {
+		view->present();
+	}
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
@@ -167,166 +137,58 @@ void ViewController::present()
 
 void ViewController::update()
 {
-	CameraModel model = cameraModel(cameraViewModel);
+	CameraModel model = cameraModel(cameraViewModel.get());
 	mainPassModelsListener.onCameraModelUpdated(model);
 
-	LightModel updatedLightModel = lightModel(lightsViewModel);
+	LightModel updatedLightModel = lightModel(lightViewModel.get());
 	mainPassModelsListener.onLightModelUpdated(updatedLightModel);
 
-	FogModel updatedFogModel = fogModel(fogViewModel);
+	FogModel updatedFogModel = fogModel(fogViewModel.get());
 	mainPassModelsListener.onFogModelUpdated(updatedFogModel);
 }
 
-void ViewController::createCameraView()
-{
-	ImGui::Begin("Camera");
-	ImGui::SliderFloat("theta", &cameraViewModel.theta, 0.0f, XM_2PI);
-	ImGui::SliderFloat("phi", &cameraViewModel.phi, 0.0f, XM_PI);
-	ImGui::SliderFloat("radius", &cameraViewModel.radius, 0.0f, 150.0f);
-	ImGui::End();
-}
-
-void ViewController::createLightView()
-{
-	ImGui::Begin("Light");
-	ImGui::InputFloat4("ambient", lightsViewModel.ambient);
-	ImGui::InputFloat3("direction", lightsViewModel.direction);
-	ImGui::End();
-}
-
-void ViewController::createFogView()
-{
-	ImGui::Begin("Fog");
-	ImGui::ColorPicker4("##picker", (float*)&fogViewModel.color, ImGuiColorEditFlags_NoSmallPreview);
-	ImGui::SliderFloat("start", &fogViewModel.start, 0.0f, 100.0f);
-	ImGui::SliderFloat("range", &fogViewModel.range, 0.0f, 100.0f);
-	ImGui::End();
-}
-
-void ViewController::createPrimitiveFactoryView()
-{
-	ImGui::Begin("Factory");
-
-	createMeshCombo();
-	createSubmeshCombo();
-	createMaterialCombo();
-
-	ImGui::InputFloat3("position", primitiveViewModel.position);
-	ImGui::InputFloat3("scaling", primitiveViewModel.scaling);
-	ImGui::InputFloat3("texture", primitiveViewModel.texture);
-
-	if (ImGui::Button("Create primitive"))
-	{
-		auto model = primitiveModel(primitiveViewModel);
-		objectsDataProvider.createPrimitive(model);
-	}
-
-	ImGui::End();
-}
-
-void ViewController::createMeshCombo()
-{
-	if (ImGui::BeginCombo("mesh", primitiveViewModel.currentMesh.c_str()))
-	{
-		for (auto mesh : meshes)
-		{
-			bool is_selected = primitiveViewModel.currentMesh == mesh.first;
-			if (ImGui::Selectable(mesh.first.c_str(), is_selected))
-			{
-				primitiveViewModel.currentMesh = mesh.first;
-				primitiveViewModel.currentSubMesh = mesh.second[0];
-			}
-			if (is_selected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
-}
-
-void ViewController::createSubmeshCombo()
-{
-	if (ImGui::BeginCombo("submesh", primitiveViewModel.currentSubMesh.c_str()))
-	{
-		for (auto submesh : meshes[primitiveViewModel.currentMesh])
-		{
-			bool is_selected = primitiveViewModel.currentSubMesh == submesh;
-			if (ImGui::Selectable(submesh.c_str(), is_selected))
-			{
-				primitiveViewModel.currentSubMesh = submesh;
-			}
-			if (is_selected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
-}
-
-void ViewController::createMaterialCombo()
-{
-	if (ImGui::BeginCombo("materials", primitiveViewModel.currentMaterial.c_str()))
-	{
-		for (auto material : materials)
-		{
-			bool is_selected = primitiveViewModel.currentMaterial == material;
-			if (ImGui::Selectable(material.c_str(), is_selected))
-			{
-				primitiveViewModel.currentMaterial = material;
-			}
-			if (is_selected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
-}
-
-CameraModel ViewController::cameraModel(CameraViewModel cameraViewModel)
+CameraModel ViewController::cameraModel(CameraViewModel*cameraViewModel)
 {
 	CameraModel cameraModel;
 
-	cameraModel.theta = cameraViewModel.theta;
-	cameraModel.phi = cameraViewModel.phi;
-	cameraModel.radius = cameraViewModel.radius;
+	cameraModel.theta = cameraViewModel->theta;
+	cameraModel.phi = cameraViewModel->phi;
+	cameraModel.radius = cameraViewModel->radius;
 
 	return cameraModel;
 }
 
-LightModel ViewController::lightModel(LightsViewModel lightsViewModel)
+LightModel ViewController::lightModel(LightViewModel* lightViewModel)
 {
 	LightModel lightModel;
 
-	lightModel.ambientLight = DirectX::XMFLOAT4(lightsViewModel.ambient[0], lightsViewModel.ambient[1], lightsViewModel.ambient[2], lightsViewModel.ambient[3]);
-	lightModel.direction = DirectX::XMFLOAT3(lightsViewModel.direction[0], lightsViewModel.direction[1], lightsViewModel.direction[2]);
+	lightModel.ambientLight = DirectX::XMFLOAT4(lightViewModel->ambient[0], lightViewModel->ambient[1], lightViewModel->ambient[2], lightViewModel->ambient[3]);
+	lightModel.direction = DirectX::XMFLOAT3(lightViewModel->direction[0], lightViewModel->direction[1], lightViewModel->direction[2]);
 
 	return lightModel;
 }
 
-FogModel ViewController::fogModel(FogViewModel fogViewModel)
+FogModel ViewController::fogModel(FogViewModel* fogViewModel)
 {
 	FogModel fogModel;
 
-	fogModel.color = DirectX::XMFLOAT4(fogViewModel.color.x, fogViewModel.color.y, fogViewModel.color.z, fogViewModel.color.w);
-	fogModel.start = fogViewModel.start;
-	fogModel.range = fogViewModel.range;
+	fogModel.color = DirectX::XMFLOAT4(fogViewModel->color.x, fogViewModel->color.y, fogViewModel->color.z, fogViewModel->color.w);
+	fogModel.start = fogViewModel->start;
+	fogModel.range = fogViewModel->range;
 
 	return fogModel;
 }
 
-PrimitiveModel ViewController::primitiveModel(PrimitiveViewModel primitiveViewModel)
-{
-	PrimitiveModel primitiveModel;
-
-	primitiveModel.mesh = primitiveViewModel.currentMesh;
-	primitiveModel.submesh = primitiveViewModel.currentSubMesh;
-	primitiveModel.material = primitiveViewModel.currentMaterial;
-	primitiveModel.position = std::vector<float>(std::begin(primitiveViewModel.position), std::end(primitiveViewModel.position));
-	primitiveModel.scaling = std::vector<float>(std::begin(primitiveViewModel.scaling), std::end(primitiveViewModel.scaling));
-	primitiveModel.texture = std::vector<float>(std::begin(primitiveViewModel.texture), std::end(primitiveViewModel.texture));
-
-	return primitiveModel;
-}
+//PrimitiveModel ViewController::primitiveModel(PrimitiveViewModel primitiveViewModel)
+//{
+//	PrimitiveModel primitiveModel;
+//
+//	primitiveModel.mesh = primitiveViewModel.currentMesh;
+//	primitiveModel.submesh = primitiveViewModel.currentSubMesh;
+//	primitiveModel.material = primitiveViewModel.currentMaterial;
+//	primitiveModel.position = std::vector<float>(std::begin(primitiveViewModel.position), std::end(primitiveViewModel.position));
+//	primitiveModel.scaling = std::vector<float>(std::begin(primitiveViewModel.scaling), std::end(primitiveViewModel.scaling));
+//	primitiveModel.texture = std::vector<float>(std::begin(primitiveViewModel.texture), std::end(primitiveViewModel.texture));
+//
+//	return primitiveModel;
+//}

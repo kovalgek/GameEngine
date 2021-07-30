@@ -2,19 +2,16 @@
 #include "MeshData.h"
 #include "MeshVertex.h"
 #include "MaterialsDataProvider.h"
-#include "RenderItemTemplatesProvider.h"
 #include "WaveFrontReader.h"
 
 using namespace DirectX;
 
 OBJFileLoader::OBJFileLoader(
     GeometryStorage& geometryStorage,
-    MaterialsDataProvider& materialsDataProvider,
-    RenderItemTemplatesProvider& renderItemTemplatesProvider
+    MaterialsDataProvider& materialsDataProvider
 ) : 
 	geometryStorage { geometryStorage },
-	materialsDataProvider{ materialsDataProvider },
-	renderItemTemplatesProvider{ renderItemTemplatesProvider }
+	materialsDataProvider{ materialsDataProvider }
 {
     geometryStorage.createMeshGeometry("obj", objModelMeshes());
 }

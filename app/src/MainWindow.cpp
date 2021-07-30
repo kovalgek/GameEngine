@@ -256,26 +256,31 @@ LRESULT CALLBACK handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		return 0;
 
 	case WM_LBUTTONDOWN:
+		break;
 	case WM_MBUTTONDOWN:
-	case WM_RBUTTONDOWN:
 		SetCapture(mainWindowHandle);
 		appFacade->onMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
+	case WM_RBUTTONDOWN:
+		break;
 	case WM_LBUTTONUP:
+		break;
 	case WM_MBUTTONUP:
-	case WM_RBUTTONUP:
 		ReleaseCapture();
 		appFacade->onMouseUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
+	case WM_RBUTTONUP:
+		break;
+		
 	case WM_MOUSEMOVE:
-		if ((wParam & MK_LBUTTON) != 0)
+		if ((wParam & MK_MBUTTON) != 0)
 		{
 			appFacade->onMouseMove(0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		}
-		else if ((wParam & MK_RBUTTON) != 0)
-		{
-			appFacade->onMouseMove(1, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		}
+		//else if ((wParam & MK_RBUTTON) != 0)
+		//{
+		//	appFacade->onMouseMove(1, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		//}
 		return 0;
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)

@@ -1,11 +1,9 @@
 #include "Scene.h"
-#include "RenderItem.h"
 #include "MeshGeometry.h"
 #include "GeometryStorage.h"
 #include "MaterialsDataProvider.h"
 #include <algorithm>
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
+#include "GameTimer.h"
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
@@ -22,70 +20,112 @@ Scene::Scene(
 
 Scene::~Scene() = default;
 
-std::unique_ptr<RenderItem> Scene::createRenderItem(
+
+void Scene::sceneDidLoad()
+{
+	createCamera();
+
+	entt::entity entity = createRenderItem(
+		"shapeGeo",
+		"box",
+		"water",
+		{ 0.0f,4.0f,0.0f },
+		{ 1.0f,1.0f,1.0f },
+		{ 5.0f,5.0f,5.0f }
+	);
+
+	entt::entity entity2 = createRenderItem(
+		"shapeGeo",
+		"box",
+		"grass",
+		{ 0.0f,4.0f,4.0f },
+		{ 1.0f,1.0f,1.0f },
+		{ 5.0f,5.0f,5.0f }
+	);
+}
+
+void Scene::addShadow(entt::entity entity)
+{
+	RenderComponent &renderComponent = registry.get<RenderComponent>(entity);
+
+	registry.emplace<ShadowComponent>(
+		entity,
+		renderComponent.material,
+		renderComponent.geometry,
+		renderComponent.primitiveType,
+		renderComponent.indexCount,
+		renderComponent.startIndexLocation,
+		renderComponent.baseVertexLocation
+	);
+}
+
+void Scene::addReflection(entt::entity entity)
+{
+
+}
+
+RenderView Scene::renderView()
+{
+	return registry.view<RenderComponent>();
+}
+
+RenderAndTransformGroup Scene::renderAndTransformGroup()
+{
+	return registry.group<TransformComponent>(entt::get<RenderComponent>);
+}
+
+entt::entity Scene::createRenderItem(
 	std::string meshName,
 	std::string submeshName,
 	std::string material,
 	std::vector<float> position,
 	std::vector<float> scaling,
-	std::vector<float> textureTransform,
-	RenderLayer2 renderLayer
-) {
-	auto item = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&item->World, XMMatrixScaling(scaling[0], scaling[1], scaling[2]) * XMMatrixTranslation(position[0], position[1], position[2]));
-	XMStoreFloat4x4(&item->TexTransform, XMMatrixScaling(textureTransform[0], textureTransform[1], textureTransform[2]));
-
-	item->ObjCBIndex = currentObjCBIndex();
-
-	item->Mat = materialsDataProvider.getMaterialForName(material);
-	item->Geo = geometryStorage.getGeometry(meshName);
-	item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	item->IndexCount = item->Geo->DrawArgs[submeshName].IndexCount;
-	item->StartIndexLocation = item->Geo->DrawArgs[submeshName].StartIndexLocation;
-	item->BaseVertexLocation = item->Geo->DrawArgs[submeshName].BaseVertexLocation;
-
-	renderItemLayer[(int)RenderLayer2::Opaque].push_back(item.get());
-
-	return item;
-}
-
-int Scene::currentObjCBIndex()
+	std::vector<float> textureTransform
+)
 {
-	return renderItems.size();
-}
+	entt::entity entity = registry.create();
 
-std::vector<RenderItem*> Scene::getRenderItems()
-{
-	std::vector<RenderItem*> renderItemsWithPointers(renderItems.size());
+	XMFLOAT4X4 word;
+	XMStoreFloat4x4(&word, XMMatrixScaling(scaling[0], scaling[1], scaling[2]) * XMMatrixTranslation(position[0], position[1], position[2]));
+	registry.emplace<TransformComponent>(entity, word);
 
-	std::transform(renderItems.begin(), renderItems.end(), renderItemsWithPointers.begin(), [](const std::unique_ptr<RenderItem> &renderItem) {
-		return renderItem.get();
-	});
-
-	return renderItemsWithPointers;
-}
-
-std::vector<RenderItem*> Scene::getRenderItemsForLayer(RenderLayer2 layer)
-{
-	return renderItemLayer[(int)layer];
-}
-
-void Scene::sceneDidLoad()
-{
-	auto item = createRenderItem(
-		"shapeGeo",
-		"box",
-		"grass",
-		{ 0.0f,0.0f,0.0f },
-		{ 1.0f,1.0f,1.0f },
-		{ 5.0f,5.0f,5.0f }
+	auto geometry = geometryStorage.getGeometry(meshName);
+	registry.emplace<RenderComponent>(
+		entity,
+		materialsDataProvider.getMaterialForName(material),
+		geometry,
+		D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		geometry->DrawArgs[submeshName].IndexCount,
+		geometry->DrawArgs[submeshName].StartIndexLocation,
+		geometry->DrawArgs[submeshName].BaseVertexLocation,
+		3,
+		(UINT)itemIndex++
 	);
-
-	addItem(std::move(item), RenderLayer2::Opaque);
+	return entity;
 }
 
-void Scene::addItem(std::unique_ptr<RenderItem> renderItem, RenderLayer2 renderLayer)
+void Scene::update(const GameTimer& gameTimer)
 {
-	renderItemLayer[(int)renderLayer].push_back(renderItem.get());
-	renderItems.push_back(std::move(renderItem));
+
+}
+
+void Scene::onWindowResize(int clientWidth, int clientHeight)
+{
+
+}
+
+void Scene::onMouseDown(int x, int y)
+{
+
+}
+
+void Scene::onMouseMove(int btnState, int x, int y)
+{
+
+}
+
+void Scene::createCamera()
+{
+	//cameraEntity = registry.create();
+	//registry.emplace<CameraComponent>(cameraEntity, M_PI, M_PI_4, 70);
 }

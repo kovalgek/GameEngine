@@ -5,9 +5,7 @@
 #include "UploadBuffer.h"
 #include "FrameResourceController.h"
 #include "MainPassDataProvider.h"
-#include "ObjectsDataProvider.h"
 #include "MaterialsDataProvider.h"
-#include "RenderItem.h"
 #include "Material.h"
 #include "GameTimer.h"
 #include <DirectXColors.h>
@@ -15,6 +13,7 @@
 #include "GPUService.h"
 #include "DynamicVertices.h"
 #include "DynamicVerticesProvider.h"
+#include "Scene.h"
 
 using namespace DirectX;
 
@@ -22,14 +21,14 @@ FrameResourceUpdater::FrameResourceUpdater(
 	std::unique_ptr<FrameResourceController> frameResourceController,
 	GPUService& gpuService,
 	MainPassDataProvider& mainPassDataProvider,
-	ObjectsDataProvider& objectsDataProvider,
+	Scene& scene,
 	const MaterialsDataProvider& materialsDataProvider,
 	DynamicVerticesProvider& dynamicVerticesProvider) :
 
 	frameResourceController { std::move(frameResourceController) },
 	gpuService{ gpuService },
 	mainPassDataProvider { mainPassDataProvider },
-	objectsDataProvider { objectsDataProvider },
+	scene { scene },
 	materialsDataProvider { materialsDataProvider },
 	dynamicVerticesProvider { dynamicVerticesProvider }
 {
@@ -134,36 +133,41 @@ PassConstants FrameResourceUpdater::updateReflectedPassCB(PassConstants mainPass
 void FrameResourceUpdater::updateObjectConstantBufferForFrameResource(FrameResource *frameResource)
 {
 	auto objectConstantBuffer = frameResource->ObjectCB.get();
-	auto renderItems = objectsDataProvider.renderItems();
-	updateObjectConstantBuffer(objectConstantBuffer, renderItems);
+	//auto renderItems = scene.renderAndTransformGroup();
+	updateObjectConstantBuffer(objectConstantBuffer);
 }
 
-void FrameResourceUpdater::updateObjectConstantBuffer(UploadBuffer<ObjectConstants> * objectConstantBuffer, std::vector<RenderItem*> renderItems)
+void FrameResourceUpdater::updateObjectConstantBuffer(UploadBuffer<ObjectConstants> * objectConstantBuffer)
 {
-	for (auto& renderItem : renderItems)
-	{
+	auto group = scene.renderAndTransformGroup();
+
+	for (auto entity : group) {
+	
+		auto& transformComponent = group.get<TransformComponent>(entity);
+		auto& renderComponent = group.get<RenderComponent>(entity);
+
 		// Only update the cbuffer data if the constants have changed.  
 		// This needs to be tracked per frame resource.
-		if (renderItem->NumFramesDirty == 0)
+		if (renderComponent.numberOfDirtyFrames == 0)
 		{
 			continue;
 		}
 		// Next FrameResource need to be updated too.
-		renderItem->NumFramesDirty--;
+		renderComponent.numberOfDirtyFrames--;
 
-		ObjectConstants objConstants = objectConstantsFromRenderItem(renderItem);
-		objectConstantBuffer->CopyData(renderItem->ObjCBIndex, objConstants);
+		ObjectConstants objConstants = objectConstantsFromRenderItem(&transformComponent);
+		objectConstantBuffer->CopyData(renderComponent.objectConstantBufferIndex, objConstants);
 	}
 }
 
-ObjectConstants FrameResourceUpdater::objectConstantsFromRenderItem(RenderItem* renderItem)
+ObjectConstants FrameResourceUpdater::objectConstantsFromRenderItem(TransformComponent* renderItem)
 {
 	ObjectConstants objConstants;
 
-	XMMATRIX world = XMLoadFloat4x4(&renderItem->World);
+	XMMATRIX world = XMLoadFloat4x4(&renderItem->world);
 	XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
 
-	XMMATRIX texTransform = XMLoadFloat4x4(&renderItem->TexTransform);
+	XMMATRIX texTransform = XMLoadFloat4x4(&renderItem->texture);
 	XMStoreFloat4x4(&objConstants.TexTransform, XMMatrixTranspose(texTransform));
 
 	return objConstants;

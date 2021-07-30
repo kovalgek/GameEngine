@@ -3,8 +3,7 @@
 #include "FrameResourceController.h"
 #include "MainPassDataProvider.h"
 #include "FrameResourceUpdater.h"
-#include "ObjectsDataProvider.h"
-#include "ObjectsDataProviderConfigurator.h"
+
 #include "MaterialsDataProvider.h"
 #include "MaterialsDataProviderConfigurator.h"
 #include "DynamicVerticesProvider.h"
@@ -18,8 +17,7 @@
 #include "AppContext.h"
 #include "RendererFactory.h"
 
-#include "RenderItemTemplatesProvider.h"
-#include "RenderItemTemplatesProviderConfigurator.h"
+
 #include "OBJFileLoader.h"
 #include <dxgi1_4.h>
 
@@ -62,9 +60,7 @@ void AppContextFactory::createDXGIFactory(IDXGIFactory4** dxgiFactory)
 
 std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWindowHandle, std::unique_ptr<GPUService> gpuService)
 {
-	auto renderItemTemplatesProvider = std::make_unique<RenderItemTemplatesProvider>();
-	auto renderItemTemplatesProviderConfigurator = std::make_unique<RenderItemTemplatesProviderConfigurator>();
-	renderItemTemplatesProviderConfigurator->configure(*renderItemTemplatesProvider);
+
 
 	auto geometryGenerator = std::make_unique<GeometryGenerator>();
 
@@ -86,29 +82,27 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 
 	auto objFileLoader = std::make_unique<OBJFileLoader>(
 		*geometryStorage,
-		*materialsDataProvider,
-		*renderItemTemplatesProvider
+		*materialsDataProvider
 	);
 
 	auto dynamicVerticesProvider = std::make_unique<DynamicVerticesProvider>();
 	geometryStorageConfigurator->configure(*geometryStorage, *dynamicVerticesProvider);
 
-	auto objectsDataProvider = std::make_unique<ObjectsDataProvider>(
-		*geometryStorage,
-		*materialsDataProvider,
-		*dynamicVerticesProvider
-	);
 
-	auto objectsDataProviderConfigurator = std::make_unique<ObjectsDataProviderConfigurator>(*renderItemTemplatesProvider);
-	objectsDataProviderConfigurator->configure(*objectsDataProvider);
+	auto scene = std::make_unique<Scene>(*geometryStorage, *materialsDataProvider);
+
 
 	auto materials = materialsDataProvider->getMaterials();
-	auto renderItems = objectsDataProvider->renderItems();
+
+
+	auto renderView = scene->renderView();
+	
+	
 
 	auto frameResourceController = std::make_unique<FrameResourceController>(
 		gpuService->getDevice(),
 		2,
-		(UINT)renderItems.size(),
+		renderView.size(),
 		(UINT)materials.size()
 	);
 
@@ -129,37 +123,33 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		gpuService->getCommandList(),
 		*srvHeapProvider,
 		*mainPassDataProvider,
-		*objectsDataProvider,
 		*materialsDataProvider,
 		*geometryStorage
 	);
+
 
 	auto renderer = RendererFactory::getRenderer(
 		mainWindowHandle,
 		*gpuService,
 		*frameResourceController,
-		*objectsDataProvider,
 		std::move(srvHeapProvider),
-		*viewController
+		*viewController,
+		*scene
 	);
 
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
 		std::move(frameResourceController),
 		*gpuService,
 		*mainPassDataProvider,
-		*objectsDataProvider,
+		*scene,
 		*materialsDataProvider,
 		*dynamicVerticesProvider
 	);
-
-	auto scene = std::make_unique<Scene>(*geometryStorage, *materialsDataProvider);
-
 
 	return std::make_unique<AppContext>(
 		std::move(gpuService),
 		std::move(renderer),
 		std::move(mainPassDataProvider),
-		std::move(objectsDataProvider),
 		std::move(materialsDataProvider),
 		std::move(dynamicVerticesProvider),
 		std::move(frameResourceUpdater),
@@ -168,7 +158,6 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		std::move(geometryStorage),
 		std::move(geometryGenerator),
 		std::move(materialsDataProviderConfigurator),
-		std::move(renderItemTemplatesProvider),
 		std::move(objFileLoader),
 		std::move(scene)
 	);

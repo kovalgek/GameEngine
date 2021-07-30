@@ -27,18 +27,8 @@ set( DATA_PROVIDER_FILES
 	src/MaterialsDataProvider.cpp
 	src/MaterialsDataProviderConfigurator.cpp
 	src/MaterialsDataProviderConfigurator.h
-	src/RenderItem.h
-	src/ObjectsDataProvider.h
-	src/ObjectsDataProvider.cpp
-	src/ObjectsDataProviderConfigurator.cpp
-	src/ObjectsDataProviderConfigurator.h
 	src/MainPassModelsListener.h
 	src/MainPassModels.h
-	src/RenderItemTemplate.h
-	src/RenderItemTemplatesProvider.cpp
-	src/RenderItemTemplatesProvider.h
-	src/RenderItemTemplatesProviderConfigurator.cpp
-	src/RenderItemTemplatesProviderConfigurator.h
 	src/Scene.h
 	src/Scene.cpp
 )
@@ -93,9 +83,25 @@ source_group( ${SOURCE_FILES_DIR}/Geometry/Storage FILES ${GEOMETRY_STORAGE_FILE
 
 #GUI
 set( GUI_FILES
-	src/ViewModels.h
 	src/ViewController.h
 	src/ViewController.cpp
+	src/CameraView.h
+	src/CameraView.cpp
+	src/CameraViewModel.h
+	src/CameraViewModel.cpp
+	src/View.h
+	src/LightView.h
+	src/LightView.cpp
+	src/LightViewModel.h
+	src/LightViewModel.cpp
+	src/FogViewModel.h
+	src/FogViewModel.cpp
+	src/FogView.h
+	src/FogView.cpp
+	src/PrimitiveView.h
+	src/PrimitiveView.cpp
+	src/PrimitiveViewModel.h
+	src/PrimitiveViewModel.cpp
 )
 source_group( ${SOURCE_FILES_DIR}//GUI FILES ${GUI_FILES} )
 
@@ -177,7 +183,7 @@ add_definitions(-DUNICODE -D_UNICODE)
 # add directX libraries
 target_link_libraries(CoreKit "d3d12.lib" "dxgi.lib" "d3dcompiler.lib")
 target_link_libraries(CoreKit ImGui)
-
+target_link_libraries(CoreKit entt)
 
 # ------------------------------------------------
 # copy resources

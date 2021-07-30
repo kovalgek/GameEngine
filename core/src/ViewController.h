@@ -1,15 +1,13 @@
 #include <windows.h>
 #include <DirectXMath.h>
 #include <string>
+#include <memory>
 #include <vector>
-#include <unordered_map>
-#include "ViewModels.h"
 #include "MainPassModels.h"
 
 class Application;
 class SrvHeapProvider;
 class MainPassModelsListener;
-class ObjectsDataProvider;
 class GeometryStorage;
 class MaterialsDataProvider;
 struct PrimitiveModel;
@@ -17,6 +15,16 @@ struct CameraModel;
 struct LightModel;
 struct ID3D12Device;
 struct ID3D12GraphicsCommandList;
+
+class CameraViewModel;
+class CameraView;
+class LightViewModel;
+class LightView;
+class FogViewModel;
+class FogView;
+class PrimitiveViewModel;
+class PrimitiveView;
+class View;
 
 #pragma once
 class ViewController
@@ -27,8 +35,7 @@ public:
 		ID3D12Device              *device,
 		ID3D12GraphicsCommandList *commandList,
 		SrvHeapProvider&          srvHeapProvider,
-		MainPassModelsListener&	  mainPassModelsListener,
-		ObjectsDataProvider&      objectsDataProvider,		
+		MainPassModelsListener&	  mainPassModelsListener,	
 		MaterialsDataProvider&    materialsDataProvider,
 		GeometryStorage&          geometryStorage);
 	~ViewController();
@@ -44,34 +51,30 @@ private:
 	ID3D12Device              *device;
 	ID3D12GraphicsCommandList *commandList;
 	MainPassModelsListener &mainPassModelsListener;
-	ObjectsDataProvider   &objectsDataProvider;
 	MaterialsDataProvider &materialsDataProvider;
 	GeometryStorage       &geometryStorage;
 
-	std::unordered_map<std::string, std::vector<std::string>> meshes;
-	std::vector<std::string> materials;
+	CameraModel cameraModel(CameraViewModel* cameraViewModel);
+	LightModel lightModel(LightViewModel* lightViewModel);
+	FogModel fogModel(FogViewModel* fogViewModel);
 
-	void createCameraView();
-	void createLightView();
-	void createFogView();
-	void createPrimitiveFactoryView();
-	void createMeshCombo();
-	void createSubmeshCombo();
-	void createMaterialCombo();
-
-	CameraViewModel    cameraViewModel;
-	PrimitiveViewModel primitiveViewModel;
-	LightsViewModel    lightsViewModel;
-	FogViewModel       fogViewModel;
-
-	void initLightsViewModel(LightsViewModel& lightsViewModel);
-	void initPrimitiveViewModel(PrimitiveViewModel& primitiveViewModel);
-
-	CameraModel cameraModel(CameraViewModel cameraViewModel);
-	LightModel lightModel(LightsViewModel lightsViewModel);
-	FogModel fogModel(FogViewModel fogViewModel);
-	PrimitiveModel primitiveModel(PrimitiveViewModel primitiveViewModel);
+//	PrimitiveModel primitiveModel(PrimitiveViewModel *primitiveViewModel);
 
 	POINT lastMousePosition;
+
+
+	std::unique_ptr<CameraViewModel> cameraViewModel;
+	std::unique_ptr<CameraView> cameraView;
+
+	std::unique_ptr<LightViewModel> lightViewModel;
+	std::unique_ptr<LightView> lightView;
+
+	std::unique_ptr<FogViewModel> fogViewModel;
+	std::unique_ptr<FogView> fogView;
+
+	std::unique_ptr<PrimitiveViewModel> primitiveViewModel;
+	std::unique_ptr<PrimitiveView> primitiveView;
+	
+	std::vector<View*> views;
 };
 

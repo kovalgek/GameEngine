@@ -6,7 +6,6 @@ class Renderer;
 
 class GPUService;
 class FrameResourceController;
-class ObjectsDataProvider;
 class SrvHeapProvider;
 class ViewController;
 struct IDXGIFactory4;
@@ -19,6 +18,7 @@ struct ID3D12Fence;
 enum DXGI_FORMAT;
 struct ID3D12DescriptorHeap;
 struct ID3D12RootSignature;
+class Scene;
 
 #pragma once
 class RendererFactory
@@ -28,9 +28,9 @@ public:
 		HWND mainWindowHandle,
 		GPUService &gpuService,
 		FrameResourceController& frameResourceController,
-		ObjectsDataProvider& objectsDataProvider,
 		std::unique_ptr <SrvHeapProvider> srvHeapProvider,
-		ViewController& viewController
+		ViewController& viewController,
+		Scene& scene
 	);
 private:
 	static void RendererFactory::createDXGIFactory(IDXGIFactory4** dxgiFactory);
