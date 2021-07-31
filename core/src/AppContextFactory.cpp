@@ -1,6 +1,5 @@
 #include "AppContextFactory.h"
 
-#include "FrameResourceController.h"
 #include "MainPassDataProvider.h"
 #include "FrameResourceUpdater.h"
 
@@ -27,6 +26,12 @@
 #include "Renderer.h"
 
 #include "Scene.h"
+#include "RingBuffer.h"
+#include "FrameResource.h"
+#include "ConstantBufferUpdating.h"
+#include "MainPassConstantBufferUpdater.h"
+#include "ObjectConstantBufferUpdater.h"
+#include "MaterialConstantBufferUpdater.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -99,13 +104,6 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 	
 	
 
-	auto frameResourceController = std::make_unique<FrameResourceController>(
-		gpuService->getDevice(),
-		2,
-		renderView.size(),
-		(UINT)materials.size()
-	);
-
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>();
 
 	auto texturesProvider = std::make_unique<TexturesProvider>(
@@ -124,26 +122,47 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*srvHeapProvider,
 		*mainPassDataProvider,
 		*materialsDataProvider,
-		*geometryStorage
+		*geometryStorage,
+		*scene
 	);
 
 
 	auto renderer = RendererFactory::getRenderer(
 		mainWindowHandle,
 		*gpuService,
-		*frameResourceController,
 		std::move(srvHeapProvider),
 		*viewController,
 		*scene
 	);
 
+	size_t frameCount = 3;
+
+	auto ringBuffer = std::make_unique<RingBuffer<FrameResource>>(frameCount);
+
+	for (int i = 0; i < frameCount; ++i) {
+		auto frameResource = std::make_unique<FrameResource>(
+			gpuService->getDevice(),
+			2,
+			renderView.size(),
+			(UINT)materials.size());
+
+		ringBuffer->offer(std::move(frameResource));
+	}
+
+	std::vector<std::unique_ptr<ConstantBufferUpdating>> constantBufferUpdaters;
+
+	auto mainPassConstantBufferUpdater = std::make_unique<MainPassConstantBufferUpdater>(*mainPassDataProvider);
+	constantBufferUpdaters.push_back(std::move(mainPassConstantBufferUpdater));
+
+	auto objectConstantBufferUpdater = std::make_unique<ObjectConstantBufferUpdater>(*scene);
+	constantBufferUpdaters.push_back(std::move(objectConstantBufferUpdater));
+
+	auto materialConstantBufferUpdater = std::make_unique<MaterialConstantBufferUpdater>(*materialsDataProvider);
+	constantBufferUpdaters.push_back(std::move(materialConstantBufferUpdater));
+
 	auto frameResourceUpdater = std::make_unique<FrameResourceUpdater>(
-		std::move(frameResourceController),
-		*gpuService,
-		*mainPassDataProvider,
-		*scene,
-		*materialsDataProvider,
-		*dynamicVerticesProvider
+		*gpuService,		
+		std::move(constantBufferUpdaters)
 	);
 
 	return std::make_unique<AppContext>(
@@ -153,6 +172,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		std::move(materialsDataProvider),
 		std::move(dynamicVerticesProvider),
 		std::move(frameResourceUpdater),
+		std::move(ringBuffer),
 		std::move(viewController),
 		std::move(geometryStorageConfigurator),
 		std::move(geometryStorage),

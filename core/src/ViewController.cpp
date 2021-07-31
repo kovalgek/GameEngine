@@ -23,6 +23,9 @@
 #include "FogViewModel.h"
 #include "PrimitiveViewModel.h"
 #include "PrimitiveView.h"
+#include "Scene.h"
+#include "View.h"
+#include "ViewModel.h"
 
 using namespace DirectX;
 
@@ -33,7 +36,8 @@ ViewController::ViewController(
 	SrvHeapProvider&          srvHeapProvider,
 	MainPassModelsListener    &mainPassModelsListener,
 	MaterialsDataProvider&    materialsDataProvider,
-	GeometryStorage&          geometryStorage) :
+	GeometryStorage&          geometryStorage,
+	Scene& scene) :
 
 	device { device },
 	commandList { commandList },
@@ -60,7 +64,7 @@ ViewController::ViewController(
 	cameraView = std::make_unique<CameraView>(*cameraViewModel);
 	views.push_back(cameraView.get());
 
-	lightViewModel = std::make_unique<LightViewModel>();
+	lightViewModel = std::make_unique<LightViewModel>(scene);
 	lightView = std::make_unique<LightView>(*lightViewModel);
 	views.push_back(lightView.get());
 
@@ -137,6 +141,11 @@ void ViewController::present()
 
 void ViewController::update()
 {
+	for (auto view : views) {
+		auto &viewModel = view->getViewModel();
+		viewModel.update();
+	}
+
 	CameraModel model = cameraModel(cameraViewModel.get());
 	mainPassModelsListener.onCameraModelUpdated(model);
 

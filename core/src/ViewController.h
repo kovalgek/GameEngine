@@ -25,6 +25,7 @@ class FogView;
 class PrimitiveViewModel;
 class PrimitiveView;
 class View;
+class Scene;
 
 #pragma once
 class ViewController
@@ -37,7 +38,8 @@ public:
 		SrvHeapProvider&          srvHeapProvider,
 		MainPassModelsListener&	  mainPassModelsListener,	
 		MaterialsDataProvider&    materialsDataProvider,
-		GeometryStorage&          geometryStorage);
+		GeometryStorage&          geometryStorage,
+		Scene& scene);
 	~ViewController();
 
 	void present();

@@ -10,6 +10,7 @@ public:
 	LightView(LightViewModel& viewModel);
 	~LightView() = default;
 
+	ViewModel& getViewModel();
 	void present();
 
 private:

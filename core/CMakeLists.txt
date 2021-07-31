@@ -48,13 +48,19 @@ source_group( ${SOURCE_FILES_DIR}/DynamicVertex FILES ${DYNAMIC_VERTEX_FILES} )
 set( FRAME_RESOURCE_FILES
 	src/FrameResource.h
 	src/FrameResource.cpp
-	src/FrameResourceController.h
 	src/FrameResourceUpdater.h
-	src/FrameResourceController.cpp
 	src/FrameResourceUpdater.cpp
 	src/MaterialConstants.h
 	src/ObjectConstants.h
 	src/PassConstants.h
+	src/RingBuffer.h
+	src/ConstantBufferUpdating.h
+	src/MainPassConstantBufferUpdater.h
+	src/MainPassConstantBufferUpdater.cpp
+	src/MaterialConstantBufferUpdater.h
+	src/MaterialConstantBufferUpdater.cpp
+	src/ObjectConstantBufferUpdater.h
+	src/ObjectConstantBufferUpdater.cpp
 )
 source_group( ${SOURCE_FILES_DIR}/FrameResources FILES ${FRAME_RESOURCE_FILES} )
 
@@ -90,6 +96,7 @@ set( GUI_FILES
 	src/CameraViewModel.h
 	src/CameraViewModel.cpp
 	src/View.h
+	src/ViewModel.h
 	src/LightView.h
 	src/LightView.cpp
 	src/LightViewModel.h

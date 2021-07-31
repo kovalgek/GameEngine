@@ -31,3 +31,8 @@ void FogView::present()
 	}
 	End();
 }
+
+ViewModel& FogView::getViewModel()
+{
+	return viewModel;
+}

@@ -106,3 +106,8 @@ void PrimitiveView::createMaterialCombo()
 		ImGui::EndCombo();
 	}
 }
+
+ViewModel& PrimitiveView::getViewModel()
+{
+	return viewModel;
+}

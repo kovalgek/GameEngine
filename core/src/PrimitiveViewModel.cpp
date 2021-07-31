@@ -39,3 +39,8 @@ PrimitiveViewModel::PrimitiveViewModel(
 		material = materials[0];
 	}
 }
+
+void PrimitiveViewModel::update()
+{
+
+}

@@ -15,6 +15,8 @@ class GeometryGenerator;
 class MaterialsDataProviderConfigurator;
 class OBJFileLoader;
 class Scene;
+template<typename Element> class RingBuffer;
+struct FrameResource;
 
 class AppContext
 {
@@ -26,6 +28,7 @@ public:
 		std::unique_ptr<MaterialsDataProvider> materialsDataProvider,		
 		std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider,
 		std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
+		std::unique_ptr<RingBuffer<FrameResource>> ringBuffer,
 		std::unique_ptr<ViewController> viewController,
 		std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator,
 		std::unique_ptr<GeometryStorage> geometryStorage,
@@ -42,6 +45,7 @@ public:
 	MaterialsDataProvider* getMaterialsDataProvider() { return materialsDataProvider.get(); }
 	DynamicVerticesProvider* getDynamicVerticesProvider() { return dynamicVerticesProvider.get(); }
 	FrameResourceUpdater* getFrameResourceUpdater() { return frameResourceUpdater.get(); }
+	RingBuffer<FrameResource> &getRingBuffer() { return *ringBuffer.get(); }
 	ViewController* getViewController() { return viewController.get(); }
 	GeometryStorageConfigurator* getGeometryStorageConfigurator() { return geometryStorageConfigurator.get(); }
 	MaterialsDataProviderConfigurator* getMaterialsDataProviderConfigurator() { return materialsDataProviderConfigurator.get(); }
@@ -54,6 +58,7 @@ private:
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider;
 	std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider;
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater;
+	std::unique_ptr<RingBuffer<FrameResource>> ringBuffer;
 	std::unique_ptr<ViewController> viewController;
 	std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator;
 	std::unique_ptr<GeometryStorage> geometryStorage;

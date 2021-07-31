@@ -24,6 +24,7 @@ Scene::~Scene() = default;
 void Scene::sceneDidLoad()
 {
 	createCamera();
+	createLight();
 
 	entt::entity entity = createRenderItem(
 		"shapeGeo",
@@ -74,6 +75,11 @@ RenderAndTransformGroup Scene::renderAndTransformGroup()
 	return registry.group<TransformComponent>(entt::get<RenderComponent>);
 }
 
+LightEntityView Scene::lightView()
+{
+	return registry.view<LightComponent>();
+}
+
 entt::entity Scene::createRenderItem(
 	std::string meshName,
 	std::string submeshName,
@@ -102,6 +108,17 @@ entt::entity Scene::createRenderItem(
 		(UINT)itemIndex++
 	);
 	return entity;
+}
+
+void Scene::createLight()
+{
+	entt::entity light = registry.create();
+
+	DirectX::XMFLOAT4 ambientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
+	DirectX::XMFLOAT3 direction = { 0.0f, 0.0f, 0.0f };
+	DirectX::XMFLOAT3 strenght = { 0.0f, 0.0f, 0.0f };
+
+	registry.emplace<LightComponent>(light, ambientLight, direction, strenght);
 }
 
 void Scene::update(const GameTimer& gameTimer)

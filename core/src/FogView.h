@@ -11,6 +11,7 @@ public:
 	FogView(FogViewModel& viewModel);
 	~FogView() = default;
 
+	ViewModel& getViewModel();
 	void present();
 
 private:

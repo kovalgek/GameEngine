@@ -11,6 +11,7 @@ public:
 	PrimitiveView(PrimitiveViewModel& viewModel);
 	~PrimitiveView() = default;
 
+	ViewModel& getViewModel();
 	void present();
 
 private:

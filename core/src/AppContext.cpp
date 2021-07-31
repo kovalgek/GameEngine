@@ -12,6 +12,8 @@
 #include "MaterialsDataProviderConfigurator.h"
 #include "OBJFileLoader.h"
 #include "Scene.h"
+#include "RingBuffer.h"
+#include "FrameResource.h"
 
 AppContext::AppContext(
 	std::unique_ptr<GPUService> gpuService,
@@ -20,6 +22,7 @@ AppContext::AppContext(
 	std::unique_ptr<MaterialsDataProvider> materialsDataProvider,
 	std::unique_ptr<DynamicVerticesProvider> dynamicVerticesProvider,
 	std::unique_ptr<FrameResourceUpdater> frameResourceUpdater,
+	std::unique_ptr<RingBuffer<FrameResource>> ringBuffer,
 	std::unique_ptr<ViewController> viewController,
 	std::unique_ptr<GeometryStorageConfigurator> geometryStorageConfigurator,
 	std::unique_ptr<GeometryStorage> geometryStorage,
@@ -33,6 +36,7 @@ AppContext::AppContext(
 	mainPassDataProvider{ std::move(mainPassDataProvider) },
 	materialsDataProvider{ std::move(materialsDataProvider) },
 	frameResourceUpdater{ std::move(frameResourceUpdater) },
+	ringBuffer{ std::move(ringBuffer) },	
 	dynamicVerticesProvider{ std::move(dynamicVerticesProvider) },
 	viewController{ std::move(viewController) },
 	geometryStorageConfigurator{ std::move(geometryStorageConfigurator) },

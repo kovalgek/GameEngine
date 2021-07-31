@@ -6,6 +6,7 @@
 #include "FrameResourceUpdater.h"
 #include "DynamicVerticesProvider.h"
 #include "ViewController.h"
+#include "RingBuffer.h"
 
 AppFacade::AppFacade(HWND mainWindowHandle)
 {
@@ -16,11 +17,14 @@ AppFacade::~AppFacade() = default;
 
 void AppFacade::update(const GameTimer& gameTimer)
 {
-	appContext->getFrameResourceUpdater()->update(gameTimer);
+	auto& ringBuffer = appContext->getRingBuffer();
+	auto& frameResource = ringBuffer.poll();
+
+	appContext->getFrameResourceUpdater()->update(frameResource, gameTimer);
 	appContext->getDynamicVerticesProvider()->update(gameTimer);
 	appContext->getViewController()->update();
 
-	appContext->getRenderer()->draw(gameTimer);
+	appContext->getRenderer()->draw(frameResource, gameTimer);
 }
 
 void AppFacade::onResize(int clientWidth, int clientHeight)

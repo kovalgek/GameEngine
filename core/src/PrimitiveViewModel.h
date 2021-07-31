@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ViewModel.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -7,13 +8,16 @@
 class MaterialsDataProvider;
 class GeometryStorage;
 
-class PrimitiveViewModel {
+class PrimitiveViewModel : public ViewModel
+{
 
 public:
 	PrimitiveViewModel(
 		MaterialsDataProvider& materialsDataProvider,
 		GeometryStorage& geometryStorage);
 	~PrimitiveViewModel() = default;
+
+	void update();
 
 	std::string mesh;
 	std::string subMesh;

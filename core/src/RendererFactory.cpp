@@ -16,7 +16,6 @@ using Microsoft::WRL::ComPtr;
 std::unique_ptr<Renderer> RendererFactory::getRenderer(
 	HWND mainWindowHandle,
 	GPUService& gpuService,
-	FrameResourceController& frameResourceController,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
 	ViewController& viewController,
 	Scene& scene
@@ -105,7 +104,6 @@ std::unique_ptr<Renderer> RendererFactory::getRenderer(
 		dsvHeap,
 		rootSignature,
 		std::move(psoProvider),
-		frameResourceController,
 		std::move(srvHeapProvider),
 		viewController,
 		scene);

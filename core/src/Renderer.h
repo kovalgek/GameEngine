@@ -6,7 +6,6 @@
 
 class GPUService;
 class GameTimer;
-class FrameResourceController;
 
 #include "Scene.h"
 
@@ -48,7 +47,6 @@ public:
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,
 
 		std::unique_ptr<PSOProvider> psoProvider,
-		FrameResourceController& frameResourceController,
 
 		std::unique_ptr<SrvHeapProvider> srvHeapProvider,
 		ViewController& viewController,
@@ -56,7 +54,7 @@ public:
 	);
 
 	~Renderer();
-	void draw(const GameTimer& gameTimer);
+	void draw(FrameResource& frameResource, const GameTimer& gameTimer);
 	void onResize(int clientWidth, int clientHeight);
 
 
@@ -75,13 +73,12 @@ private:
 
 
 	std::unique_ptr<PSOProvider> psoProvider;
-	FrameResourceController& frameResourceController;
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider;
 	ViewController& viewController;
 	Scene& scene;
 
 	void onKeyboardInput(const GameTimer& gameTimer);
-	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderView renderView);
+	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderView renderView, FrameResource& frameResource);
 
 	bool isWireframe = false;
 

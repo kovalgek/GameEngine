@@ -27,3 +27,8 @@ void CameraView::present()
 	}
 	End();
 }
+
+ViewModel& CameraView::getViewModel()
+{
+	return viewModel;
+}

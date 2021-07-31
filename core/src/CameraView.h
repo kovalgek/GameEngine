@@ -10,6 +10,7 @@ public:
 	CameraView(CameraViewModel& viewModel);
 	~CameraView() = default;
 
+	ViewModel& getViewModel();
 	void present();
 
 private:

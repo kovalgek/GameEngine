@@ -26,3 +26,8 @@ void LightView::present()
 	}
 	End();
 }
+
+ViewModel& LightView::getViewModel()
+{
+	return viewModel;
+}

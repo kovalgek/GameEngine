@@ -73,6 +73,12 @@ struct CameraComponent
 	float radius = 70;
 };
 
+struct LightComponent
+{
+	DirectX::XMFLOAT4 ambientLight;
+	DirectX::XMFLOAT3 direction;
+	DirectX::XMFLOAT3 strength;
+};
 
 enum class RenderLayer2 : int
 {
@@ -87,6 +93,7 @@ enum class RenderLayer2 : int
 
 using RenderAndTransformGroup = entt::basic_group<enum entt::entity, entt::exclude_t<>, entt::get_t<RenderComponent>, TransformComponent>;
 using RenderView = entt::basic_view<enum entt::entity, entt::exclude_t<>, RenderComponent>;
+using LightEntityView = entt::basic_view<enum entt::entity, entt::exclude_t<>, LightComponent>;
 
 class Scene
 {
@@ -99,6 +106,7 @@ public:
 
 	RenderAndTransformGroup renderAndTransformGroup();
 	RenderView renderView();
+	LightEntityView lightView();
 
 	// system events
 	void update(const GameTimer& gameTimer);
@@ -117,6 +125,8 @@ private:
 		std::vector<float> scaling,
 		std::vector<float> textureTransform
 	);
+
+	void createLight();
 
 	void addShadow(entt::entity entity);
 	void addReflection(entt::entity entity);

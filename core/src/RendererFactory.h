@@ -5,7 +5,6 @@
 class Renderer;
 
 class GPUService;
-class FrameResourceController;
 class SrvHeapProvider;
 class ViewController;
 struct IDXGIFactory4;
@@ -27,7 +26,6 @@ public:
 	static std::unique_ptr<Renderer> getRenderer(
 		HWND mainWindowHandle,
 		GPUService &gpuService,
-		FrameResourceController& frameResourceController,
 		std::unique_ptr <SrvHeapProvider> srvHeapProvider,
 		ViewController& viewController,
 		Scene& scene

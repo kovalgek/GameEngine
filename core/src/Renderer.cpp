@@ -3,7 +3,6 @@
 #include "d3dUtil.h"
 #include "UploadBuffer.h"
 #include "GameTimer.h"
-#include "FrameResourceController.h"
 #include "Material.h"
 #include "FrameResource.h"
 #include "SrvHeapProvider.h"
@@ -48,7 +47,6 @@ Renderer::Renderer(
 	ComPtr<ID3D12RootSignature> rootSignature,
 
 	std::unique_ptr<PSOProvider> psoProvider,
-	FrameResourceController& frameResourceController,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
 	ViewController& viewController,
 	Scene& scene
@@ -76,7 +74,6 @@ Renderer::Renderer(
 	rootSignature{ rootSignature },
 
 	psoProvider{ std::move(psoProvider) },
-	frameResourceController { frameResourceController },
 	srvHeapProvider{ std::move(srvHeapProvider) },
 	viewController{ viewController },
 	scene { scene }
@@ -95,9 +92,9 @@ void Renderer::onKeyboardInput(const GameTimer& gameTimer)
 }
 bool show_demo_window = true;
 
-void Renderer::draw(const GameTimer& gameTimer)
+void Renderer::draw(FrameResource& frameResource, const GameTimer& gameTimer)
 {
-	auto cmdListAlloc = frameResourceController.getCurrentFrameResource()->CmdListAlloc;
+	auto cmdListAlloc = frameResource.CmdListAlloc;
 
 	// Reuse the memory associated with command recording.
 	// We can only reset when the associated command lists have finished execution on the GPU.
@@ -126,11 +123,11 @@ void Renderer::draw(const GameTimer& gameTimer)
 
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
 
-	auto passCB = frameResourceController.getCurrentFrameResource()->PassCB->Resource();
+	auto passCB = frameResource.PassCB->Resource();
 	commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
 
 	auto renderView = scene.renderView();
-	drawRenderItems(commandList, renderView);
+	drawRenderItems(commandList, renderView, frameResource);
 
 	//// Mark the visible mirror pixels in the stencil buffer with the value 1
 	//commandList->OMSetStencilRef(1);
@@ -180,16 +177,16 @@ void Renderer::draw(const GameTimer& gameTimer)
 	swapChainMethod();
 
 	//// Advance the fence value to mark commands up to this fence point.
-	frameResourceController.getCurrentFrameResource()->Fence = gpuService.setNewFenceOnGPUTimeline();
+	frameResource.Fence = gpuService.setNewFenceOnGPUTimeline();
 }
 
-void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderView renderView)
+void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderView renderView, FrameResource& frameResource)
 {
 	UINT objCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
 	UINT matCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(MaterialConstants));
 
-	auto objectCB = frameResourceController.getCurrentFrameResource()->ObjectCB->Resource();
-	auto matCB = frameResourceController.getCurrentFrameResource()->MaterialCB->Resource();
+	auto objectCB = frameResource.ObjectCB->Resource();
+	auto matCB = frameResource.MaterialCB->Resource();
 
 	for (auto entity : renderView) {
 
