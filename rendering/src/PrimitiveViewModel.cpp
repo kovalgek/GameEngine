@@ -49,14 +49,15 @@ void PrimitiveViewModel::createPrimitive()
 	auto scalingParameter = std::vector<float>(std::begin(scaling), std::end(scaling));
 	auto textureParameter = std::vector<float>(std::begin(texture), std::end(texture));
 
-	scene.createRenderItem(
-		mesh,
-		subMesh,
-		material,
-		positionParameter,
-		scalingParameter,
-		textureParameter
-	);
+	//scene.createRenderItem(
+	//	mesh,
+	//	subMesh,
+	//	material,
+	//	positionParameter,
+	//	scalingParameter,
+	//	textureParameter,
+	//	{ RenderLayer::Opaque }
+	//);
 }
 
 void PrimitiveViewModel::update()

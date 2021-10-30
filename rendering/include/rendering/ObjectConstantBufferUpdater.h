@@ -21,6 +21,6 @@ public:
 private:
 	Scene& scene;
 
-	void updateObjectConstantBuffer(UploadBuffer<ObjectConstants>* objectConstantBuffer, RenderAndTransformGroup renderAndTransformGroup);
-	ObjectConstants objectConstantsFromRenderItem(TransformComponent* renderItem);
+	void updateObjectConstantBuffer(UploadBuffer<ObjectConstants>* objectConstantBuffer, std::vector<RenderComponent*> renderComponents);
+	ObjectConstants objectConstantsFromRenderItem(RenderComponent* renderComponent);
 };

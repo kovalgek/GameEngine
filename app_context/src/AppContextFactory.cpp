@@ -85,15 +85,11 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 	auto dynamicVerticesProvider = std::make_unique<DynamicVerticesProvider>();
 	geometryStorageConfigurator->configure(*geometryStorage, *dynamicVerticesProvider);
 
-
 	auto scene = std::make_unique<Scene>(*geometryStorage, *materialsDataProvider);
-
 
 	auto materials = materialsDataProvider->getMaterials();
 
-
-	auto renderView = scene->renderView();
-	
+	auto renderComponents = scene->renderComponents();	
 
 	auto mainPassDataProvider = std::make_unique<MainPassDataProvider>(*scene);
 
@@ -116,7 +112,6 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		*scene
 	);
 
-
 	auto renderer = RendererFactory::getRenderer(
 		mainWindowHandle,
 		*gpuService,
@@ -133,7 +128,7 @@ std::unique_ptr<AppContext> AppContextFactory::halfBakedAppContext(HWND mainWind
 		auto frameResource = std::make_unique<FrameResource>(
 			gpuService->getDevice(),
 			2,
-			renderView.size(),
+			renderComponents.size(),
 			(UINT)materials.size());
 
 		ringBuffer->offer(std::move(frameResource));

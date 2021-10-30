@@ -8,20 +8,16 @@
 #include "SrvHeapProvider.h"
 #include "ViewController.h"
 #include "PSOProvider.h"
+#include "GPUService.h"
+#include "MeshGeometry.h"
+#include "Scene.h"
 
 #include <DirectXColors.h>
 #include <DirectXPackedVector.h>
 #include <D3Dcompiler.h>
 #include <array>
-
-#include "GPUService.h"
-
 #include <dxgi1_4.h>
-#include "MeshGeometry.h"
-
 #include <entt.hpp>
-#include "Scene.h"
-
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
@@ -29,7 +25,6 @@ using namespace DirectX::PackedVector;
 
 Renderer::Renderer(
 	GPUService& gpuService,
-
 	D3D_DRIVER_TYPE d3dDriverType,
 	DXGI_FORMAT backBufferFormat,
 	DXGI_FORMAT depthStencilFormat,
@@ -38,14 +33,10 @@ Renderer::Renderer(
 	UINT rtvDescriptorSize,
 	UINT dsvDescriptorSize,
 	UINT cbvSrvUavDescriptorSize,
-
 	ComPtr<IDXGISwapChain> swapChain,
-
 	ComPtr<ID3D12DescriptorHeap> rtvHeap,
 	ComPtr<ID3D12DescriptorHeap> dsvHeap,
-
 	ComPtr<ID3D12RootSignature> rootSignature,
-
 	std::unique_ptr<PSOProvider> psoProvider,
 	std::unique_ptr <SrvHeapProvider> srvHeapProvider,
 	ViewController& viewController,
@@ -57,7 +48,6 @@ Renderer::Renderer(
 	commandAllocator{ gpuService.getCommandAllocator() },
 	commandList{ gpuService.getCommandList() },
 	fence { gpuService.getFence() },
-
 	d3dDriverType{ d3dDriverType },
 	backBufferFormat{ backBufferFormat },
 	depthStencilFormat{ depthStencilFormat },
@@ -66,13 +56,10 @@ Renderer::Renderer(
 	rtvDescriptorSize { rtvDescriptorSize },
 	dsvDescriptorSize { dsvDescriptorSize },
 	cbvSrvUavDescriptorSize { cbvSrvUavDescriptorSize },
-
 	swapChain{ swapChain },
 	rtvHeap { rtvHeap },
 	dsvHeap { dsvHeap },
-
 	rootSignature{ rootSignature },
-
 	psoProvider{ std::move(psoProvider) },
 	srvHeapProvider{ std::move(srvHeapProvider) },
 	viewController{ viewController },
@@ -126,14 +113,14 @@ void Renderer::draw(FrameResource& frameResource, const GameTimer& gameTimer)
 	auto passCB = frameResource.PassCB->Resource();
 	commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
 
-	auto renderView = scene.renderView();
-	drawRenderItems(commandList, renderView, frameResource);
+	//auto renderView = scene.renderView();
+	drawRenderItems(commandList, scene.renderComponents(RenderLayer::Opaque), frameResource);
 
-	//// Mark the visible mirror pixels in the stencil buffer with the value 1
-	//commandList->OMSetStencilRef(1);
-	//commandList->SetPipelineState(psoProvider->getPipelineStateObject("markStencilMirrors"));
+	// Mark the visible mirror pixels in the stencil buffer with the value 1
+	commandList->OMSetStencilRef(1);
+	commandList->SetPipelineState(psoProvider->getPipelineStateObject("markStencilMirrors"));
 	//auto mirrorsRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::Mirrors);
-	//drawRenderItems(commandList, mirrorsRenderItems);
+	drawRenderItems(commandList, scene.renderComponents(RenderLayer::Mirrors), frameResource);
 
 	//// Draw the reflection into the mirror only (only for pixels where the stencil buffer is 1).
 	//// Note that we must supply a different per-pass constant buffer--one with the lights reflected.
@@ -145,15 +132,15 @@ void Renderer::draw(FrameResource& frameResource, const GameTimer& gameTimer)
 
 	//// Restore main pass constants and stencil ref.
 	//commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
-	//commandList->OMSetStencilRef(0);
+	commandList->OMSetStencilRef(0);
 
-	//commandList->SetPipelineState(psoProvider->getPipelineStateObject("alphaTested"));
-	//auto alphaTestedRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::AlphaTested);
-	//drawRenderItems(commandList, alphaTestedRenderItems);
+	commandList->SetPipelineState(psoProvider->getPipelineStateObject("alphaTested"));
+	auto alphaTestedRenderItems = scene.renderComponents(RenderLayer::AlphaTested);
+	drawRenderItems(commandList, alphaTestedRenderItems, frameResource);
 
-	//commandList->SetPipelineState(psoProvider->getPipelineStateObject("transparent"));
-	//auto transparentRenderItems = objectsDataProvider.renderItemsForLayer(RenderLayer::Transparent);
-	//drawRenderItems(commandList, transparentRenderItems);
+	commandList->SetPipelineState(psoProvider->getPipelineStateObject("transparent"));
+	auto transparentRenderItems = scene.renderComponents(RenderLayer::Transparent);
+	drawRenderItems(commandList, transparentRenderItems, frameResource);
 
 	//// Draw shadows
 	//commandList->SetPipelineState(psoProvider->getPipelineStateObject("shadow"));
@@ -180,7 +167,7 @@ void Renderer::draw(FrameResource& frameResource, const GameTimer& gameTimer)
 	frameResource.Fence = gpuService.setNewFenceOnGPUTimeline();
 }
 
-void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderView renderView, FrameResource& frameResource)
+void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, std::vector<RenderComponent*> renderComponents, FrameResource& frameResource)
 {
 	UINT objCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(ObjectConstants));
 	UINT matCBByteSize = d3dUtil::calcConstantBufferByteSize(sizeof(MaterialConstants));
@@ -188,23 +175,21 @@ void Renderer::drawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderView re
 	auto objectCB = frameResource.ObjectCB->Resource();
 	auto matCB = frameResource.MaterialCB->Resource();
 
-	for (auto entity : renderView) {
+	for (auto renderComponent : renderComponents) {
 
-		auto& renderComponent = renderView.get<RenderComponent>(entity);
-		
-		cmdList->IASetVertexBuffers(0, 1, &renderComponent.geometry->VertexBufferView());
-		cmdList->IASetIndexBuffer(&renderComponent.geometry->IndexBufferView());
-		cmdList->IASetPrimitiveTopology(renderComponent.primitiveType);
+		cmdList->IASetVertexBuffers(0, 1, &renderComponent->geometry->VertexBufferView());
+		cmdList->IASetIndexBuffer(&renderComponent->geometry->IndexBufferView());
+		cmdList->IASetPrimitiveTopology(renderComponent->primitiveType);
 
-		auto tex = srvHeapProvider->getHandleForIndex(renderComponent.material->DiffuseSrvHeapIndex);
-		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + renderComponent.objectConstantBufferIndex * objCBByteSize;
-		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + renderComponent.material->MatCBIndex * matCBByteSize;
+		auto tex = srvHeapProvider->getHandleForIndex(renderComponent->material->DiffuseSrvHeapIndex);
+		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + renderComponent->objectConstantBufferIndex * objCBByteSize;
+		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + renderComponent->material->MatCBIndex * matCBByteSize;
 
 		cmdList->SetGraphicsRootDescriptorTable(0, tex);
 		cmdList->SetGraphicsRootConstantBufferView(1, objCBAddress);
 		cmdList->SetGraphicsRootConstantBufferView(3, matCBAddress);
 
-		cmdList->DrawIndexedInstanced(renderComponent.indexCount, 1, renderComponent.startIndexLocation, renderComponent.baseVertexLocation, 0);
+		cmdList->DrawIndexedInstanced(renderComponent->indexCount, 1, renderComponent->startIndexLocation, renderComponent->baseVertexLocation, 0);
 	}
 }
 

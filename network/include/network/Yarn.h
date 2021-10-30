@@ -1,3 +1,8 @@
+#include "GameObject.h"
+#include <memory>
+
+class RoboCat;
+
 class Yarn : public GameObject
 {
 public:
@@ -42,4 +47,4 @@ protected:
 
 };
 
-typedef shared_ptr< Yarn >	YarnPtr;
+typedef std::shared_ptr< Yarn >	YarnPtr;

@@ -1,8 +1,9 @@
+#pragma once
+
 #include <memory>
 #include "RoboMath.h"
 
 class RoboCat;
-//class Vector3;
 class OutputMemoryBitStream;
 class InputMemoryBitStream;
 

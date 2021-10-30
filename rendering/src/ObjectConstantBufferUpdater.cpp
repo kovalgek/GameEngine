@@ -16,39 +16,36 @@ ObjectConstantBufferUpdater::ObjectConstantBufferUpdater(Scene& scene) : scene {
 void ObjectConstantBufferUpdater::update(FrameResource& frameResource, const GameTimer& gameTimer)
 {
 	auto objectConstantBuffer = frameResource.ObjectCB.get();	
-	auto group = scene.renderAndTransformGroup();
-	updateObjectConstantBuffer(objectConstantBuffer, group);
+	auto renderItems = scene.renderComponents();
+	updateObjectConstantBuffer(objectConstantBuffer, renderItems);
 }
 
-void ObjectConstantBufferUpdater::updateObjectConstantBuffer(UploadBuffer<ObjectConstants>* objectConstantBuffer, RenderAndTransformGroup renderAndTransformGroup)
+void ObjectConstantBufferUpdater::updateObjectConstantBuffer(UploadBuffer<ObjectConstants>* objectConstantBuffer, std::vector<RenderComponent*> renderComponents)
 {
-	for (auto entity : renderAndTransformGroup) {
-
-		auto& transformComponent = renderAndTransformGroup.get<TransformComponent>(entity);
-		auto& renderComponent = renderAndTransformGroup.get<RenderComponent>(entity);
+	for (auto renderComponent : renderComponents) {
 
 		// Only update the cbuffer data if the constants have changed.  
 		// This needs to be tracked per frame resource.
-		if (renderComponent.numberOfDirtyFrames == 0)
+		if (renderComponent->numberOfDirtyFrames == 0)
 		{
 			continue;
 		}
 		// Next FrameResource need to be updated too.
-		renderComponent.numberOfDirtyFrames--;
+		renderComponent->numberOfDirtyFrames--;
 
-		ObjectConstants objConstants = objectConstantsFromRenderItem(&transformComponent);
-		objectConstantBuffer->CopyData(renderComponent.objectConstantBufferIndex, objConstants);
+		ObjectConstants objConstants = objectConstantsFromRenderItem(renderComponent);
+		objectConstantBuffer->CopyData(renderComponent->objectConstantBufferIndex, objConstants);
 	}
 }
 
-ObjectConstants ObjectConstantBufferUpdater::objectConstantsFromRenderItem(TransformComponent* renderItem)
+ObjectConstants ObjectConstantBufferUpdater::objectConstantsFromRenderItem(RenderComponent* renderComponent)
 {
 	ObjectConstants objConstants;
 
-	XMMATRIX world = XMLoadFloat4x4(&renderItem->world);
+	XMMATRIX world = XMLoadFloat4x4(&renderComponent->world);
 	XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
 
-	XMMATRIX texTransform = XMLoadFloat4x4(&renderItem->texture);
+	XMMATRIX texTransform = XMLoadFloat4x4(&renderComponent->texture);
 	XMStoreFloat4x4(&objConstants.TexTransform, XMMatrixTranspose(texTransform));
 
 	return objConstants;

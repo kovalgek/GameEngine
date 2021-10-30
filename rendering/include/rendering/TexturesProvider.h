@@ -27,6 +27,8 @@ private:
 	std::unique_ptr<Texture> fenceTexture();
 	std::unique_ptr<Texture> white1x1Texture();
 	std::unique_ptr<Texture> iceTexture();
+	std::unique_ptr<Texture> checkboardTexture();
+	std::unique_ptr<Texture> bricksTexture();
 
 	std::vector<std::unique_ptr<Texture>> textures;
 };

@@ -3,12 +3,11 @@
 #include <memory>
 #include <string>
 #include <d3d12.h>
+#include "Components.h"
 
 class GPUService;
 class GameTimer;
-
-#include "Scene.h"
-
+class Scene;
 class SrvHeapProvider;
 class ViewController;
 class PSOProvider;
@@ -28,35 +27,28 @@ class Renderer
 public:
 	Renderer(
 		GPUService& gpuService,
-
 		D3D_DRIVER_TYPE d3dDriverType,
 		DXGI_FORMAT backBufferFormat,
 		DXGI_FORMAT depthStencilFormat,
 		bool      msaa4xState,
 		UINT      msaa4xQuality,
-
 		UINT rtvDescriptorSize,
 		UINT dsvDescriptorSize,
 		UINT cbvSrvUavDescriptorSize,
-
 		Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain,
-
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap,
-
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,
-
 		std::unique_ptr<PSOProvider> psoProvider,
-
 		std::unique_ptr<SrvHeapProvider> srvHeapProvider,
 		ViewController& viewController,
 		Scene &scene
 	);
 
 	~Renderer();
+
 	void draw(FrameResource& frameResource, const GameTimer& gameTimer);
 	void onResize(int clientWidth, int clientHeight);
-
 
 
 	// Properties for PSO
@@ -78,7 +70,7 @@ private:
 	Scene& scene;
 
 	void onKeyboardInput(const GameTimer& gameTimer);
-	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderView renderView, FrameResource& frameResource);
+	void drawRenderItems(ID3D12GraphicsCommandList* cmdList, std::vector<RenderComponent*> renderComponents, FrameResource& frameResource);
 
 	bool isWireframe = false;
 

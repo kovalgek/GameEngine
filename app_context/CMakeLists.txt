@@ -19,4 +19,4 @@ target_include_directories(AppContext PUBLIC include/app_context)
 target_include_directories(AppContext PRIVATE src)
 
 target_link_libraries(AppContext Rendering)
-target_link_libraries(AppContext Game)
+#target_link_libraries(AppContext Game)

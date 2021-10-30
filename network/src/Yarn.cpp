@@ -1,4 +1,7 @@
-#include <RoboCatPCH.h>
+#include "Yarn.h"
+#include "MemoryBitStream.h"
+#include "RoboCat.h"
+#include "Timing.h"
 
 Yarn::Yarn() :
 	mMuzzleSpeed( 3.f ),

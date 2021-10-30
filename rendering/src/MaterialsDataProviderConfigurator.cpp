@@ -70,7 +70,7 @@ std::unique_ptr<Material> MaterialsDataProviderConfigurator::bricksMaterial()
 	auto bricks = std::make_unique<Material>();
 	bricks->Name = "bricks";
 	bricks->MatCBIndex = 4;
-	bricks->DiffuseSrvHeapIndex = 0;
+	bricks->DiffuseSrvHeapIndex = 5;
 	bricks->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	bricks->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	bricks->Roughness = 0.25f;
@@ -82,7 +82,7 @@ std::unique_ptr<Material> MaterialsDataProviderConfigurator::checkertileMaterial
 	auto checkertile = std::make_unique<Material>();
 	checkertile->Name = "checkertile";
 	checkertile->MatCBIndex = 5;
-	checkertile->DiffuseSrvHeapIndex = 1;
+	checkertile->DiffuseSrvHeapIndex = 6;
 	checkertile->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	checkertile->FresnelR0 = XMFLOAT3(0.07f, 0.07f, 0.07f);
 	checkertile->Roughness = 0.3f;

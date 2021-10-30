@@ -101,8 +101,6 @@ BOOL initMainWindow(HINSTANCE hInstance, int nCmdShow)
     ShowWindow(mainWindowHandle, nCmdShow);
     UpdateWindow(mainWindowHandle);
 
-
-
     return TRUE;
 }
 

@@ -13,11 +13,13 @@ set( HEADER_FILES
 	include/network/RoboMath.h
 	#include/network/NetworkManager.h
 
-	#include/network/GameObject.h
-	#include/network/GameObjectRegistry.h
-	#include/network/Mouse.h
-	#include/network/RoboCat.h
-	#include/network/Yarn.h
+	include/network/GameObject.h
+	include/network/GameObjectRegistry.h
+	include/network/Mouse.h
+	include/network/RoboCat.h
+	include/network/Yarn.h
+	include/network/World.h
+	include/network/Timing.h
 )
 set( SRC_FILES
 	src/UDPSocket.cpp
@@ -29,11 +31,13 @@ set( SRC_FILES
 	src/RoboMath.cpp
 	#src/NetworkManager.cpp
 
-	#src/GameObject.cpp
-	#src/GameObjectRegistry.cpp
-	#src/Mouse.cpp
-	#src/RoboCat.cpp
-	#src/Yarn.cpp
+	src/GameObject.cpp
+	src/GameObjectRegistry.cpp
+	src/Mouse.cpp
+	src/RoboCat.cpp
+	src/World.cpp
+	src/Yarn.cpp
+	src/Timing.cpp
 )
 
 add_library(Network STATIC ${HEADER_FILES} ${SRC_FILES})

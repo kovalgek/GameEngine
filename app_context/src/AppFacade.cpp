@@ -7,6 +7,7 @@
 #include "DynamicVerticesProvider.h"
 #include "ViewController.h"
 #include "RingBuffer.h"
+#include "Scene.h"
 
 AppFacade::AppFacade(HWND mainWindowHandle)
 {
@@ -21,6 +22,7 @@ void AppFacade::update(const GameTimer& gameTimer)
 	auto& frameResource = ringBuffer.poll();
 
 	appContext->getFrameResourceUpdater()->update(frameResource, gameTimer);
+
 	appContext->getDynamicVerticesProvider()->update(gameTimer);
 	appContext->getViewController()->update();
 

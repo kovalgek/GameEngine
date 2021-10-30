@@ -1,4 +1,5 @@
 #include "GameObjectRegistry.h"
+#include "World.h"
 
 std::unique_ptr< GameObjectRegistry >	GameObjectRegistry::sInstance;
 
@@ -25,7 +26,7 @@ GameObjectPtr GameObjectRegistry::CreateGameObject( uint32_t inFourCCName )
 
 	//should the registry depend on the world? this might be a little weird
 	//perhaps you should ask the world to spawn things? for now it will be like this
-	//World::sInstance->AddGameObject( gameObject );
+	World::sInstance->AddGameObject( gameObject );
 
 	return gameObject;
 }

@@ -21,6 +21,8 @@ void TexturesProvider::loadTextures()
 	textures.push_back(fenceTexture());
 	textures.push_back(white1x1Texture());
 	textures.push_back(iceTexture());
+	textures.push_back(bricksTexture());
+	textures.push_back(checkboardTexture());
 }
 
 std::vector<ID3D12Resource*> TexturesProvider::getTextureResources()
@@ -108,4 +110,34 @@ std::unique_ptr<Texture> TexturesProvider::iceTexture()
 		white1x1Tex->UploadHeap)
 	);
 	return white1x1Tex;
+}
+
+std::unique_ptr<Texture> TexturesProvider::checkboardTexture()
+{
+	auto texture = std::make_unique<Texture>();
+	texture->Name = "checkboardTex";
+	texture->Filename = L"../core/resources/textures/checkboard.dds";
+	ThrowIfFailed(CreateDDSTextureFromFile12(
+		device,
+		commandList,
+		texture->Filename.c_str(),
+		texture->Resource,
+		texture->UploadHeap)
+	);
+	return texture;
+}
+
+std::unique_ptr<Texture> TexturesProvider::bricksTexture()
+{
+	auto texture = std::make_unique<Texture>();
+	texture->Name = "bricksTex";
+	texture->Filename = L"../core/resources/textures/bricks3.dds";
+	ThrowIfFailed(CreateDDSTextureFromFile12(
+		device,
+		commandList,
+		texture->Filename.c_str(),
+		texture->Resource,
+		texture->UploadHeap)
+	);
+	return texture;
 }

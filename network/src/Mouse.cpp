@@ -1,4 +1,5 @@
-#include <RoboCatPCH.h>
+#include "Mouse.h"
+#include "MemoryBitStream.h"
 
 Mouse::Mouse()
 {

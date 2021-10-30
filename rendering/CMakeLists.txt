@@ -55,6 +55,13 @@ set( DATA_PROVIDER_FILES
 	include/rendering/MaterialsDataProviderConfigurator.h
 	src/MainPassModelsListener.h
 	include/rendering/MainPassModels.h
+	include/rendering/Scene.h
+	src/Scene.cpp
+	include/rendering/Components.h
+	src/GameObject.cpp
+	include/rendering/GameObject.h
+	src/MirrorController.cpp
+	include/rendering/MirrorController.h
 )
 source_group( ${SOURCE_FILES_DIR}/DataProviders FILES ${DATA_PROVIDER_FILES} )
 
