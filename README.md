@@ -6,6 +6,8 @@ Parelhoen is a guineafowl in Dutch. These birds are beautiful creatures that com
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+https://user-images.githubusercontent.com/6523886/212499973-0c234517-dbec-4ec6-852e-2af196daeca0.mp4
+
 This project is a rendering engine that is written in C++ 11 and using DirectX 12 as low-level graphics API. Additionally, I employed the [ImGui](https://github.com/ocornut/imgui) library to create a user interface for configuring various rendering features in real-time. Initially, I integrated the [EnTT](https://github.com/skypjack/entt) header-only library as an Entity-Component-System, but later decided to implement a simpler solution without it."
 
 <!-- INSTALLATION -->
