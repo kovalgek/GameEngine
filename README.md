@@ -1,14 +1,12 @@
-<img src="images/parelhoen.png" width="317" height="300" style="display: block; margin: 0 auto">
-
-Parelhoen is a guineafowl in Dutch. These birds are beautiful creatures that come from Africa. I remember this one guineafowl that broke out of the farm and hung out in a parking lot. During the crazy times of COVID, this bird always put a smile on my face. So, I decided to name my game engine after it as a nod to its awesomeness. Long live Parelhoen, the brave little bird that brightened up my days!
-
+<p align="center"><img src="assets/parelhoen.png" width="317" height="300"></p>
+Parelhoen is a guineafowl in Dutch. These birds are beautiful creatures that came from Africa. I knew a guineafowl that escaped from a farm and found a new home in a car parking. During the COVID pandemic, this bird always put a smile on my face. I named my game engine after it as a nod to its awesomeness. Long live Parelhoen, the brave little bird that brightened up my days!
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-https://user-images.githubusercontent.com/6523886/212499973-0c234517-dbec-4ec6-852e-2af196daeca0.mp4
-
-This project is a rendering engine that is written in C++ 11 and using DirectX 12 as low-level graphics API. Additionally, I employed the [ImGui](https://github.com/ocornut/imgui) library to create a user interface for configuring various rendering features in real-time. Initially, I integrated the [EnTT](https://github.com/skypjack/entt) header-only library as an Entity-Component-System, but later decided to implement a simpler solution without it."
+<p align="center">
+[![ParelhoenDemo](https://img.youtube.com/vi/kZ0JwX0i2ko/0.jpg)](https://www.youtube.com/watch?v=kZ0JwX0i2ko)
+</p>
+This project is a rendering engine that is written in C++ 11 and using DirectX 12 as low-level graphics API. Additionally, I employed the [ImGui](https://github.com/ocornut/imgui) library to create a user interface for configuring various rendering features in real-time. Initially, I integrated the [EnTT](https://github.com/skypjack/entt) header-only library as an Entity-Component-System, but later decided to implement a simpler solution without it.
 
 <!-- INSTALLATION -->
 ## Installation
@@ -39,11 +37,12 @@ I used CMake as a building tool. To run the project, do these steps:
 
 
 #### DataFlow
-<img src="images/ParelhoenDataFlow.png" style="border: 20px solid black">
+<img src="assets/ParelhoenDataFlow.png">
+It is a simplified dataflow scheme that shows what data and events drive the rendering.
 
 #### Resources Scheme
-<img src="images/ParelhoenDiagram.png" style="border: 20px solid black">
-
+<img src="assets/ParelhoenDiagram.png">
+It is a detailed scheme showing how and at what stages data binds to the rendering pipeline.
 
 <!-- Acknowledgments -->
 ## Acknowledgments
